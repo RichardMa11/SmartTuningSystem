@@ -1,0 +1,54 @@
+﻿using System;
+using System.Collections.Generic;
+using DAL;
+using Model;
+
+namespace BLL
+{
+    public class RoleManager
+    {
+        public readonly RoleService RoleService = new RoleService();
+
+        public int AddRole(Role role)
+        {
+            return RoleService.InsertRole(role);
+        }
+
+        public void ModifyRole(Role role)
+        {
+            RoleService.UpdateRole(role);
+        }
+
+        public void RemoveRole(Role role)
+        {
+            RoleService.LogicDeleteRole(role);
+        }
+
+        public void DeleteRole(int id)
+        {
+            RoleService.DeleteRole(id);
+        }
+
+        public List<Role> GetRoleByDate(DateTime startDate, DateTime endDate)
+        {
+            return RoleService.SelectRole(startDate, endDate);
+        }
+
+        public List<Role> GetRoleBySql(string strSql)
+        {
+            return RoleService.SqlStrQueryRole(strSql);
+        }
+
+        //添加人员角色
+        public int AddUserRole(UserRole userRole)
+        {
+            return RoleService.InsertUserRole(userRole);
+        }
+
+        //分配角色菜单
+        public int AddRoleMenu(RoleMenu roleMenu)
+        {
+            return RoleService.InsertRoleMenu(roleMenu);
+        }
+    }
+}

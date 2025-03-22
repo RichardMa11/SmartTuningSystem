@@ -1,0 +1,92 @@
+﻿<UserControl x:Class="Common.MyControls.UserSelector"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+              xmlns:pu="clr-namespace:Panuon.UI.Silver;assembly=Panuon.UI.Silver"
+             xmlns:local="clr-namespace:Common.MyControls"
+             mc:Ignorable="d" 
+             Background="White"
+             d:DesignHeight="600" 
+             Loaded="UserControl_Loaded"
+             d:DesignWidth="800">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="120"/>
+                <ColumnDefinition Width="120"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0">
+                <TreeView  x:Name="tvDepartment" 
+                       pu:TreeViewHelper.TreeViewStyle="Classic"
+                       pu:TreeViewHelper.SelectMode="ChildOnly"
+                       pu:TreeViewHelper.ItemHeight="30"
+                           pu:TreeViewHelper.SelectedBackground="{DynamicResource TreeViewSelectedBgColor}"
+                           SelectedItemChanged="tvDepartment_SelectedItemChanged"
+                       pu:TreeViewHelper.SelectedForeground="Black" >
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                            <Grid HorizontalAlignment="Left">
+                                <Label Content="{Binding Name}" HorizontalAlignment="Center"/>
+                            </Grid>
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
+                </TreeView>
+            </Grid>
+            <Grid Grid.Column="1">
+                <TreeView  x:Name="tvPosition" 
+                       BorderBrush="{DynamicResource TreeViewSelectedHeaderColor}"
+                       pu:TreeViewHelper.TreeViewStyle="Modern"
+                       pu:TreeViewHelper.SelectMode="ChildOnly"
+                       pu:TreeViewHelper.ItemHeight="30"
+pu:TreeViewHelper.SelectedBackground="{DynamicResource TreeViewSelectedBgColor}"
+                          SelectedItemChanged="tvPosition_SelectedItemChanged"
+                       pu:TreeViewHelper.SelectedForeground="Black" >
+                </TreeView>
+            </Grid>
+            <Grid Grid.Column="2">
+                <StackPanel>
+                    <TextBox  Height="30" Margin="5" 
+                                              pu:TextBoxHelper.Watermark="账户名"
+                                              Background="{DynamicResource TextBoxBgColor}"
+                                              pu:TextBoxHelper.FocusedBorderBrush="{DynamicResource TextBoxFocusColor}"
+                                              pu:TextBoxHelper.FocusedShadowColor="{DynamicResource TextBoxFocusedShadowColor}"
+                                              pu:TextBoxHelper.IsClearButtonVisible="True" />
+                    <DataGrid HorizontalAlignment="Center"
+                              x:Name="list"
+                              ItemsSource="{Binding}"
+                              HeadersVisibility ="None"
+                              Margin="5"
+                              BorderThickness="1,1,0,0"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              pu:DataGridHelper.ColumnHorizontalContentAlignment="Center" 
+                              pu:DataGridHelper.HeaderPadding="5,0"
+                              pu:DataGridHelper.CellPadding="5,0"
+                              pu:DataGridHelper.HoverBackground="{DynamicResource DataGridHoverColor}" 
+                              pu:DataGridHelper.SelectedBackground="{DynamicResource DataGridSelectedColor}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="名称" Width="100" Binding="{Binding Name}"/>
+                            <DataGridTextColumn Header="职务" Width="*" Binding="{Binding PositionName}" />
+                            <DataGridTemplateColumn Header="操作" Width="50" >
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Button  Content="&#xf0a6;" FontFamily="{StaticResource FontAwesome}" Visibility="{Binding EditButtonVisibility}"  pu:ButtonHelper.ButtonStyle="Link" Tag="{Binding Id}" Foreground="Blue" x:Name="btnEdit"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

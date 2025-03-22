@@ -1,0 +1,26 @@
+﻿<UserControl x:Class="Common.MyControls.ImageEditer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:pu="clr-namespace:Panuon.UI.Silver;assembly=Panuon.UI.Silver"
+             xmlns:local="clr-namespace:Common.MyControls"
+             x:Name="MyImageEditer"
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="400">
+    <Grid>
+        <Grid  x:Name="realImg" MouseEnter="realImg_MouseEnter" MouseLeave="realImg_MouseLeave">
+            <Image x:Name="img"/>
+            <Border x:Name="op" Visibility="Collapsed" Background="Black" Opacity="0.4"/>
+            <Button x:Name="btnUpdate" Visibility="Collapsed" Content="&#xf044;" Click="btnUpdate_Click" pu:ButtonHelper.ButtonStyle="Link" FontSize="20" Foreground="White" pu:ButtonHelper.HoverBrush="White" FontFamily="{StaticResource FontAwesome}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <Button x:Name="btnDelete" Visibility="Collapsed" Content="&#xf00d;" Click="btnDelete_Click" pu:ButtonHelper.ButtonStyle="Link" FontSize="20" Foreground="Red" pu:ButtonHelper.HoverBrush="Red" FontFamily="{StaticResource FontAwesome}" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10"/>
+        </Grid>
+        <Grid x:Name="gNew" Visibility="Collapsed" Background="LightGray">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Button Grid.Row="0" x:Name="btnNew" ToolTip="查找本地文件" Click="btnNew_Click" Content="&#xf00e;"  FontFamily="{StaticResource FontAwesome}" Background="Transparent" Foreground="White" FontSize="20" pu:ButtonHelper.HoverBrush="Transparent" />
+                <Button Grid.Row="1" x:Name="btnCamera" ToolTip="调取摄像头拍摄" Click="btnCamera_Click" Margin="20,0,0,0" Content="&#xf030;"  FontFamily="{StaticResource FontAwesome}" Background="Transparent" Foreground="White" FontSize="20" pu:ButtonHelper.HoverBrush="Transparent" />
+            </StackPanel>
+        </Grid>
+        <Label x:Name="lblTitle" Content="{Binding ElementName=MyImageEditer,Path=Title}" Foreground="White" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,5,0,0" FontSize="20"/>
+    </Grid>
+</UserControl>
