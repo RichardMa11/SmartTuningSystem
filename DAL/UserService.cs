@@ -96,5 +96,47 @@ namespace DAL
 
             return users;
         }
+
+        public (List<UserRoleDto>, int) QueryPagedUser(string keyword, int pageIndex, int pageSize)
+        {
+            using (var db = new CoreDbContext())
+            {
+                var query = db.User
+                    .Join(db.UserRole,                     // 关联第二张表
+                        user => user.Id,
+                        userRole => userRole.UserId,
+                        (user, userRole) => new { User = user, UserRole = userRole })
+                    .Join(db.Role,                        // 关联第三张表
+                        combined => combined.UserRole.RoleId,
+                        role => role.Id,
+                        (combined, role) => new UserRoleDto
+                        {
+                            UserName = combined.User.UserName,
+                            UserNo = combined.User.UserNo,
+                            RoleName = role.RoleName,
+                            RoleNo = role.RoleNo,
+                            CreateTime = combined.User.CreateTime
+                        })
+                    .AsQueryable();
+
+                // 动态条件过滤
+                if (!string.IsNullOrEmpty(keyword))
+                {
+                    query = query.Where(x =>
+                        x.UserName.Contains(keyword) ||
+                        x.UserNo.Contains(keyword) ||
+                        x.RoleName.Contains(keyword));
+                }
+
+                // 分页操作
+                int total = query.Count();
+                var data = query.OrderByDescending(x => x.CreateTime)
+                    .Skip((pageIndex - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+
+                return (data, total);
+            }
+        }
     }
 }

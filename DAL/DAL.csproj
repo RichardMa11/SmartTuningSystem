@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="CoreDBContext.cs" />
     <Compile Include="DbContextExtensions.cs" />
+    <Compile Include="DeviceInfoService.cs" />
     <Compile Include="SysConfigService.cs" />
     <Compile Include="UserService.cs" />
     <Compile Include="RoleService.cs" />

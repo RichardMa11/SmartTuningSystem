@@ -1,11 +1,15 @@
 ﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using BLL;
 using LiveCharts;
 using LiveCharts.Wpf;
+using Model;
+using Panuon.UI.Silver;
 using SmartTuningSystem.Global;
+using SmartTuningSystem.Utils;
+using static Model.Log;
+using Menu = Model.Menu;
 
 namespace SmartTuningSystem.View
 {
@@ -14,67 +18,261 @@ namespace SmartTuningSystem.View
     /// </summary>
     public partial class Index : Page
     {
-        // 日志数据集合
-        private ObservableCollection<LogEntry> _systemLogs = new ObservableCollection<LogEntry>();
-        private ObservableCollection<LogEntry> _authLogs = new ObservableCollection<LogEntry>();
+        private int _pageSize = 20;
+        public readonly LogManager LogManager = new LogManager();
+        public readonly DeviceInfoManager DeviceInfoManager = new DeviceInfoManager();
+        public readonly UserManager UserManager = new UserManager();
         public Index()
         {
             InitializeComponent();
             this.StartPageInAnimation();
 
-            PointLabel = chartPoint => string.Format("{0} ({1:P})", chartPoint.Y, chartPoint.Participation);
-            DataContext = this;
-
-            LoadDemoData();
-
-            // 绑定数据源
-            dgSystemLogs.DataContext = _systemLogs;
-            dgAuthLogs.DataContext = _authLogs;
+            //PointLabel = chartPoint => string.Format("{0} ({1:P})", chartPoint.Y, chartPoint.Participation);
+            //DataContext = this;
         }
 
-        // 加载示例数据
-        private void LoadDemoData()
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            // 系统日志示例
-            _systemLogs.Add(new LogEntry
+            if (UserGlobal.MainWindow != null)
+                UserGlobal.MainWindow.WriteInfoOnBottom("打开首页成功。");
+
+            LogHelps.WriteLogToDb($"{UserGlobal.CurrUser.UserName}打开首页！", LogLevel.Info);
+            UpdateDataCount();
+            LoadLogData(); // 初始化加载数据
+            LoadDevData();
+            LoadProdData();
+            LoadUserData();
+        }
+
+        /// <summary>
+        /// 更新数量
+        /// </summary>
+        private void UpdateDataCount()
+        {
+            lblUserCount.Content = LogManager.QueryBySql<User>(@"select * from Users with(nolock)").Count;
+            lblRoleCount.Content = LogManager.QueryBySql<Role>(@"select * from Roles with(nolock)").Count;
+            lblMenuCount.Content = LogManager.QueryBySql<Menu>(@"select * from Menus with(nolock)").Count;
+            lblDeviceCount.Content = LogManager.QueryBySql<DeviceInfo>(@"select * from DeviceInfo with(nolock)").Count;
+        }
+
+        //private async void LoadDataAsync()
+        //{
+        //    await Task.Run(LoadData);
+        //}
+
+
+        #region 系统日志
+
+        private int _currentLogPage = 1;
+        // 事件处理
+        private void SearchSystem_Click(object sender, RoutedEventArgs e) => ResetAndLoad();
+        private void BtnPrev_Click(object sender, RoutedEventArgs e) => ChangePage(-1);
+        private void BtnNext_Click(object sender, RoutedEventArgs e) => ChangePage(1);
+        private void LoadLogData()
+        {
+            // 系统日志
+            var (data, total) = LogManager.GetPagedLogs(dpStart.SelectedDate, dpEnd.SelectedDate,
+                cmbLevel.SelectedValue != null ? Convert.ToInt32(cmbLevel.SelectedValue) : (int?)null,
+                txtSearchSystem.Text, _currentLogPage, _pageSize);
+
+            dgSystemLogs.ItemsSource = data;
+            UpdatePagingUI(total);
+
+            //          _systemLogs = LogManager.QueryBySql<LogModel>(@"SELECT 
+            //     CASE 
+            //        WHEN l.[LogType] = 0 THEN 'Info' 
+            //        WHEN l.[LogType] = 1 THEN 'Error' 
+            //        WHEN l.[LogType] = 2 THEN 'Warning' 
+            //        ELSE 'Unknown' 
+            //  END AS LogLevel
+            //    ,[LogStr]
+            //    ,[CreateTime]
+            //FROM [SmartTuningSystemDB].[dbo].[Logs] l with(nolock) where l.LogType in (0,1,2) order by CreateTime desc").ToList();
+            //using (var conn = new SqlConnection("YourConnectionString"))
+            //{
+            //    using (var multi = conn.QueryMultiple(sql, new
+            //    {
+            //        StartDate = startDate,
+            //        EndDate = endDate,
+            //        Level = level,
+            //        Keyword = keyword,
+            //        Offset = (_currentPage - 1) * _pageSize,
+            //        PageSize = _pageSize
+            //    }))
+            //    {
+            //        dgData.ItemsSource = multi.Read<Log>(); // 读取分页数据
+            //        _totalRecords = multi.ReadSingle<int>(); // 读取总记录数
+            //    }
+            //}
+            // 分页 SQL
+            //var sql = @"
+            //    SELECT * FROM Logs with(nolock)
+            //    WHERE (@StartDate IS NULL OR CreateTime >= @StartDate)
+            //      AND (@EndDate IS NULL OR CreateTime <= @EndDate)
+            //      AND (@LogType IS NULL OR LogType = @LogType)
+            //      AND (@Keyword IS NULL OR LogStr LIKE '%' + @Keyword + '%')
+            //    ORDER BY CreateTime DESC
+            //    OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
+
+            //    SELECT COUNT(*) FROM Logs with(nolock)
+            //    WHERE (@StartDate IS NULL OR CreateTime >= @StartDate)
+            //      AND (@EndDate IS NULL OR CreateTime <= @EndDate)
+            //      AND (@LogType IS NULL OR LogType = @LogType)
+            //      AND (@Keyword IS NULL OR LogStr LIKE '%' + @Keyword + '%');";
+        }
+
+        // 更新分页界面
+        private void UpdatePagingUI(int total)
+        {
+            int totalPages = (int)Math.Ceiling((double)total / _pageSize);
+            txtPageInfo.Text = $"第 {_currentLogPage} 页 / 共 {totalPages} 页";
+            btnPrev.IsEnabled = (_currentLogPage > 1);
+            btnNext.IsEnabled = (_currentLogPage < totalPages);
+        }
+
+        // 重置到第一页并加载
+        private void ResetAndLoad()
+        {
+            if (dpStart.SelectedDate > dpEnd.SelectedDate)
             {
-                Timestamp = DateTime.Now.AddMinutes(-5),
-                Level = "INFO",
-                Message = "系统启动成功"
-            });
-
-            // 授权日志示例
-            _authLogs.Add(new LogEntry
-            {
-                Timestamp = DateTime.Now.AddMinutes(-3),
-                User = "admin",
-                Message = "用户登录成功"
-            });
+                MessageBoxX.Show("结束时间不能早于开始时间！", "查询提醒");
+                return;
+            }
+            _currentLogPage = 1;
+            LoadLogData();
         }
 
-        // 系统日志搜索
-        private void SearchSystem_Click(object sender, RoutedEventArgs e)
+        // 切换页码
+        private void ChangePage(int delta)
         {
-            var keyword = txtSearchSystem.Text.ToLower();
-            var filtered = _systemLogs.Where(l =>
-                l.Message.ToLower().Contains(keyword) ||
-                l.Level.ToLower().Contains(keyword)
-            ).ToList();
-
-            dgSystemLogs.DataContext = new ObservableCollection<LogEntry>(filtered);
+            _currentLogPage += delta;
+            LoadLogData();
         }
 
-        // 授权日志搜索
-        private void SearchAuth_Click(object sender, RoutedEventArgs e)
+        #endregion
+
+        #region 机台列表
+
+        private int _currentDevPage = 1;
+        // 事件处理
+        private void SearchDevi_Click(object sender, RoutedEventArgs e) => ResetAndLoadDev();
+        private void BtnDevPrev_Click(object sender, RoutedEventArgs e) => ChangePageDev(-1);
+        private void BtnDevNext_Click(object sender, RoutedEventArgs e) => ChangePageDev(1);
+        private void LoadDevData()
         {
-            var keyword = txtSearchAuth.Text.ToLower();
-            var filtered = _authLogs.Where(l =>
-                l.User.ToLower().Contains(keyword) ||
-                l.Message.ToLower().Contains(keyword)
-            ).ToList();
+            // 机台列表
+            var (data, total) = DeviceInfoManager.GetPagedDeviceInfo(txtSearchDevice.Text, _currentDevPage, _pageSize);
 
-            dgAuthLogs.DataContext = new ObservableCollection<LogEntry>(filtered);
+            dgDeviceLogs.ItemsSource = data;
+            UpdatePagingDevUI(total);
         }
+
+        // 更新分页界面
+        private void UpdatePagingDevUI(int total)
+        {
+            int totalPages = (int)Math.Ceiling((double)total / _pageSize);
+            txtDevPageInfo.Text = $"第 {_currentDevPage} 页 / 共 {totalPages} 页";
+            btndDevPrev.IsEnabled = (_currentDevPage > 1);
+            btnDevNext.IsEnabled = (_currentDevPage < totalPages);
+        }
+
+        // 重置到第一页并加载
+        private void ResetAndLoadDev()
+        {
+            _currentDevPage = 1;
+            LoadDevData();
+        }
+
+        // 切换页码
+        private void ChangePageDev(int delta)
+        {
+            _currentDevPage += delta;
+            LoadDevData();
+        }
+
+        #endregion
+
+        #region 产品列表
+
+        private int _currentProdPage = 1;
+        // 事件处理
+        private void SearchProd_Click(object sender, RoutedEventArgs e) => ResetAndLoadProd();
+        private void BtnProdPrev_Click(object sender, RoutedEventArgs e) => ChangePageProd(-1);
+        private void BtnProdNext_Click(object sender, RoutedEventArgs e) => ChangePageProd(1);
+        private void LoadProdData()
+        {
+            // 产品列表
+            var (data, total) = DeviceInfoManager.GetPagedDeviceInfo(txtSearchProduct.Text, _currentProdPage, _pageSize);
+
+            dgProductLogs.ItemsSource = data;
+            UpdatePagingProdUI(total);
+        }
+
+        // 更新分页界面
+        private void UpdatePagingProdUI(int total)
+        {
+            int totalPages = (int)Math.Ceiling((double)total / _pageSize);
+            txtProdPageInfo.Text = $"第 {_currentProdPage} 页 / 共 {totalPages} 页";
+            btndProdPrev.IsEnabled = (_currentProdPage > 1);
+            btnProdNext.IsEnabled = (_currentProdPage < totalPages);
+        }
+
+        // 重置到第一页并加载
+        private void ResetAndLoadProd()
+        {
+            _currentProdPage = 1;
+            LoadProdData();
+        }
+
+        // 切换页码
+        private void ChangePageProd(int delta)
+        {
+            _currentProdPage += delta;
+            LoadProdData();
+        }
+
+        #endregion
+
+        #region 用户列表
+
+        private int _currentUserPage = 1;
+        // 事件处理
+        private void SearchUser_Click(object sender, RoutedEventArgs e) => ResetAndLoadUser();
+        private void BtnUserPrev_Click(object sender, RoutedEventArgs e) => ChangePageUser(-1);
+        private void BtnUserNext_Click(object sender, RoutedEventArgs e) => ChangePageUser(1);
+        private void LoadUserData()
+        {
+            // 用户列表
+            var (data, total) = UserManager.GetPagedUser(txtSearchUser.Text, _currentUserPage, _pageSize);
+
+            dgUserLogs.ItemsSource = data;
+            UpdatePagingUserUI(total);
+        }
+
+        // 更新分页界面
+        private void UpdatePagingUserUI(int total)
+        {
+            int totalPages = (int)Math.Ceiling((double)total / _pageSize);
+            txtUserPageInfo.Text = $"第 {_currentUserPage} 页 / 共 {totalPages} 页";
+            btndUserPrev.IsEnabled = (_currentUserPage > 1);
+            btnUserNext.IsEnabled = (_currentUserPage < totalPages);
+        }
+
+        // 重置到第一页并加载
+        private void ResetAndLoadUser()
+        {
+            _currentUserPage = 1;
+            LoadUserData();
+        }
+
+        // 切换页码
+        private void ChangePageUser(int delta)
+        {
+            _currentUserPage += delta;
+            LoadUserData();
+        }
+
+        #endregion
 
         public Func<ChartPoint, string> PointLabel { get; set; }
 
@@ -89,36 +287,5 @@ namespace SmartTuningSystem.View
             var selectedSeries = (PieSeries)chartpoint.SeriesView;
             selectedSeries.PushOut = 8;
         }
-
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            UpdateDataCount();
-
-            if (UserGlobal.MainWindow != null)
-                UserGlobal.MainWindow.WriteInfoOnBottom("打开首页成功。");
-        }
-
-        /// <summary>
-        /// 更新数量
-        /// </summary>
-        private void UpdateDataCount()
-        {
-            //using (CoreDBContext context = new CoreDBContext())
-            //{
-            //    lblUserCount.Content = context.User.Any() ? context.User.Where(c => !c.IsDel).Count() : 0;
-            //    lblRoleCount.Content = context.Role.Any() ? context.Role.Count() : 0;
-            //    lblPluginsCount.Content = context.Plugins.Count();
-            //    lblPositionCount.Content = context.DepartmentPosition.Any(c => !c.IsDel) ? context.DepartmentPosition.Count(c => !c.IsDel) : 0;
-            //}
-        }
-    }
-
-    // 日志实体类
-    public class LogEntry
-    {
-        public DateTime Timestamp { get; set; }
-        public string Level { get; set; }    // 用于系统日志
-        public string User { get; set; }     // 用于授权记录
-        public string Message { get; set; }
     }
 }

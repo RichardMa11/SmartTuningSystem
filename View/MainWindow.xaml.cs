@@ -6,6 +6,7 @@ using System.Windows.Media.Animation;
 using Panuon.UI.Silver;
 using SmartTuningSystem.Global;
 using SmartTuningSystem.Utils;
+using static Model.Log;
 
 namespace SmartTuningSystem.View
 {
@@ -108,6 +109,7 @@ namespace SmartTuningSystem.View
             var result = MessageBoxX.Show("是否退出？", "退出提醒", this, MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes)
             {
+                LogHelps.WriteLogToDb($"{UserGlobal.CurrUser.UserName}退出登录！", LogLevel.Authorization);
                 _isClose = true;
                 Closing -= WindowX_Closing;
                 CloseWindow();
@@ -142,6 +144,7 @@ namespace SmartTuningSystem.View
 
         private void btnReLogin_Click(object sender, RoutedEventArgs e)
         {
+            LogHelps.WriteLogToDb($"{UserGlobal.CurrUser.UserName}注销成功！", LogLevel.Authorization);
             //System.Windows.Forms.Application.Restart();
             //Application.Current.Shutdown();
             System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);

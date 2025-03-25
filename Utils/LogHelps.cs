@@ -1,6 +1,7 @@
 ﻿using BLL;
 using Model;
 using SmartTuningSystem.Global;
+using static Model.Log;
 
 namespace SmartTuningSystem.Utils
 {
@@ -39,7 +40,7 @@ namespace SmartTuningSystem.Utils
             Logger.Fatal(strMsg);
         }
 
-        public static void WriteLogToDb(string logStr, int logType)
+        public static void WriteLogToDb(string logStr, LogLevel logType)
         {
             LogManager.AddLog(new Log
             {

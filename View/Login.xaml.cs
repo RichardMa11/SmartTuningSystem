@@ -10,6 +10,7 @@ using Panuon.UI.Silver;
 using Panuon.UI.Silver.Core;
 using SmartTuningSystem.Global;
 using SmartTuningSystem.Utils;
+using static Model.Log;
 
 namespace SmartTuningSystem.View
 {
@@ -141,7 +142,7 @@ namespace SmartTuningSystem.View
                             UserGlobal.CurrUser = userModel;
 
                             //LogHelps.Info($"{userName}登录成功！");
-                            LogHelps.WriteLogToDb($"{userName}登录成功！", LogType.Info);
+                            LogHelps.WriteLogToDb($"{userName}登录成功！", LogLevel.Authorization);
 
                             #region 加载权限，主页
                             UserGlobal.VUserRoleMenus = LogManager.QueryBySql<VUserRoleMenu>(@"  select UserName,UserNo,PageName,PagePath,RoleNo FROM [SmartTuningSystemDB].[dbo].[Users] users with(nolock) 

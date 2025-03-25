@@ -51,7 +51,7 @@
                         </Grid>
                     </Grid>
                 </Border>
-                <!--数据字典-->
+                <!--菜单数量-->
                 <Border  Background="White" Margin="5,0,5,5">
                     <Grid>
                         <Grid.RowDefinitions>
@@ -67,7 +67,7 @@
                         </Grid>
                     </Grid>
                 </Border>
-                <!--插件数量-->
+                <!--机台数量-->
                 <Border  Background="White" Margin="5,0,5,5">
                     <Grid>
                         <Grid.RowDefinitions>
@@ -98,22 +98,190 @@
                                     pu:TabControlHelper.SelectedForeground="{DynamicResource SkinColor}"
                                     pu:TabControlHelper.ItemsAlignment="LeftOrTop">
                     <TabItem Header="系统日志">
-                        <StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="0 5">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <!-- 查询条件 -->
+                                <RowDefinition Height="*"/>
+                                <!-- 数据区域 -->
+                                <RowDefinition Height="Auto"/>
+                                <!-- 分页按钮 -->
+                            </Grid.RowDefinitions>
+
+                            <!-- 查询条件 -->
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                                <DatePicker x:Name="dpStart" Width="120" Margin="5"/>
+                                <DatePicker x:Name="dpEnd" Width="120" Margin="5"/>
+                                <ComboBox x:Name="cmbLevel" Width="100" Margin="5" SelectedValuePath="Tag">
+                                    <ComboBoxItem Content="--请选择--" Tag="{x:Null}"/>
+                                    <ComboBoxItem Content="Info" Tag="0"/>
+                                    <ComboBoxItem Content="Error" Tag="1"/>
+                                    <ComboBoxItem Content="Warning" Tag="2"/>
+                                    <ComboBoxItem Content="Authorization" Tag="3"/>
+                                    <ComboBoxItem Content="Operation" Tag="4"/>
+                                </ComboBox>
                                 <TextBox x:Name="txtSearchSystem" Width="200" Margin="5"/>
-                                <Button Content="搜索" Click="SearchSystem_Click" Margin="5"/>
+                                <Button Content="查询" Click="SearchSystem_Click" Margin="5" Width="80"/>
                             </StackPanel>
-                            <DataGrid x:Name="dgSystemLogs" AutoGenerateColumns="False" 
+
+                            <!-- 可滚动数据区 -->
+                            <!--<ScrollViewer Grid.Row="1">                              
+                            </ScrollViewer>-->
+                            <DataGrid Grid.Row="1" x:Name="dgSystemLogs" AutoGenerateColumns="False" 
                                       ItemsSource="{Binding}" IsReadOnly="True">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="时间" Binding="{Binding Timestamp,StringFormat=yyyy-MM-dd HH:mm:ss}"/>
-                                    <DataGridTextColumn Header="级别" Binding="{Binding Level}"/>
-                                    <DataGridTextColumn Header="消息" Binding="{Binding Message}" Width="*"/>
+                                    <DataGridTextColumn Header="时间" Binding="{Binding CreateTime,StringFormat=yyyy-MM-dd HH:mm:ss}"/>
+                                    <DataGridTextColumn Header="级别" Binding="{Binding LogType}"/>
+                                    <DataGridTextColumn Header="用户名" Binding="{Binding CreateName}"/>
+                                    <DataGridTextColumn Header="工号" Binding="{Binding CreateNo}"/>
+                                    <DataGridTextColumn Header="消息" Binding="{Binding LogStr}" Width="*"/>
                                 </DataGrid.Columns>
                             </DataGrid>
-                        </StackPanel>
+
+                            <!-- 分页按钮 -->
+                            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button x:Name="btnPrev" Content="上一页" Click="BtnPrev_Click" Width="80" Margin="5"/>
+                                <TextBlock x:Name="txtPageInfo" Margin="5" VerticalAlignment="Center"/>
+                                <Button x:Name="btnNext" Content="下一页" Click="BtnNext_Click" Width="80" Margin="5"/>
+                            </StackPanel>
+                        </Grid>
+                        <!--<StackPanel>
+                            -->
+                        <!-- 查询条件 -->
+                        <!--
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                                <DatePicker x:Name="dpStart" Width="120" Margin="5"/>
+                                <DatePicker x:Name="dpEnd" Width="120" Margin="5"/>
+                                <ComboBox x:Name="cmbLevel" Width="100" Margin="5" SelectedValuePath="Tag">
+                                    <ComboBoxItem Content="Info" Tag="0"/>
+                                    <ComboBoxItem Content="Error" Tag="1"/>
+                                    <ComboBoxItem Content="Warning" Tag="2"/>
+                                </ComboBox>
+                                <TextBox x:Name="txtSearchSystem" Width="200" Margin="5"/>
+                                <Button Content="查询" Click="SearchSystem_Click" Margin="5" Width="80"/>
+                            </StackPanel>
+                            <DataGrid x:Name="dgSystemLogs" AutoGenerateColumns="False" Height="400"
+                                      ItemsSource="{Binding}" IsReadOnly="True">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="时间" Binding="{Binding CreateTime,StringFormat=yyyy-MM-dd HH:mm:ss}"/>
+                                    <DataGridTextColumn Header="级别" Binding="{Binding LogType}"/>
+                                    <DataGridTextColumn Header="消息" Binding="{Binding LogStr}" Width="*"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            -->
+                        <!-- 分页控件 -->
+                        <!--
+                            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button x:Name="btnPrev" Content="上一页" Click="BtnPrev_Click" Width="80" Margin="5"/>
+                                <TextBlock x:Name="txtPageInfo" Margin="5" VerticalAlignment="Center"/>
+                                <Button x:Name="btnNext" Content="下一页" Click="BtnNext_Click" Width="80" Margin="5"/>
+                            </StackPanel>
+                        </StackPanel>-->
                     </TabItem>
-                    <TabItem Header="授权记录">
+                    <TabItem Header="机台列表">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <!-- 查询条件 -->
+                                <RowDefinition Height="*"/>
+                                <!-- 数据区域 -->
+                                <RowDefinition Height="Auto"/>
+                                <!-- 分页按钮 -->
+                            </Grid.RowDefinitions>
+
+                            <!-- 查询条件 -->
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                                <TextBox x:Name="txtSearchDevice" Width="200" Margin="5"/>
+                                <Button Content="查询" Click="SearchDevi_Click" Margin="5" Width="80"/>
+                            </StackPanel>
+
+                            <DataGrid Grid.Row="1" x:Name="dgDeviceLogs" AutoGenerateColumns="False" 
+                                      ItemsSource="{Binding}" IsReadOnly="True">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="时间" Binding="{Binding CreateTime,StringFormat=yyyy-MM-dd HH:mm:ss}"/>
+                                    <DataGridTextColumn Header="机台号" Binding="{Binding DeviceName}"/>
+                                    <DataGridTextColumn Header="IP地址" Binding="{Binding IpAddress}" Width="*"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+                            <!-- 分页按钮 -->
+                            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button x:Name="btndDevPrev" Content="上一页" Click="BtnDevPrev_Click" Width="80" Margin="5"/>
+                                <TextBlock x:Name="txtDevPageInfo" Margin="5" VerticalAlignment="Center"/>
+                                <Button x:Name="btnDevNext" Content="下一页" Click="BtnDevNext_Click" Width="80" Margin="5"/>
+                            </StackPanel>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="产品列表">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <!-- 查询条件 -->
+                                <RowDefinition Height="*"/>
+                                <!-- 数据区域 -->
+                                <RowDefinition Height="Auto"/>
+                                <!-- 分页按钮 -->
+                            </Grid.RowDefinitions>
+
+                            <!-- 查询条件 -->
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                                <TextBox x:Name="txtSearchProduct" Width="200" Margin="5"/>
+                                <Button Content="查询" Click="SearchProd_Click" Margin="5" Width="80"/>
+                            </StackPanel>
+
+                            <DataGrid Grid.Row="1" x:Name="dgProductLogs" AutoGenerateColumns="False" 
+                                      ItemsSource="{Binding}" IsReadOnly="True">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="时间" Binding="{Binding CreateTime,StringFormat=yyyy-MM-dd HH:mm:ss}"/>
+                                    <DataGridTextColumn Header="用户" Binding="{Binding DeviceName}"/>
+                                    <DataGridTextColumn Header="产品" Binding="{Binding IpAddress}" Width="*"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+                            <!-- 分页按钮 -->
+                            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button x:Name="btndProdPrev" Content="上一页" Click="BtnProdPrev_Click" Width="80" Margin="5"/>
+                                <TextBlock x:Name="txtProdPageInfo" Margin="5" VerticalAlignment="Center"/>
+                                <Button x:Name="btnProdNext" Content="下一页" Click="BtnProdNext_Click" Width="80" Margin="5"/>
+                            </StackPanel>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="用户列表">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <!-- 查询条件 -->
+                                <RowDefinition Height="*"/>
+                                <!-- 数据区域 -->
+                                <RowDefinition Height="Auto"/>
+                                <!-- 分页按钮 -->
+                            </Grid.RowDefinitions>
+
+                            <!-- 查询条件 -->
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                                <TextBox x:Name="txtSearchUser" Width="200" Margin="5"/>
+                                <Button Content="查询" Click="SearchUser_Click" Margin="5" Width="80"/>
+                            </StackPanel>
+
+                            <DataGrid Grid.Row="1" x:Name="dgUserLogs" AutoGenerateColumns="False" 
+                                      ItemsSource="{Binding}" IsReadOnly="True">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="时间" Binding="{Binding CreateTime,StringFormat=yyyy-MM-dd HH:mm:ss}"/>
+                                    <DataGridTextColumn Header="用户" Binding="{Binding UserNo}"/>
+                                    <DataGridTextColumn Header="姓名" Binding="{Binding UserName}"/>
+                                    <DataGridTextColumn Header="角色" Binding="{Binding RoleName}" Width="*"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+                            <!-- 分页按钮 -->
+                            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button x:Name="btndUserPrev" Content="上一页" Click="BtnUserPrev_Click" Width="80" Margin="5"/>
+                                <TextBlock x:Name="txtUserPageInfo" Margin="5" VerticalAlignment="Center"/>
+                                <Button x:Name="btnUserNext" Content="下一页" Click="BtnUserNext_Click" Width="80" Margin="5"/>
+                            </StackPanel>
+                        </Grid>
+                    </TabItem>
+                    <!--<TabItem Header="授权记录">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0 5">
                                 <TextBox x:Name="txtSearchAuth" Width="200" Margin="5"/>
@@ -129,38 +297,22 @@
                             </DataGrid>
                         </StackPanel>
                     </TabItem>
-                    <TabItem Header="操作记录">
+                    <TabItem Header="产品列表">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0 5">
-                                <TextBox x:Name="txtSearchAuth1" Width="200" Margin="5"/>
-                                <Button Content="搜索" Click="SearchAuth_Click" Margin="5"/>
+                                <TextBox x:Name="txtSearchOperation" Width="200" Margin="5"/>
+                                <Button Content="搜索" Click="SearchOperation_Click" Margin="5"/>
                             </StackPanel>
-                            <DataGrid x:Name="dgAuthLog1s" AutoGenerateColumns="False" 
+                            <DataGrid x:Name="dgOperationLogs" AutoGenerateColumns="False" 
                                       ItemsSource="{Binding}" IsReadOnly="True">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="时间" Binding="{Binding Timestamp,StringFormat=yyyy-MM-dd HH:mm:ss}"/>
                                     <DataGridTextColumn Header="用户" Binding="{Binding User}"/>
-                                    <DataGridTextColumn Header="操作" Binding="{Binding Message}" Width="*"/>
+                                    <DataGridTextColumn Header="内容" Binding="{Binding Message}" Width="*"/>
                                 </DataGrid.Columns>
                             </DataGrid>
                         </StackPanel>
-                    </TabItem>
-                    <TabItem Header="机台列表">
-                        <StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="0 5">
-                                <TextBox x:Name="txtSearchAuth2" Width="200" Margin="5"/>
-                                <Button Content="搜索" Click="SearchAuth_Click" Margin="5"/>
-                            </StackPanel>
-                            <DataGrid x:Name="dgAuthLogs2" AutoGenerateColumns="False" 
-                                      ItemsSource="{Binding}" IsReadOnly="True">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="时间" Binding="{Binding Timestamp,StringFormat=yyyy-MM-dd HH:mm:ss}"/>
-                                    <DataGridTextColumn Header="用户" Binding="{Binding User}"/>
-                                    <DataGridTextColumn Header="操作" Binding="{Binding Message}" Width="*"/>
-                                </DataGrid.Columns>
-                            </DataGrid>
-                        </StackPanel>
-                    </TabItem>
+                    </TabItem>-->
                 </TabControl>
                 <Button FontSize="16"
                     Width="28"
@@ -174,7 +326,7 @@
                     Margin="5"
                     VerticalAlignment="Top"
                     HorizontalAlignment="Right" />
-                <my:MyPager_ZHHans VerticalAlignment="Bottom"/>
+                <!--<my:MyPager_ZHHans VerticalAlignment="Bottom"/>-->
             </Grid>
         </Grid>
     </Grid>

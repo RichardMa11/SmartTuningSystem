@@ -38,5 +38,10 @@ namespace BLL
         {
             return UserService.SqlStrQueryUser(strSql);
         }
+
+        public (List<UserRoleDto>, int) GetPagedUser(string keyword, int pageIndex, int pageSize)
+        {
+            return UserService.QueryPagedUser(keyword, pageIndex, pageSize);
+        }
     }
 }

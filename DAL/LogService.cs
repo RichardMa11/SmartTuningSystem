@@ -75,5 +75,39 @@ namespace DAL
 
             return logs;
         }
+
+        public (List<Log>, int) QueryPagedLogs(DateTime? startTime, DateTime? endTime, int? logType, string keyword, int pageIndex, int pageSize)
+        {
+            using (var db = new CoreDbContext())
+            {
+                var query = db.Logs.AsQueryable();
+
+                // 条件筛选
+                if (startTime != null)
+                    query = query.Where(x => x.CreateTime >= startTime);
+
+                if (endTime != null)
+                    query = query.Where(x => x.CreateTime <= endTime);
+
+                if (logType != null)
+                    query = query.Where(x => (int)x.LogType == logType);
+
+                if (!string.IsNullOrEmpty(keyword))
+                    query = query.Where(x =>
+                    x.LogStr.Contains(keyword) ||
+                    x.CreateName.Contains(keyword) ||
+                    x.CreateNo.Contains(keyword));
+
+                // 分页处理
+                int total = query.Count();
+                var data = query.OrderByDescending(x => x.CreateTime)
+                    .Skip((pageIndex - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+
+                return (data, total);
+            }
+        }
+
     }
 }
