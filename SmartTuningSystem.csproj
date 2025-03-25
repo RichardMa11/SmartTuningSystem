@@ -114,6 +114,9 @@
     <Compile Include="Utils\ModelCommon.cs" />
     <Compile Include="Utils\PagerUtils.cs" />
     <Compile Include="Utils\PhoneNumberCommon.cs" />
+    <Compile Include="View\TuningRecord.xaml.cs">
+      <DependentUpon>TuningRecord.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Index.xaml.cs">
       <DependentUpon>Index.xaml</DependentUpon>
     </Compile>
@@ -136,6 +139,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MyControls\MyPager_ZHHans.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\TuningRecord.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

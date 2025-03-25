@@ -1,0 +1,116 @@
+﻿<Page x:Class="SmartTuningSystem.View.TuningRecord"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:pu="clr-namespace:Panuon.UI.Silver;assembly=Panuon.UI.Silver" xmlns:my="clr-namespace:SmartTuningSystem.MyControls"
+      mc:Ignorable="d" Loaded="Page_Loaded"
+      d:DesignHeight="730" d:DesignWidth="1190"
+      Title="调机记录">
+
+    <Grid Margin="10,10,10,0" Background="White">
+        <TabControl VerticalAlignment="Stretch"
+                                    pu:TabControlHelper.TabControlStyle="Standard"
+                                    pu:TabControlHelper.ItemHeight="40"
+                                    FontSize="12"
+                                    Margin="0,0,0,40"
+                                    pu:TabControlHelper.ItemPadding="12,0"
+                                    pu:TabControlHelper.SelectedForeground="{DynamicResource SkinColor}"
+                                    pu:TabControlHelper.ItemsAlignment="LeftOrTop">
+            <TabItem Header="调机记录" FontSize="18" pu:TabControlHelper.ItemIcon="&#xf02d;">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- 查询条件 -->
+                        <RowDefinition Height="*"/>
+                        <!-- 数据区域 -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- 分页按钮 -->
+                    </Grid.RowDefinitions>
+
+                    <!-- 查询条件 -->
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,15,0,10">
+                        <DatePicker x:Name="dpStart" Width="140" Margin="5"/>
+                        <DatePicker x:Name="dpEnd" Width="140" Margin="5"/>
+                        <ComboBox x:Name="cmbLevel" Width="100" Margin="5" SelectedValuePath="Tag">
+                            <ComboBoxItem Content="--请选择--" Tag="{x:Null}"/>
+                            <ComboBoxItem Content="Info" Tag="0"/>
+                            <ComboBoxItem Content="Error" Tag="1"/>
+                            <ComboBoxItem Content="Warning" Tag="2"/>
+                            <ComboBoxItem Content="Authorization" Tag="3"/>
+                            <ComboBoxItem Content="Operation" Tag="4"/>
+                        </ComboBox>
+                        <TextBox x:Name="txtSearchSystem" Width="200" Margin="5"/>
+                        <Button Content="查询" Click="SearchSystem_Click" Margin="5" Width="80"/>
+                    </StackPanel>
+
+                    <!-- 可滚动数据区 -->
+                    <!--<ScrollViewer Grid.Row="1">                              
+                            </ScrollViewer>-->
+                    <DataGrid Grid.Row="1" x:Name="dgSystemLogs" AutoGenerateColumns="False" 
+                                      ItemsSource="{Binding}" IsReadOnly="True">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="时间" Binding="{Binding CreateTime,StringFormat=yyyy-MM-dd HH:mm:ss}"/>
+                            <DataGridTextColumn Header="级别" Binding="{Binding LogType}"/>
+                            <DataGridTextColumn Header="用户名" Binding="{Binding CreateName}"/>
+                            <DataGridTextColumn Header="工号" Binding="{Binding CreateNo}"/>
+                            <DataGridTextColumn Header="消息" Binding="{Binding LogStr}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <!-- 分页按钮 -->
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button x:Name="btnPrev" Content="上一页" Click="BtnPrev_Click" Width="80" Margin="5"/>
+                        <TextBlock x:Name="txtPageInfo" Margin="5" VerticalAlignment="Center"/>
+                        <Button x:Name="btnNext" Content="下一页" Click="BtnNext_Click" Width="80" Margin="5"/>
+                    </StackPanel>
+                </Grid>
+                <!--<StackPanel>
+                            -->
+                <!-- 查询条件 -->
+                <!--
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                                <DatePicker x:Name="dpStart" Width="120" Margin="5"/>
+                                <DatePicker x:Name="dpEnd" Width="120" Margin="5"/>
+                                <ComboBox x:Name="cmbLevel" Width="100" Margin="5" SelectedValuePath="Tag">
+                                    <ComboBoxItem Content="Info" Tag="0"/>
+                                    <ComboBoxItem Content="Error" Tag="1"/>
+                                    <ComboBoxItem Content="Warning" Tag="2"/>
+                                </ComboBox>
+                                <TextBox x:Name="txtSearchSystem" Width="200" Margin="5"/>
+                                <Button Content="查询" Click="SearchSystem_Click" Margin="5" Width="80"/>
+                            </StackPanel>
+                            <DataGrid x:Name="dgSystemLogs" AutoGenerateColumns="False" Height="400"
+                                      ItemsSource="{Binding}" IsReadOnly="True">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="时间" Binding="{Binding CreateTime,StringFormat=yyyy-MM-dd HH:mm:ss}"/>
+                                    <DataGridTextColumn Header="级别" Binding="{Binding LogType}"/>
+                                    <DataGridTextColumn Header="消息" Binding="{Binding LogStr}" Width="*"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            -->
+                <!-- 分页控件 -->
+                <!--
+                            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button x:Name="btnPrev" Content="上一页" Click="BtnPrev_Click" Width="80" Margin="5"/>
+                                <TextBlock x:Name="txtPageInfo" Margin="5" VerticalAlignment="Center"/>
+                                <Button x:Name="btnNext" Content="下一页" Click="BtnNext_Click" Width="80" Margin="5"/>
+                            </StackPanel>
+                        </StackPanel>-->
+            </TabItem>
+        </TabControl>
+        <Button FontSize="16"
+                    Width="28"
+                    Height="28"
+                    ToolTip="添加日志类型"
+                    pu:ButtonHelper.ButtonStyle="Link"
+                    Foreground="#EAEAEA"
+                    Content="&#xf067;"
+                    FontFamily="{StaticResource FontAwesome}"
+                    pu:ButtonHelper.HoverBrush="Gray"
+                    Margin="5"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Right" />
+        <!--<my:MyPager_ZHHans VerticalAlignment="Bottom"/>-->
+    </Grid>
+</Page>

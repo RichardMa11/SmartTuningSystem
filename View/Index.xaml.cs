@@ -36,7 +36,7 @@ namespace SmartTuningSystem.View
             if (UserGlobal.MainWindow != null)
                 UserGlobal.MainWindow.WriteInfoOnBottom("打开首页成功。");
 
-            LogHelps.WriteLogToDb($"{UserGlobal.CurrUser.UserName}打开首页！", LogLevel.Info);
+            LogHelps.WriteLogToDb($"{UserGlobal.CurrUser.UserName}打开首页！", LogLevel.Operation);
             UpdateDataCount();
             LoadLogData(); // 初始化加载数据
             LoadDevData();

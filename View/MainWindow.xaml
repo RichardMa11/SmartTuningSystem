@@ -184,6 +184,9 @@
                         <TreeViewItem pu:TreeViewHelper.ItemIcon="&#xf26c;" FontSize="15"  
                                   Tag="index.xaml"
                                   Header="智能调机"/>
+                        <TreeViewItem pu:TreeViewHelper.ItemIcon="&#xf02d;" FontSize="15"  
+                                      Tag="TuningRecord.xaml"
+                                  Header="调机记录"/>
                         <TreeViewItem pu:TreeViewHelper.ItemIcon="&#xf0ad;" FontSize="15"  
                                   Tag="pack://application:,,,/CorePlugin;component/Pages/Manager/DepartmentPositionMsg.xaml"
                                   Header="机台维护"/>
