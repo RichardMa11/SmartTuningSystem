@@ -121,7 +121,7 @@
                                     <ComboBoxItem Content="Operation" Tag="4"/>
                                 </ComboBox>
                                 <TextBox x:Name="txtSearchSystem" Width="200" Margin="5"/>
-                                <Button Content="查询" Click="SearchSystem_Click" Margin="5" Width="80"/>
+                                <Button Content="查询" Click="SearchSystem_Click" Margin="5" Width="80" pu:ButtonHelper.Icon="&#xf002;"/>
                             </StackPanel>
 
                             <!-- 可滚动数据区 -->
@@ -192,7 +192,7 @@
                             <!-- 查询条件 -->
                             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,5,0,10">
                                 <TextBox x:Name="txtSearchDevice" Width="200" Margin="5"/>
-                                <Button Content="查询" Click="SearchDevi_Click" Margin="5" Width="80"/>
+                                <Button Content="查询" Click="SearchDevi_Click" Margin="5" Width="80" pu:ButtonHelper.Icon="&#xf002;"/>
                             </StackPanel>
 
                             <DataGrid Grid.Row="1" x:Name="dgDeviceLogs" AutoGenerateColumns="False" 
@@ -226,7 +226,7 @@
                             <!-- 查询条件 -->
                             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,5,0,10">
                                 <TextBox x:Name="txtSearchProduct" Width="200" Margin="5"/>
-                                <Button Content="查询" Click="SearchProd_Click" Margin="5" Width="80"/>
+                                <Button Content="查询" Click="SearchProd_Click" Margin="5" Width="80" pu:ButtonHelper.Icon="&#xf002;"/>
                             </StackPanel>
 
                             <DataGrid Grid.Row="1" x:Name="dgProductLogs" AutoGenerateColumns="False" 
@@ -260,7 +260,7 @@
                             <!-- 查询条件 -->
                             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,5,0,10">
                                 <TextBox x:Name="txtSearchUser" Width="200" Margin="5"/>
-                                <Button Content="查询" Click="SearchUser_Click" Margin="5" Width="80"/>
+                                <Button Content="查询" Click="SearchUser_Click" Margin="5" Width="80" pu:ButtonHelper.Icon="&#xf002;"/>
                             </StackPanel>
 
                             <DataGrid Grid.Row="1" x:Name="dgUserLogs" AutoGenerateColumns="False" 

@@ -33,6 +33,8 @@ namespace DAL
 
         public DbSet<UserRole> UserRole { get; set; }
 
+        public DbSet<TuningRecord> TuningRecord { get; set; }
+
         #endregion
 
         #region  权限相关

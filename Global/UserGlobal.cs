@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Model;
 using Model.View;
 using SmartTuningSystem.View;
 
@@ -13,7 +12,7 @@ namespace SmartTuningSystem.Global
         /// <summary>
         /// 数据表
         /// </summary>
-        public static User CurrUser { get; set; }
+        public static Model.User CurrUser { get; set; }
 
         /// <summary>
         /// 当前账户权限下的模块

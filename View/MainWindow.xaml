@@ -188,7 +188,7 @@
                                       Tag="TuningRecord.xaml"
                                   Header="调机记录"/>
                         <TreeViewItem pu:TreeViewHelper.ItemIcon="&#xf0ad;" FontSize="15"  
-                                  Tag="pack://application:,,,/CorePlugin;component/Pages/Manager/DepartmentPositionMsg.xaml"
+                                  Tag="DepartmentPositionMsg.xaml"
                                   Header="机台维护"/>
                         <TreeViewItem pu:TreeViewHelper.ItemIcon="&#xf0ad;" FontSize="15"  
                                   Tag="pack://application:,,,/CorePlugin;component/Pages/Manager/DepartmentPositionMsg.xaml"
@@ -197,7 +197,7 @@
                                   Tag="pack://application:,,,/CorePlugin;component/Pages/Manager/DepartmentPositionMsg.xaml"
                                   Header="基础数据"/>
                         <TreeViewItem pu:TreeViewHelper.ItemIcon="&#xf2bc;" FontSize="15"  
-                                  Tag="pack://application:,,,/CorePlugin;component/Pages/Manager/User.xaml"
+                                  Tag="User.xaml"
                                   Header="人员管理"/>
                         <TreeViewItem pu:TreeViewHelper.ItemIcon="&#xf084;" FontSize="15"  
                                   Tag="pack://application:,,,/CorePlugin;component/Pages/Manager/RoleAuthorization.xaml"

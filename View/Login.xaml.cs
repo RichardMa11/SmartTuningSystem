@@ -188,6 +188,11 @@ namespace SmartTuningSystem.View
                 });
 
                 LogHelps.Error($@"系统错误：{ex.Message + ex.StackTrace}");
+                LogHelps.WriteLogToDb($"{UserGlobal.CurrUser.UserName}异常退出！原因：系统错误：{ex.Message + ex.StackTrace}"
+                    , LogLevel.Authorization);
+
+                System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
+                Application.Current.Shutdown();
             }
         }
 
