@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using BLL;
 using Panuon.UI.Silver;
+using SmartTuningSystem.Extensions;
 using SmartTuningSystem.Global;
 using SmartTuningSystem.Utils;
 using static Model.Log;

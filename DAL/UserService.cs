@@ -36,12 +36,17 @@ namespace DAL
             return tmp.Id;
         }
 
-        public void UpdateUser(User user)
+        public void UpdateUser(User user, bool isCanLogin)
         {
             using (CoreDbContext context = new CoreDbContext())
             {
                 var model = context.User.Single(c => c.Id == user.Id);
-                model.UserPwd = user.UserPwd;
+                if (isCanLogin)
+                    model.CanLogin = user.CanLogin;
+
+                if (!string.IsNullOrEmpty(user.UserPwd))
+                    model.UserPwd = user.UserPwd;
+
                 model.UpdateName = user.UpdateName;
                 model.UpdateNo = user.UpdateNo;
                 model.UpdateTime = DateTime.Now;

@@ -1,15 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using BLL;
 using Model;
 using Panuon.UI.Silver;
+using SmartTuningSystem.Extensions;
+using SmartTuningSystem.Global;
 using SmartTuningSystem.Utils;
+using SmartTuningSystem.View.Windows;
+using static Model.Log;
 
 namespace SmartTuningSystem.View
 {
@@ -18,6 +24,8 @@ namespace SmartTuningSystem.View
     /// </summary>
     public partial class UserView : Page
     {
+        public readonly RoleManager RoleManager = new RoleManager();
+        public readonly UserManager UserManager = new UserManager();
         public UserView()
         {
             InitializeComponent();
@@ -37,17 +45,18 @@ namespace SmartTuningSystem.View
                 set
                 {
                     name = value;
-                    NotifyPropertyChanged("Name");
+                    NotifyPropertyChanged("UserName");
                 }
             }
-            private string realName = "";
-            public string RealName
+
+            private string userNo = "";
+            public string UserNo
             {
-                get => realName;
+                get => userNo;
                 set
                 {
-                    realName = value;
-                    NotifyPropertyChanged("RealName");
+                    userNo = value;
+                    NotifyPropertyChanged("UserNo");
                 }
             }
             public int RoleId { get; set; }
@@ -62,27 +71,6 @@ namespace SmartTuningSystem.View
                 }
             }
 
-            private string departmentName = "";
-            public string DepartmentName
-            {
-                get => departmentName;
-                set
-                {
-                    departmentName = value;
-                    NotifyPropertyChanged("DepartmentName");
-                }
-            }
-
-            private string positionName = "";
-            public string PositionName
-            {
-                get => positionName;
-                set
-                {
-                    positionName = value;
-                    NotifyPropertyChanged("PositionName");
-                }
-            }
 
             private bool canLogin = false;
             public bool CanLogin
@@ -116,24 +104,19 @@ namespace SmartTuningSystem.View
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             UpdateRoles();//加载角色
-            //list.ItemsSource = Data;//绑定数据源
-            //cbDepartment.ItemsSource = DepartmentData;
-            //cbDepartment.DisplayMemberPath = "Name";
-            //cbDepartment.SelectedValuePath = "Id";
-            //cbPosition.ItemsSource = PositionData;
-            //cbPosition.DisplayMemberPath = "Name";
-            //cbPosition.SelectedValuePath = "Id";
+            list.ItemsSource = Data;//绑定数据源
 
-            //updateList = false;
-            //UpdateDepartment();
-            //updateList = true;
+            if (UserGlobal.MainWindow != null)
+                UserGlobal.MainWindow.WriteInfoOnBottom("打开人员管理成功。");
+
+            LogHelps.WriteLogToDb($"{UserGlobal.CurrUser.UserName}打开打开人员管理！", LogLevel.Operation);
         }
 
         #region 左侧角色列表
 
         #region 角色属性
 
-        bool allChecking = false;//是否在进行全选或反选操作
+        bool _allChecking = false;//是否在进行全选或反选操作
 
         #endregion 
 
@@ -141,48 +124,46 @@ namespace SmartTuningSystem.View
         private List<int> GetSelectedRoleIds()
         {
             List<int> ids = new List<int>();
-            //foreach (var item in wpRoles.Children)
-            //{
-            //    CheckBox target = (item as CheckBox);
-            //    if ((bool)target.IsChecked)
-            //        ids.Add(target.Tag.ToString().AsInt());
-            //}
+            foreach (var item in wpRoles.Children)
+            {
+                CheckBox target = (item as CheckBox);
+                if ((bool)target.IsChecked)
+                    ids.Add(target.Tag.ToString().AsInt());
+            }
             return ids;
         }
 
         //初始化角色
         private void UpdateRoles()
         {
-            //List<Role> _roles = null;
-            //using (CoreDBContext context = new CoreDBContext())
-            //{
-            //    _roles = context.Role.Where(c => !c.IsDel).ToList();
-            //}
-            //wpRoles.Children.Clear();
-            //foreach (var _r in _roles)
-            //{
-            //    //添加角色
-            //    CheckBox checkBox = new CheckBox();
-            //    checkBox.Height = 30;
-            //    checkBox.Content = _r.Name;
-            //    checkBox.Background = new SolidColorBrush(Colors.Gray);
-            //    checkBox.Foreground = new SolidColorBrush(Colors.White);
-            //    checkBox.Margin = new Thickness(5);
-            //    checkBox.Tag = _r.Id;
-            //    checkBox.Checked += RoleItem_Checked;
-            //    checkBox.Unchecked += RoleItem_Unchecked;
-            //    CheckBoxHelper.SetCheckBoxStyle(checkBox, CheckBoxStyle.Button);
-            //    CheckBoxHelper.SetCheckedBackground(checkBox, new SolidColorBrush(Colors.Black));
-            //    CheckBoxHelper.SetCornerRadius(checkBox, new CornerRadius(5));
+            List<Role> roles = RoleManager.GetAllRole();
+            wpRoles.Children.Clear();
+            foreach (var r in roles)
+            {
+                //添加角色
+                CheckBox checkBox = new CheckBox
+                {
+                    Height = 30,
+                    Content = r.RoleName,
+                    Background = new SolidColorBrush(Colors.Gray),
+                    Foreground = new SolidColorBrush(Colors.White),
+                    Margin = new Thickness(5),
+                    Tag = r.Id
+                };
+                checkBox.Checked += RoleItem_Checked;
+                checkBox.Unchecked += RoleItem_Unchecked;
+                CheckBoxHelper.SetCheckBoxStyle(checkBox, CheckBoxStyle.Button);
+                CheckBoxHelper.SetCheckedBackground(checkBox, new SolidColorBrush(Colors.Black));
+                CheckBoxHelper.SetCornerRadius(checkBox, new CornerRadius(5));
 
-            //    wpRoles.Children.Add(checkBox);
-            //}
+                wpRoles.Children.Add(checkBox);
+            }
         }
 
         //角色不选中
         private void RoleItem_Unchecked(object sender, RoutedEventArgs e)
         {
-            if (allChecking) return;//全选或反选操作中不做任何动作
+            if (_allChecking) return;//全选或反选操作中不做任何动作
             //CheckBox currRoleCheckBox = sender as CheckBox;
             if (btnSelectedAllRoles.Content.ToString() == "\xf058")
             {
@@ -197,28 +178,28 @@ namespace SmartTuningSystem.View
         //角色选中
         private void RoleItem_Checked(object sender, RoutedEventArgs e)
         {
-            if (allChecking) return;//全选或反选操作中不做任何动作
-                                    //CheckBox currRoleCheckBox = sender as CheckBox;
-                                    //暂时简便直接刷新
+            if (_allChecking) return;//全选或反选操作中不做任何动作
+                                     //CheckBox currRoleCheckBox = sender as CheckBox;
+                                     //暂时简便直接刷新
             UpdateGridAsync();
         }
 
         //添加角色
         private void btnAddRole_Click(object sender, RoutedEventArgs e)
         {
-            //this.MaskVisible(true);
-            //EditRole editRole = new EditRole();
-            //if (editRole.ShowDialog() == true)
-            //{
-            //    UpdateRoles();
-            //}
-            //this.MaskVisible(false);
+            this.MaskVisible(true);
+            EditRole editRole = new EditRole();
+            if (editRole.ShowDialog() == true)
+            {
+                UpdateRoles();
+            }
+            this.MaskVisible(false);
         }
 
         //全选、反选
         private void btnSelectedAllRoles_Click(object sender, RoutedEventArgs e)
         {
-            allChecking = true;
+            _allChecking = true;
 
             if (btnSelectedAllRoles.Content.ToString() == "\xf058")
             {
@@ -247,32 +228,35 @@ namespace SmartTuningSystem.View
                 #endregion
             }
 
-            allChecking = false;
+            _allChecking = false;
             UpdateGridAsync();
         }
 
         private void cbCanLogin_Click(object sender, RoutedEventArgs e)
         {
-            //int userId = (sender as CheckBox).Tag.ToString().AsInt();//获取用户Id
-            //var selectedUser = Data.First(c => c.Id == userId);//选中的User
-            //var result = MessageBoxX.Show($"是否确认更改[{selectedUser.Name}]登录权限？", "权限更新提醒", System.Windows.Application.Current.MainWindow, MessageBoxButton.YesNo);
-            //if (result == MessageBoxResult.Yes)
-            //    UpdateCanLogin(userId, !selectedUser.CanLogin);
-            //else (sender as CheckBox).IsChecked = selectedUser.CanLogin;
+            int userId = (sender as CheckBox).Tag.ToString().AsInt();//获取用户Id
+            var selectedUser = Data.First(c => c.Id == userId);//选中的User
+            var result = MessageBoxX.Show($"是否确认更改[{selectedUser.Name}]登录权限？", "权限更新提醒", System.Windows.Application.Current.MainWindow, MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
+                UpdateCanLogin(userId, !selectedUser.CanLogin);
+            else (sender as CheckBox).IsChecked = selectedUser.CanLogin;
         }
 
         //更新用户是否可登录
-        private void UpdateCanLogin(int _userId, bool _canLogin)
+        private void UpdateCanLogin(int userId, bool canLogin)
         {
-            //using (CoreDBContext context = new CoreDBContext())
-            //{
-            //    //更新数据
-            //    context.User.Single(c => c.Id == _userId).CanLogin = _canLogin;
-            //    context.SaveChanges();
-            //    //更新UI
-            //    Data.Single(c => c.Id == _userId).CanLogin = _canLogin;
-            //}
-            //this.Log("登录权限更新成功！");
+            UserManager.ModifyUser(new User
+            {
+                Id = userId,
+                CanLogin = canLogin,
+                UpdateName = UserGlobal.CurrUser.UserName,
+                UpdateNo = UserGlobal.CurrUser.UserNo
+            }, true);
+            //更新UI
+            Data.Single(c => c.Id == userId).CanLogin = canLogin;
+
+            UserGlobal.MainWindow.WriteInfoOnBottom("登录权限更新成功！");
+            LogHelps.WriteLogToDb($"{UserGlobal.CurrUser.UserName}登录权限更新成功！", LogLevel.Operation);
         }
 
         #endregion
@@ -295,85 +279,67 @@ namespace SmartTuningSystem.View
         /// </summary>
         private async void UpdateGridAsync()
         {
-            //var selectedRoleIds = GetSelectedRoleIds();//选择的角色
-            //int departmentId = cbDepartment.SelectedItem == null ? 0 : (cbDepartment.SelectedItem as Department).Id;//选择的部门
-            //int positionId = cbPosition.SelectedItem == null ? 0 : (cbPosition.SelectedItem as DepartmentPosition).Id;//选择的职位
-            //string searchText = txtSearchText.Text;//按名称搜索
+            var selectedRoleIds = GetSelectedRoleIds();//选择的角色
+            string searchText = txtSearchText.Text;//按名称搜索
 
-            //ShowLoadingPanel();//显示Loading
-            //if (running) return;
-            //running = true;
+            ShowLoadingPanel();//显示Loading
+            if (running) return;
+            running = true;
 
-            //Data.Clear();
-            //List<CoreDBModels.User> models = new List<CoreDBModels.User>();
+            Data.Clear();
+            List<UserRoleDto2> models = new List<UserRoleDto2>();
 
-            //await Task.Run(() =>
-            //{
-            //    using (var context = new CoreDBContext())
-            //    {
-            //        IQueryable<CoreDBModels.User> users = context.User.Where(c => !c.IsDel);
-            //        if (selectedRoleIds.Count > 0)
-            //            users = users.Where(c => selectedRoleIds.Contains(c.RoleId));
-            //        if (departmentId > 0)
-            //        {
-            //            //选择了部门
-            //            if (positionId > 0)
-            //            {
-            //                //选择了职位
-            //                users = users.Where(c => c.DepartmentPositionId == positionId);
-            //            }
-            //            else
-            //            {
-            //                //没有选择职位
-            //                users = users.Where(c => c.DepartmentId == departmentId);
-            //            }
-            //        }
-            //        if (searchText.NotEmpty())
-            //            users = users.Where(c => c.Name.Contains(searchText) || c.RealName.Contains(searchText));
+            await Task.Run(() =>
+            {
+                List<UserRoleDto2> users = LogManager.QueryBySql<UserRoleDto2>(@"   select UserName,UserNo,RoleNo,users.Id UserId,r.Id RoleId,RoleName,CanLogin,users.CreateTime
+ FROM [SmartTuningSystemDB].[dbo].[Users] users with(nolock) 
+  left join [SmartTuningSystemDB].[dbo].[UserRole] ur with(nolock)  on users.Id=ur.UserId and ur.IsValid=1
+  left join [SmartTuningSystemDB].[dbo].[Roles] r with(nolock) on ur.RoleId=r.Id and r.IsValid=1
+  where users.IsValid=1  ");
+                if (selectedRoleIds.Count > 0)
+                    users = users.Where(c => selectedRoleIds.Contains(c.RoleId)).ToList();
 
-            //        dataCount = users.Count();
-            //        //
-            //        //页码
-            //        //
-            //        pagerCount = PagerUtils.GetPagerCount(dataCount, pageSize);
-            //        if (currPage > pagerCount) currPage = pagerCount;
-            //        //更新页码
-            //        UIGlobal.RunUIAction(() =>
-            //        {
-            //            gPager.CurrentIndex = currPage;
-            //            gPager.TotalIndex = pagerCount;
-            //        });
+                if (searchText.NotEmpty())
+                    users = users.Where(c => c.UserName.Contains(searchText) || c.UserNo.Contains(searchText)).ToList();
 
-            //        //生成分页数据
-            //        models = users.OrderByDescending(c => c.CreateTime).Skip(pageSize * (currPage - 1)).Take(pageSize).ToList();
-            //    }
-            //});
+                dataCount = users.Count();
+                //
+                //页码
+                //
+                pagerCount = PagerUtils.GetPagerCount(dataCount, pageSize);
+                if (currPage > pagerCount) currPage = pagerCount;
+                //更新页码
+                UiGlobal.RunUiAction(() =>
+                {
+                    gPager.CurrentIndex = currPage;
+                    gPager.TotalIndex = pagerCount;
+                });
 
-            //await Task.Delay(300);
-            //bNoData.Visibility = models.Count() == 0 ? Visibility.Visible : Visibility.Collapsed;
-            //using (CoreDBContext context = new CoreDBContext())
-            //{
-            //    foreach (var item in models)
-            //    {
-            //        UIModel _model = new UIModel()
-            //        {
-            //            CreateYear = item.CreateTime.Year,
-            //            CreateTime = item.CreateTime.ToString("MM-dd HH:mm"),
-            //            Id = item.Id,
-            //            Name = item.Name,
-            //            RoleId = item.RoleId,
-            //            RoleName = context.Role.First(c => c.Id == item.RoleId).Name,
-            //            CanLogin = item.CanLogin,
-            //            DepartmentName = context.Department.Any(c => c.Id == item.DepartmentId) ? context.Department.First(c => c.Id == item.DepartmentId).Name : "无部门",
-            //            PositionName = context.DepartmentPosition.Any(c => c.Id == item.DepartmentPositionId) ? context.DepartmentPosition.First(c => c.Id == item.DepartmentPositionId).Name : "无职位",
-            //            RealName = item.RealName
-            //        };
+                //生成分页数据
+                models = users.OrderByDescending(c => c.CreateTime).Skip(pageSize * (currPage - 1)).Take(pageSize).ToList();
+            });
 
-            //        Data.Add(_model);
-            //    }
-            //}
-            //HideLoadingPanel();
-            //running = false;
+            await Task.Delay(300);
+            bNoData.Visibility = models.Count() == 0 ? Visibility.Visible : Visibility.Collapsed;
+            foreach (var item in models)
+            {
+                UIModel _model = new UIModel()
+                {
+                    CreateYear = item.CreateTime.Year,
+                    CreateTime = item.CreateTime.ToString("MM-dd HH:mm"),
+                    Id = item.UserId,
+                    Name = item.UserName,
+                    RoleId = item.RoleId,
+                    RoleName = item.RoleName,
+                    CanLogin = item.CanLogin,
+                    UserNo = item.UserNo
+                };
+
+                Data.Add(_model);
+            }
+
+            HideLoadingPanel();
+            running = false;
         }
 
         #region Grid
@@ -402,23 +368,28 @@ namespace SmartTuningSystem.View
         //重置密码为123456
         private void btnRePwd_Click(object sender, RoutedEventArgs e)
         {
-            //int id = (sender as Button).Tag.ToString().AsInt();
-            //var selectModel = Data.First(c => c.Id == id);
-            //var result = MessageBoxX.Show($"是否确认重置[{selectModel.Name}]密码？", "密码初始化提醒", System.Windows.Application.Current.MainWindow, MessageBoxButton.YesNo);
-            //if (result == MessageBoxResult.Yes)
-            //{
-            //    using (CoreDBContext context = new CoreDBContext())
-            //    {
-            //        var user = context.User.Single(c => c.Id == id);
-            //        user.Pwd = "123456";
-            //        if (user.Id == UserGlobal.CurrUser.Id)
-            //        {
-            //            UserGlobal.CurrUser.Pwd = user.Pwd;
-            //        }
-            //        context.SaveChanges();
-            //    }
-            //    MessageBoxX.Show("初始密码\"123456\"", "密码初始化成功");
-            //}
+            int id = (sender as Button).Tag.ToString().AsInt();
+            var selectModel = Data.First(c => c.Id == id);
+            var result = MessageBoxX.Show($"是否确认重置[{selectModel.Name}]密码？", "密码初始化提醒", System.Windows.Application.Current.MainWindow, MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
+            {
+                UserManager.ModifyUser(new User
+                {
+                    Id = id,
+                    UserPwd = "123456",
+                    UpdateName = UserGlobal.CurrUser.UserName,
+                    UpdateNo = UserGlobal.CurrUser.UserNo
+                }, false);
+
+                if (id == UserGlobal.CurrUser.Id)
+                    UserGlobal.CurrUser.UserPwd = "123456";
+
+                UserGlobal.MainWindow.WriteInfoOnBottom("初始密码123456设置成功！");
+                LogHelps.WriteLogToDb($"{UserGlobal.CurrUser.UserName}初始密码123456设置成功", LogLevel.Operation);
+                MessageBoxX.Show("初始密码\"123456\"", "密码初始化成功");
+            }
+
+
         }
 
         //账号授权
@@ -441,23 +412,21 @@ namespace SmartTuningSystem.View
         //删除账号
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
-            //int id = (sender as Button).Tag.ToString().AsInt();
-            //UIModel selectModel = Data.First(c => c.Id == id);
+            int id = (sender as Button).Tag.ToString().AsInt();
+            UIModel selectModel = Data.First(c => c.Id == id);
 
-            //var result = MessageBoxX.Show($"是否确认删除账户[{selectModel.Name}]？", "删除提醒", System.Windows.Application.Current.MainWindow, MessageBoxButton.YesNo);
-            //if (result == MessageBoxResult.Yes)
-            //{
-            //    using (CoreDBContext context = new CoreDBContext())
-            //    {
-            //        var user = context.User.Single(c => c.Id == id);
-            //        user.IsDel = true;
-            //        user.DelTime = DateTime.Now;
-            //        user.DelUser = UserGlobal.CurrUser.Id;
+            var result = MessageBoxX.Show($"是否确认删除账户[{selectModel.Name}]？", "删除提醒", System.Windows.Application.Current.MainWindow, MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
+            {
+                UserManager.RemoveUser(new User
+                {
+                    Id = id,
+                    DelName = UserGlobal.CurrUser.UserName,
+                    DelNo = UserGlobal.CurrUser.UserNo
+                });
 
-            //        context.SaveChanges();
-            //        Data.Remove(selectModel);
-            //    }
-            //}
+                Data.Remove(selectModel);
+            }
         }
 
         //添加账号
@@ -508,8 +477,6 @@ namespace SmartTuningSystem.View
                 list.IsEnabled = false;
                 gPager.IsEnabled = false;
                 bNoData.IsEnabled = false;
-
-                OnLoadingShowComplate();
             }
         }
 
@@ -521,112 +488,12 @@ namespace SmartTuningSystem.View
                 list.IsEnabled = true;
                 gPager.IsEnabled = true;
                 bNoData.IsEnabled = true;
-
-                OnLoadingHideComplate();
             }
         }
 
-        private void OnLoadingHideComplate()
-        {
-
-        }
-
-        private void OnLoadingShowComplate()
-        {
-
-        }
-
         #endregion
 
         #endregion
-
-        #endregion
-
-        #region 部门、职位
-
-        //ObservableCollection<Department> DepartmentData = new ObservableCollection<Department>();
-        //ObservableCollection<DepartmentPosition> PositionData = new ObservableCollection<DepartmentPosition>();
-        bool updateList = false;//是否更新数据
-
-        /// <summary>
-        /// 更新部门
-        /// </summary>
-        private void UpdateDepartment()
-        {
-            //DepartmentData.Clear();
-
-            //DepartmentData.Add(new Department()
-            //{
-            //    Id = 0,
-            //    Name = "全部部门"
-            //});
-            //using (CoreDBContext context = new CoreDBContext())
-            //{
-            //    var list = context.Department.Where(c => !c.IsDel).ToList();
-            //    if (list != null)
-            //        foreach (var item in list)
-            //        {
-            //            DepartmentData.Add(item);
-            //        }
-            //}
-            //cbDepartment.SelectedIndex = 0;
-        }
-
-        private void cbDepartment_SearchTextChanged(object sender, Panuon.UI.Silver.Core.SearchTextChangedEventArgs e)
-        {
-
-        }
-
-        private void cbPosition_SearchTextChanged(object sender, Panuon.UI.Silver.Core.SearchTextChangedEventArgs e)
-        {
-
-        }
-
-        private void cbDepartment_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            //if (cbDepartment.SelectedItem != null)
-            //{
-            //    var selectedModel = cbDepartment.SelectedItem as Department;
-
-            //    PositionData.Clear();
-
-            //    PositionData.Add(new DepartmentPosition()
-            //    {
-            //        Id = 0,
-            //        Name = "全部职位"
-            //    });
-
-            //    if (selectedModel.Id > 0)
-            //    {
-            //        using (CoreDBContext context = new CoreDBContext())
-            //        {
-            //            var list = context.DepartmentPosition.Where(c => !c.IsDel).ToList();
-            //            if (list != null)
-            //                foreach (var item in list)
-            //                {
-            //                    PositionData.Add(item);
-            //                }
-            //        }
-            //    }
-            //    cbPosition.SelectedIndex = 0;
-
-            //    if (updateList)
-            //        UpdateGridAsync();
-            //}
-        }
-
-        private void cbPosition_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            //if (cbPosition.SelectedItem != null)
-            //{
-            //    var selectedModel = cbPosition.SelectedItem as DepartmentPosition;
-            //    if (selectedModel.Id > 0)
-            //    {
-            //        if (updateList)
-            //            UpdateGridAsync();
-            //    }
-            //}
-        }
 
         #endregion
     }

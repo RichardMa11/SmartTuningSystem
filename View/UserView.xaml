@@ -102,7 +102,7 @@
                             pu:GroupBoxHelper.ShadowColor="LightGray" >
             <pu:GroupBoxHelper.ExtendControl>
                 <StackPanel Margin="0,0,20,0" Orientation="Horizontal">
-                    <ComboBox  Height="30"
+                    <!--<ComboBox  Height="30"
                                x:Name="cbDepartment"
                                Width="150"
                                BorderThickness="0,0,0,1"
@@ -112,8 +112,8 @@
                                pu:ComboBoxHelper.SearchTextChanged="cbDepartment_SearchTextChanged"
                                pu:ComboBoxHelper.HoverBackground="{DynamicResource ComboBoxHoverColor}"
                                pu:ComboBoxHelper.SelectedBackground="{DynamicResource ComboBoxSelectedColor}"
-                               pu:ComboBoxHelper.IsSearchTextBoxVisible="True"/>
-                    <ComboBox  Height="30"
+                               pu:ComboBoxHelper.IsSearchTextBoxVisible="True"/>-->
+                    <!--<ComboBox  Height="30"
                                x:Name="cbPosition"
                                Width="100"
                                BorderThickness="0,0,0,1"
@@ -124,7 +124,7 @@
                                pu:ComboBoxHelper.SearchTextChanged="cbPosition_SearchTextChanged"
                                pu:ComboBoxHelper.HoverBackground="{DynamicResource ComboBoxHoverColor}"
                                pu:ComboBoxHelper.SelectedBackground="{DynamicResource ComboBoxSelectedColor}"
-                               pu:ComboBoxHelper.IsSearchTextBoxVisible="True"/>
+                               pu:ComboBoxHelper.IsSearchTextBoxVisible="True"/>-->
                     <TextBox  BorderBrush="White"
                               x:Name="txtSearchText"
                                        Margin="10,2,2,2"
@@ -180,10 +180,10 @@
                               pu:DataGridHelper.HoverBackground="{DynamicResource DataGridHoverColor}" 
                               pu:DataGridHelper.SelectedBackground="{DynamicResource DataGridSelectedColor}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="真实姓名" Width="100" Binding="{Binding RealName}" />
-                        <DataGridTextColumn Header="账号" Width="120" Binding="{Binding Name}" />
+                        <DataGridTextColumn Header="用户名" Width="100" Binding="{Binding Name}" />
+                        <DataGridTextColumn Header="工号" Width="120" Binding="{Binding UserNo}" />
                         <DataGridTextColumn Header="角色" Width="100" Binding="{Binding RoleName}" />
-                        <DataGridTemplateColumn Header="部门职位" Width="220">
+                        <!--<DataGridTemplateColumn Header="部门职位" Width="220">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Grid ToolTip="{Binding PositionName}">
@@ -198,7 +198,7 @@
                                     </Grid>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
+                        </DataGridTemplateColumn>-->
                         <DataGridTemplateColumn Header="登录权限" Width="100" IsReadOnly="True">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
@@ -256,7 +256,7 @@
                 </Border>
                 <Grid Visibility="Visible">
                     <Border Background="White" x:Name="bNoData" Margin="-5,35,0,-5">
-                        <Image Source="pack://application:,,,/Common;component/Images/data_empty.png" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                        <Image Source="../Assets/Images/data_empty.png" VerticalAlignment="Center" HorizontalAlignment="Center" />
                     </Border>
                 </Grid>
                 <pu:Loading x:Name="gLoading" Visibility="Collapsed"  Height="50" Width="50" LoadingStyle="Ring2" IsRunning="True"/>

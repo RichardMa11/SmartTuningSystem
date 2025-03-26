@@ -124,7 +124,7 @@
                             Margin="15,0,0,0"
                         Width="30"
                         Height="30"
-                        ToolTip="设置"
+                        ToolTip="密码修改"
                         pu:ButtonHelper.ButtonStyle="Link"
                         Content="&#xf085;"
                         FontFamily="{StaticResource FontAwesome}"
@@ -197,7 +197,7 @@
                                   Tag="pack://application:,,,/CorePlugin;component/Pages/Manager/DepartmentPositionMsg.xaml"
                                   Header="基础数据"/>
                         <TreeViewItem pu:TreeViewHelper.ItemIcon="&#xf2bc;" FontSize="15"  
-                                  Tag="User.xaml"
+                                  Tag="UserView.xaml"
                                   Header="人员管理"/>
                         <TreeViewItem pu:TreeViewHelper.ItemIcon="&#xf084;" FontSize="15"  
                                   Tag="pack://application:,,,/CorePlugin;component/Pages/Manager/RoleAuthorization.xaml"

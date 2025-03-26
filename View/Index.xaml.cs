@@ -6,6 +6,7 @@ using LiveCharts;
 using LiveCharts.Wpf;
 using Model;
 using Panuon.UI.Silver;
+using SmartTuningSystem.Extensions;
 using SmartTuningSystem.Global;
 using SmartTuningSystem.Utils;
 using static Model.Log;

@@ -40,7 +40,7 @@ namespace DAL
             {
                 var model = context.Role.Single(c => c.Id == role.Id);
                 model.RoleName = role.RoleName;
-                model.RoleNo = role.RoleNo;
+                //model.RoleNo = role.RoleNo;
                 model.UpdateName = role.UpdateName;
                 model.UpdateNo = role.UpdateNo;
                 model.UpdateTime = DateTime.Now;
@@ -80,6 +80,28 @@ namespace DAL
             using (CoreDbContext context = new CoreDbContext())
             {
                 roles = context.Role.Where(e => e.CreateTime >= startDate && e.CreateTime <= endDate && e.IsValid).ToList();
+            }
+
+            return roles;
+        }
+
+        public Role SelectRoleById(int roleId)
+        {
+            Role role;
+            using (CoreDbContext context = new CoreDbContext())
+            {
+                role = context.Role.First(c => c.Id == roleId && c.IsValid);
+            }
+
+            return role;
+        }
+
+        public List<Role> SelectAllRole()
+        {
+            List<Role> roles;
+            using (CoreDbContext context = new CoreDbContext())
+            {
+                roles = context.Role.Where(e => e.IsValid).ToList();
             }
 
             return roles;

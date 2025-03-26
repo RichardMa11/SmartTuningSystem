@@ -34,6 +34,17 @@ namespace BLL
             return RoleService.SelectRole(startDate, endDate);
         }
 
+        public Role GetRoleById(int roleId)
+        {
+            return RoleService.SelectRoleById(roleId);
+        }
+
+
+        public List<Role> GetAllRole()
+        {
+            return RoleService.SelectAllRole();
+        }
+
         public List<Role> GetRoleBySql(string strSql)
         {
             return RoleService.SqlStrQueryRole(strSql);

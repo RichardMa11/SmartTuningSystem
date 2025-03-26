@@ -14,9 +14,9 @@ namespace BLL
             return UserService.InsertUser(user);
         }
 
-        public void ModifyUser(User user)
+        public void ModifyUser(User user, bool isCanLogin)
         {
-            UserService.UpdateUser(user);
+            UserService.UpdateUser(user, isCanLogin);
         }
 
         public void RemoveUser(User user)

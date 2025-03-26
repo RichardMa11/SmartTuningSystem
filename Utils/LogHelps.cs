@@ -9,6 +9,7 @@ namespace SmartTuningSystem.Utils
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         public static readonly LogManager LogManager = new LogManager();
+        public static readonly TuningRecordManager TuningRecordManager = new TuningRecordManager();
 
         public static void Trace(string strMsg)
         {
@@ -46,6 +47,19 @@ namespace SmartTuningSystem.Utils
             {
                 LogStr = logStr,
                 LogType = logType,
+                CreateName = UserGlobal.CurrUser.UserName,
+                CreateNo = UserGlobal.CurrUser.UserNo
+            });
+        }
+
+        public static void WriteTuningRecord(string deviceName, string productName, string sendStr, string befParam)
+        {
+            TuningRecordManager.AddTuningRecord(new TuningRecord
+            {
+                DeviceName = deviceName,
+                ProductName = productName,
+                SendStr = sendStr,
+                BefParam = befParam,
                 CreateName = UserGlobal.CurrUser.UserName,
                 CreateNo = UserGlobal.CurrUser.UserNo
             });

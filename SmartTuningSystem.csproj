@@ -97,6 +97,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Extensions\PageExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Extensions\TextBoxExtensions.cs" />
     <Compile Include="MyControls\MyPager_ZHHans.xaml.cs">
       <DependentUpon>MyPager_ZHHans.xaml</DependentUpon>
     </Compile>
@@ -128,6 +130,9 @@
     </Compile>
     <Compile Include="View\Welcome.xaml.cs">
       <DependentUpon>Welcome.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Windows\EditRole.xaml.cs">
+      <DependentUpon>EditRole.xaml</DependentUpon>
     </Compile>
     <Page Include="Assets\Styles\DefaultStyle.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -178,6 +183,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\Welcome.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Windows\EditRole.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -251,5 +260,6 @@
     <Content Include="Dll\ObjectsComparer.dll" />
     <Content Include="Dll\Panuon.UI.Silver.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

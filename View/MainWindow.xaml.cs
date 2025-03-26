@@ -155,10 +155,10 @@ namespace SmartTuningSystem.View
 
         private void btnSetting_Click(object sender, RoutedEventArgs e)
         {
-            //IsMaskVisible = true;
-            //SettingWindow settingWindow = new SettingWindow();
-            //settingWindow.ShowDialog();
-            //IsMaskVisible = false;
+            IsMaskVisible = true;
+            //UpdatePassword updatePassword = new UpdatePassword();
+            //updatePassword.ShowDialog();
+            IsMaskVisible = false;
         }
 
         /// <summary>
