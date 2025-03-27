@@ -6,6 +6,7 @@ using System.Windows.Media.Animation;
 using Panuon.UI.Silver;
 using SmartTuningSystem.Global;
 using SmartTuningSystem.Utils;
+using SmartTuningSystem.View.Windows;
 using static Model.Log;
 
 namespace SmartTuningSystem.View
@@ -156,8 +157,8 @@ namespace SmartTuningSystem.View
         private void btnSetting_Click(object sender, RoutedEventArgs e)
         {
             IsMaskVisible = true;
-            //UpdatePassword updatePassword = new UpdatePassword();
-            //updatePassword.ShowDialog();
+            UpdatePassword updatePassword = new UpdatePassword();
+            updatePassword.ShowDialog();
             IsMaskVisible = false;
         }
 

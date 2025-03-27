@@ -172,15 +172,12 @@ namespace SmartTuningSystem.View
             }
             //暂时简便直接刷新
             UpdateGridAsync();
-
         }
 
         //角色选中
         private void RoleItem_Checked(object sender, RoutedEventArgs e)
         {
-            if (_allChecking) return;//全选或反选操作中不做任何动作
-                                     //CheckBox currRoleCheckBox = sender as CheckBox;
-                                     //暂时简便直接刷新
+            if (_allChecking) return;//全选或反选操作中不做任何动作//CheckBox currRoleCheckBox = sender as CheckBox;//暂时简便直接刷新
             UpdateGridAsync();
         }
 
@@ -291,11 +288,11 @@ namespace SmartTuningSystem.View
 
             await Task.Run(() =>
             {
-                List<UserRoleDto2> users = LogManager.QueryBySql<UserRoleDto2>(@"   select UserName,UserNo,RoleNo,users.Id UserId,r.Id RoleId,RoleName,CanLogin,users.CreateTime
+                List<UserRoleDto2> users = LogManager.QueryBySql<UserRoleDto2>(@"   select UserName,UserNo,RoleNo,users.Id UserId,r.Id RoleId,RoleName,CanLogin,users.CreateTime,UserPwd
  FROM [SmartTuningSystemDB].[dbo].[Users] users with(nolock) 
   left join [SmartTuningSystemDB].[dbo].[UserRole] ur with(nolock)  on users.Id=ur.UserId and ur.IsValid=1
   left join [SmartTuningSystemDB].[dbo].[Roles] r with(nolock) on ur.RoleId=r.Id and r.IsValid=1
-  where users.IsValid=1  ");
+  where users.IsValid=1   ");
                 if (selectedRoleIds.Count > 0)
                     users = users.Where(c => selectedRoleIds.Contains(c.RoleId)).ToList();
 
@@ -395,18 +392,20 @@ namespace SmartTuningSystem.View
         //账号授权
         private void btnAuthorization_Click(object sender, RoutedEventArgs e)
         {
-            //int userId = (sender as Button).Tag.ToString().AsInt();
-            //this.MaskVisible(true);
+            int userId = (sender as Button).Tag.ToString().AsInt();
+            this.MaskVisible(true);
 
-            //Authorization2User a = new Authorization2User(userId);
-            //a.ShowDialog();
+            Authorization2User a = new Authorization2User(userId);
+            a.ShowDialog();
 
-            //this.MaskVisible(false);
+            this.MaskVisible(false);
 
-            //if (a.Succeed)
-            //{
-            //    MessageBoxX.Show("请当前用户重新登录", "授权成功");
-            //}
+            if (a.Succeed)
+            {
+                MessageBoxX.Show("请被授权用户重新登录", "授权成功");
+                UserGlobal.MainWindow.WriteInfoOnBottom($"授权成功。");
+                LogHelps.WriteLogToDb($"{UserGlobal.CurrUser.UserName}操作：授权成功！", LogLevel.Authorization);
+            }
         }
 
         //删除账号
@@ -432,26 +431,24 @@ namespace SmartTuningSystem.View
         //添加账号
         private void btnAdd_Click(object sender, RoutedEventArgs e)
         {
-            //this.MaskVisible(true);
-            //AddUser a = new AddUser();
-            //a.ShowDialog();
-            //this.MaskVisible(false);
-            //if (a.Succeed)
-            //{
-            //    using (CoreDBContext context = new CoreDBContext())
-            //    {
-            //        Data.Insert(0, new UIModel()
-            //        {
-            //            CreateYear = a.Model.CreateTime.Year,
-            //            CreateTime = a.Model.CreateTime.ToString("MM-dd HH:mm"),
-            //            Id = a.Model.Id,
-            //            Name = a.Model.Name,
-            //            RoleId = a.Model.RoleId,
-            //            RoleName = context.Role.First(c => c.Id == a.Model.RoleId).Name,
-            //            CanLogin = a.Model.CanLogin
-            //        });
-            //    }
-            //}
+            this.MaskVisible(true);
+            AddUser a = new AddUser();
+            a.ShowDialog();
+            this.MaskVisible(false);
+            if (a.Succeed)
+            {
+                Data.Insert(0, new UIModel()
+                {
+                    CreateYear = a.Model.CreateTime.Year,
+                    CreateTime = a.Model.CreateTime.ToString("MM-dd HH:mm"),
+                    Id = a.Model.UserId,
+                    Name = a.Model.UserName,
+                    RoleId = a.Model.RoleId,
+                    RoleName = a.Model.RoleName,
+                    CanLogin = a.Model.CanLogin,
+                    UserNo = a.Model.UserNo
+                });
+            }
         }
 
         //页码更改事件

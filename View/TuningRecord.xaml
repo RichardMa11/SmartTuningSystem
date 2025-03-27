@@ -33,32 +33,53 @@
                         <DatePicker x:Name="dpStart" Width="140" Margin="5"/>
                         <DatePicker x:Name="dpEnd" Width="140" Margin="5"/>
                         <TextBox x:Name="txtSearch" Width="300" Margin="5"/>
-                        <Button Content="查询" Click="Search_Click" Margin="5" Width="80" pu:ButtonHelper.Icon="&#xf002;"/>
+                        <Button x:Name="btnSearch" Content="查询" Click="Search_Click" Margin="5" Width="80" pu:ButtonHelper.Icon="&#xf002;"/>
                     </StackPanel>
 
                     <!-- 可滚动数据区 -->
                     <!--<ScrollViewer Grid.Row="1">                              
                             </ScrollViewer>-->
-                    <DataGrid Grid.Row="1" x:Name="dgTuningRecords" AutoGenerateColumns="False" 
-                                      ItemsSource="{Binding}" IsReadOnly="True">
+                    <DataGrid Grid.Row="1" x:Name="dgTuningRecords" HorizontalAlignment="Center"
+                                      ItemsSource="{Binding}" 
+                                      Margin="0,-6,0,35"
+                                      BorderThickness="0,1,0,0"
+                                      IsReadOnly="True"
+                                      CanUserAddRows="False"
+                                      CanUserSortColumns="False"
+                                      AutoGenerateColumns="False"
+                                      pu:DataGridHelper.ColumnHorizontalContentAlignment="Center" 
+                                      pu:DataGridHelper.HeaderPadding="5,0"
+                                      pu:DataGridHelper.HeaderMinHeight="40"
+                                      pu:DataGridHelper.RowMinHeight="30"
+                                      pu:DataGridHelper.CellPadding="5,0"
+                                      pu:DataGridHelper.HoverBackground="{DynamicResource DataGridHoverColor}" 
+                                      pu:DataGridHelper.SelectedBackground="{DynamicResource DataGridSelectedColor}">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="时间" Binding="{Binding CreateTime,StringFormat=yyyy-MM-dd HH:mm:ss}"/>
                             <DataGridTextColumn Header="用户名" Binding="{Binding CreateName}"/>
                             <DataGridTextColumn Header="工号" Binding="{Binding CreateNo}"/>
                             <DataGridTextColumn Header="机台" Binding="{Binding DeviceName}"/>
                             <DataGridTextColumn Header="产品" Binding="{Binding ProductName}"/>
-                            <DataGridTextColumn Header="发送前参数" Binding="{Binding BefParam}"/>
+                            <DataGridTextColumn Header="发送前参数" Binding="{Binding BefParam}" Width="*"/>
                             <DataGridTextColumn Header="发送参数" Binding="{Binding SendStr}" Width="*"/>
                         </DataGrid.Columns>
                     </DataGrid>
 
                     <!-- 分页按钮 -->
-                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <StackPanel x:Name="gPager" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
                         <Button x:Name="btnPrev" Content="上一页" Click="BtnPrev_Click" Width="80" Margin="5"/>
                         <TextBlock x:Name="txtPageInfo" Margin="5" VerticalAlignment="Center"/>
                         <Button x:Name="btnNext" Content="下一页" Click="BtnNext_Click" Width="80" Margin="5"/>
                     </StackPanel>
+
+                    <Grid Grid.Row="1" Visibility="Visible">
+                        <Border Background="White" x:Name="bNoData" Margin="0,35,0,0">
+                            <Image Source="../Assets/Images/data_empty.png" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                        </Border>
+                    </Grid>
+                    <pu:Loading Grid.Row="1" x:Name="gLoading" Visibility="Collapsed"  Height="50" Width="50" LoadingStyle="Ring2" IsRunning="True"/>
                 </Grid>
+                
                 <!--<StackPanel>
                             -->
                 <!-- 查询条件 -->

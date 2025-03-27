@@ -203,7 +203,7 @@
                                   Tag="pack://application:,,,/CorePlugin;component/Pages/Manager/RoleAuthorization.xaml"
                               Header="角色授权"/>
                         <TreeViewItem pu:TreeViewHelper.ItemIcon="&#xf260;" FontSize="15"  
-                                  Tag="pack://application:,,,/CorePlugin;component/Pages/Manager/PluginsMsg.xaml"
+                                  Tag="MenuView.xaml"
                               Header="菜单管理"/>
                         <TreeViewItem pu:TreeViewHelper.ItemIcon="&#xf0e8;" FontSize="15"  
                                   Tag="pack://application:,,,/CorePlugin;component/Pages/Manager/DepartmentPositionMsg.xaml"

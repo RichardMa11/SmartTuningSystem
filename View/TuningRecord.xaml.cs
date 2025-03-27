@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using BLL;
@@ -40,13 +42,41 @@ namespace SmartTuningSystem.View
         private void Search_Click(object sender, RoutedEventArgs e) => ResetAndLoad();
         private void BtnPrev_Click(object sender, RoutedEventArgs e) => ChangePage(-1);
         private void BtnNext_Click(object sender, RoutedEventArgs e) => ChangePage(1);
-        private void LoadTuningRecord()
+        private async void LoadTuningRecord()
         {
+            ShowLoadingPanel();//显示Loading
             var (data, total) = TuningRecordManager.GetPagedTuningRecords(dpStart.SelectedDate, dpEnd.SelectedDate,
                 txtSearch.Text, _currentPage, _pageSize);
 
             dgTuningRecords.ItemsSource = data;
             UpdatePagingUI(total);
+            await Task.Delay(300);
+            bNoData.Visibility = data.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+            HideLoadingPanel();
+        }
+
+        private void ShowLoadingPanel()
+        {
+            if (gLoading.Visibility != Visibility.Visible)
+            {
+                gLoading.Visibility = Visibility.Visible;
+                btnSearch.IsEnabled = false;
+                dgTuningRecords.IsEnabled = false;
+                gPager.IsEnabled = false;
+                bNoData.IsEnabled = false;
+            }
+        }
+
+        private void HideLoadingPanel()
+        {
+            if (gLoading.Visibility != Visibility.Collapsed)
+            {
+                gLoading.Visibility = Visibility.Collapsed;
+                btnSearch.IsEnabled = true;
+                dgTuningRecords.IsEnabled = true;
+                gPager.IsEnabled = true;
+                bNoData.IsEnabled = true;
+            }
         }
 
         // 更新分页界面

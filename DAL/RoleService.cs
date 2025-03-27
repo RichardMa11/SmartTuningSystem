@@ -151,6 +151,51 @@ namespace DAL
             return tmp.Id;
         }
 
+        //分配人员角色2
+        public void InsertUserRole(UserRoleDto2 userRoleDto2, User user)
+        {
+            using (CoreDbContext context = new CoreDbContext())
+            {
+                var timeTmp = DateTime.Now;
+                var tmp = context.User.Add(new User
+                {
+                    UserName = userRoleDto2.UserName,
+                    UserNo = userRoleDto2.UserNo,
+                    UserPwd = userRoleDto2.UserPwd,
+                    CanLogin = true,
+                    CreateName = user.UserName,
+                    CreateNo = user.UserNo,
+                    CreateTime = timeTmp,
+                    UpdateName = user.UserName,
+                    UpdateNo = user.UserNo,
+                    UpdateTime = timeTmp,
+                    IsValid = true
+                });
+                context.SaveChanges();
+
+                var tmpUserRole = context.UserRole.FirstOrDefault(c => c.UserId == tmp.Id);
+                if (tmpUserRole != null)
+                {
+                    context.UserRole.Remove(tmpUserRole);
+                    context.SaveChanges();
+                }
+
+                context.UserRole.Add(new UserRole
+                {
+                    RoleId = userRoleDto2.RoleId,
+                    UserId = tmp.Id,
+                    CreateName = user.UserName,
+                    CreateNo = user.UserNo,
+                    CreateTime = timeTmp,
+                    UpdateName = user.UserName,
+                    UpdateNo = user.UserNo,
+                    UpdateTime = timeTmp,
+                    IsValid = true
+                });
+                context.SaveChanges();
+            }
+        }
+
         public void DeleteUserRole(int id)
         {
             using (CoreDbContext context = new CoreDbContext())

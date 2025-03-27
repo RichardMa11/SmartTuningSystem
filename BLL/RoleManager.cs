@@ -56,6 +56,12 @@ namespace BLL
             return RoleService.InsertUserRole(userRole);
         }
 
+        //添加人员角色2
+        public void AddUserRole(UserRoleDto2 userRoleDto2, User user)
+        {
+            RoleService.InsertUserRole(userRoleDto2, user);
+        }
+
         //分配角色菜单
         public int AddRoleMenu(RoleMenu roleMenu)
         {

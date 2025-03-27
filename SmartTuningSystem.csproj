@@ -99,6 +99,10 @@
     <Compile Include="Extensions\PageExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\TextBoxExtensions.cs" />
+    <Compile Include="Extensions\WindowExtensions.cs" />
+    <Compile Include="MyControls\AuthorizationItems.xaml.cs">
+      <DependentUpon>AuthorizationItems.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MyControls\MyPager_ZHHans.xaml.cs">
       <DependentUpon>MyPager_ZHHans.xaml</DependentUpon>
     </Compile>
@@ -116,6 +120,9 @@
     <Compile Include="Utils\ModelCommon.cs" />
     <Compile Include="Utils\PagerUtils.cs" />
     <Compile Include="Utils\PhoneNumberCommon.cs" />
+    <Compile Include="View\MenuView.xaml.cs">
+      <DependentUpon>MenuView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\TuningRecord.xaml.cs">
       <DependentUpon>TuningRecord.xaml</DependentUpon>
     </Compile>
@@ -131,8 +138,17 @@
     <Compile Include="View\Welcome.xaml.cs">
       <DependentUpon>Welcome.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Windows\AddUser.xaml.cs">
+      <DependentUpon>AddUser.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Windows\Authorization2User.xaml.cs">
+      <DependentUpon>Authorization2User.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Windows\EditRole.xaml.cs">
       <DependentUpon>EditRole.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Windows\UpdatePassword.xaml.cs">
+      <DependentUpon>UpdatePassword.xaml</DependentUpon>
     </Compile>
     <Page Include="Assets\Styles\DefaultStyle.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -146,7 +162,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="MyControls\AuthorizationItems.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MyControls\MyPager_ZHHans.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\MenuView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -186,7 +210,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="View\Windows\AddUser.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Windows\Authorization2User.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="View\Windows\EditRole.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Windows\UpdatePassword.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

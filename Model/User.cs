@@ -28,16 +28,11 @@ namespace Model
         public DateTime CreateTime { get; set; }//创建时间
     }
 
-    public class UserRoleDto2
+    public class UserRoleDto2 : UserRoleDto
     {
         public int UserId { get; set; }
         public int RoleId { get; set; }
-        public string UserName { get; set; }
-        public string UserNo { get; set; }
-        public string RoleName { get; set; }
-        public string RoleNo { get; set; }
-        public DateTime CreateTime { get; set; }//创建时间
-
         public bool CanLogin { get; set; }//是否允许登录
+        public string UserPwd { get; set; }
     }
 }
