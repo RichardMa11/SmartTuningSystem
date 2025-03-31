@@ -64,7 +64,8 @@
 
     <!--<Border BorderThickness="0,1,1,1"  BorderBrush="Transparent" >
         <Grid>
-            --><!--<Grid Margin="20">
+            -->
+    <!--<Grid Margin="20">
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="3*"/>
@@ -75,8 +76,8 @@
             </Grid.ColumnDefinitions>
 
             -->
-            <!-- 单元格 (0,0) -->
-            <!--
+    <!-- 单元格 (0,0) -->
+    <!--
             <Grid Grid.Row="0" Grid.Column="0" Margin="10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -87,8 +88,8 @@
                 </Grid.ColumnDefinitions>
 
                 -->
-            <!-- 嵌套的子单元格 -->
-            <!--
+    <!-- 嵌套的子单元格 -->
+    <!--
                 <Border Grid.Row="0" Grid.Column="0" Margin="10" >
                     <Border.Background>
                         <ImageBrush ImageSource="../Assets/Images/pic12.jpg" Stretch="UniformToFill"/>
@@ -105,13 +106,14 @@
 
 
             -->
-            <!-- 单元格 (0,1) -->
-            <!--
+    <!-- 单元格 (0,1) -->
+    <!--
             <Border Grid.Row="1" Grid.Column="0" Margin="10">
                 <Label Content="欢迎进入JABIL-CNC智能调机系统" VerticalAlignment="Center" HorizontalAlignment="Center" FontStyle="Italic" FontWeight="Bold" FontSize="36"/>
             </Border>
 
-        </Grid>--><!--
+        </Grid>-->
+    <!--
             <Grid.Background>
                 <ImageBrush ImageSource="../Assets/Images/pic4.jpg" Stretch="UniformToFill"/>
             </Grid.Background>

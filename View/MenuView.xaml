@@ -4,7 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:pu="clr-namespace:Panuon.UI.Silver;assembly=Panuon.UI.Silver"
-      mc:Ignorable="d" Loaded="Page_Loaded" Unloaded="Page_Unloaded"
+      mc:Ignorable="d" Loaded="Page_Loaded" 
       d:DesignHeight="750" d:DesignWidth="1190"
       Title="菜单管理">
 
@@ -12,7 +12,7 @@
         <GroupBox  Header="菜单列表"
                    BorderThickness="0,1,0,0"
                    Margin="10,10,10,0"
-                   pu:GroupBoxHelper.Icon="&#xf0c6;"
+                   pu:GroupBoxHelper.Icon="&#xf260;"
                    pu:GroupBoxHelper.HeaderPadding="0,10,0,10"
                    pu:GroupBoxHelper.IsSplitLineVisible="True"
                    pu:GroupBoxHelper.ShadowColor="LightGray">
@@ -74,9 +74,12 @@
                               pu:DataGridHelper.HoverBackground="{DynamicResource DataGridHoverColor}" 
                               pu:DataGridHelper.SelectedBackground="{DynamicResource DataGridSelectedColor}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="页面名称" Width="100" Binding="{Binding Name}" />
-                        <DataGridTextColumn Header="页面路径" Width="120" Binding="{Binding UserNo}" />
+                        <DataGridTextColumn Header="页面名称" Width="100" Binding="{Binding PageName}" />
+                        <DataGridTextColumn Header="页面路径" Width="200" Binding="{Binding PagePath}" />
+                        <DataGridTextColumn Header="图标" Width="100" Binding="{Binding Icon}" FontFamily="{StaticResource FontAwesome}" />
                         <DataGridTextColumn Header="排序" Width="100" Binding="{Binding Order}" />
+                        <DataGridTextColumn Header="创建人" Width="100" Binding="{Binding CreateNo}" />
+                        <DataGridTextColumn Header="创建人工号" Width="100" Binding="{Binding CreateName}" />
                         <DataGridTemplateColumn Header="创建时间" Width="150">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
@@ -99,6 +102,7 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
+                                        <Button  Content="&#xf044;"  ToolTip="编辑"  FontFamily="{StaticResource FontAwesome}" Margin="20,0,0,0" pu:ButtonHelper.ButtonStyle="Link" Tag="{Binding Id}" FontSize="20"  Foreground="Orange" x:Name="btnAuthorization" Click="btnEdit_Click" />
                                         <Button  Content="&#xf014;"  ToolTip="删除"  FontFamily="{StaticResource FontAwesome}" Margin="20,0,20,0" pu:ButtonHelper.ButtonStyle="Link" Tag="{Binding Id}" FontSize="20"  Foreground="Red" x:Name="btnDelete" Click="btnDelete_Click"/>
                                     </StackPanel>
                                 </DataTemplate>

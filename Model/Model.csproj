@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommEntity.cs" />
+    <Compile Include="UserMenu.cs" />
     <Compile Include="TuningRecord.cs" />
     <Compile Include="Product.cs" />
     <Compile Include="DeviceInfoDetail.cs" />

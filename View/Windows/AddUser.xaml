@@ -15,7 +15,7 @@
         WindowStartupLocation="CenterScreen">
     <Border MouseDown="Border_MouseDown" BorderThickness="1" BorderBrush="LightGray">
         <Grid>
-            <GroupBox  Header="人员"
+            <GroupBox  Header="人员新增"
                    pu:GroupBoxHelper.Icon="&#xf007;"
                            BorderThickness="0"
                    pu:GroupBoxHelper.HeaderPadding="0,10,0,10"

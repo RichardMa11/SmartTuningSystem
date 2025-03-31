@@ -1,0 +1,30 @@
+﻿<Page x:Class="SmartTuningSystem.View.Developing"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:pu="clr-namespace:Panuon.UI.Silver;assembly=Panuon.UI.Silver"
+      mc:Ignorable="d" 
+      d:DesignHeight="750" d:DesignWidth="1190"
+      Title="开发中">
+
+    <Grid>
+        <GroupBox  Header="开发中"
+                   BorderThickness="0,1,0,0"
+                   Margin="10,10,10,0"
+                   pu:GroupBoxHelper.Icon="&#xf0c6;"
+                   pu:GroupBoxHelper.HeaderPadding="0,10,0,10"
+                   pu:GroupBoxHelper.IsSplitLineVisible="True"
+                   pu:GroupBoxHelper.ShadowColor="LightGray">
+            <Grid>
+                <Label Margin="0,0,0,0" Content="开发中，敬请期待......" HorizontalAlignment="Center" 
+                       FontStyle="Italic" FontWeight="Bold" FontSize="30" Foreground="{DynamicResource ButtonBgColor}"/>
+                <Grid Visibility="Visible">
+                    <Border Background="White" x:Name="bNoData" Margin="0,45,0,0">
+                        <Image Source="../Assets/Images/data_empty.png" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                    </Border>
+               </Grid>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</Page>

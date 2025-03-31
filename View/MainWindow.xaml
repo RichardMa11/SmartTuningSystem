@@ -165,7 +165,7 @@
             <Border Grid.Row="1" HorizontalAlignment="Left" Width="200" Grid.Column="0" BorderThickness="1,1,0,1" Background="#FF003B67" BorderBrush="#FF003B67" >
 
                 <Grid Grid.Row="1" Width="200" Grid.Column="0" x:Name="bSecondMenu" Background="#FF003B67">
-                    <TreeView  x:Name="tvMenu" BorderThickness="0" FontSize="15" 
+                    <TreeView  x:Name="tvMenu" BorderThickness="0" 
                            Margin="0,20,0,0"
                         pu:TreeViewHelper.TreeViewStyle="Modern"
                         pu:TreeViewHelper.ExpandMode="SingleClick"
@@ -173,41 +173,55 @@
                         pu:TreeViewHelper.ExpandBehaviour="OnlyOne"
                          pu:TreeViewHelper.SelectedBackground="#FFF1EAEA"
                            pu:TreeViewHelper.SelectedForeground="Black"
-                        pu:TreeViewHelper.ItemPadding="3,10,10,10"
+                        pu:TreeViewHelper.ItemPadding="3,0,10,0"
                             Background="#FF003B67"
                          BorderBrush="#FF49A2CE"
                            ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                           PreviewMouseUp="TreeView_PreviewMouseUp">
-                        <TreeViewItem pu:TreeViewHelper.ItemIcon="&#xf015;" FontSize="15"
-                                  Tag="index.xaml"
+
+                        <TreeView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <!-- 文本（绑定数据对象的某个属性，例如 Title） -->
+                                    <!--<TextBlock Text="{Binding PageName}" VerticalAlignment="Center"/>-->
+                                    <Label FontSize="{Binding FontSize}"  ToolTip="{Binding PageName}"
+                                           HorizontalContentAlignment="Center" VerticalAlignment="Center" Width="50" FontFamily="{StaticResource FontAwesome}" 
+                                           Content="{Binding Icon}"  Foreground="{Binding HeaderForeground}"/>
+                                    <Label FontSize="15" VerticalAlignment="Center"  Content="{Binding PageName}" Foreground="{Binding Foreground}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </TreeView.ItemTemplate>
+
+                        <!--<TreeViewItem pu:TreeViewHelper.ItemIcon="&#xf015;" FontSize="15"
+                                  Tag="Index.xaml"
                               Header="首页"/>
                         <TreeViewItem pu:TreeViewHelper.ItemIcon="&#xf26c;" FontSize="15"  
-                                  Tag="index.xaml"
+                                  Tag="Developing.xaml"
                                   Header="智能调机"/>
                         <TreeViewItem pu:TreeViewHelper.ItemIcon="&#xf02d;" FontSize="15"  
                                       Tag="TuningRecord.xaml"
                                   Header="调机记录"/>
                         <TreeViewItem pu:TreeViewHelper.ItemIcon="&#xf0ad;" FontSize="15"  
-                                  Tag="DepartmentPositionMsg.xaml"
+                                  Tag="Developing.xaml"
                                   Header="机台维护"/>
                         <TreeViewItem pu:TreeViewHelper.ItemIcon="&#xf0ad;" FontSize="15"  
-                                  Tag="pack://application:,,,/CorePlugin;component/Pages/Manager/DepartmentPositionMsg.xaml"
+                                  Tag="Developing.xaml"
                                   Header="产品维护"/>
                         <TreeViewItem pu:TreeViewHelper.ItemIcon="&#xf1c0;" FontSize="15"  
-                                  Tag="pack://application:,,,/CorePlugin;component/Pages/Manager/DepartmentPositionMsg.xaml"
+                                  Tag="Developing.xaml"
                                   Header="基础数据"/>
                         <TreeViewItem pu:TreeViewHelper.ItemIcon="&#xf2bc;" FontSize="15"  
                                   Tag="UserView.xaml"
                                   Header="人员管理"/>
                         <TreeViewItem pu:TreeViewHelper.ItemIcon="&#xf084;" FontSize="15"  
-                                  Tag="pack://application:,,,/CorePlugin;component/Pages/Manager/RoleAuthorization.xaml"
+                                  Tag="Developing.xaml"
                               Header="角色授权"/>
                         <TreeViewItem pu:TreeViewHelper.ItemIcon="&#xf260;" FontSize="15"  
                                   Tag="MenuView.xaml"
                               Header="菜单管理"/>
                         <TreeViewItem pu:TreeViewHelper.ItemIcon="&#xf0e8;" FontSize="15"  
-                                  Tag="pack://application:,,,/CorePlugin;component/Pages/Manager/DepartmentPositionMsg.xaml"
-                                  Header="系统管理"/>
+                                  Tag="Developing.xaml"
+                                  Header="系统管理"/>-->
                     </TreeView>
                 </Grid>
 

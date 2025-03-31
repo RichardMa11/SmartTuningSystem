@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
+using BLL;
 using Panuon.UI.Silver;
 using SmartTuningSystem.Global;
 using SmartTuningSystem.Utils;
@@ -17,6 +22,98 @@ namespace SmartTuningSystem.View
     public partial class MainWindow : WindowX
     {
         private bool _isClose = false;
+        public ObservableCollection<UIModel> tvMenus = new ObservableCollection<UIModel>();//页面数据集合
+        public readonly MenuManager MenuManager = new MenuManager();
+        Brush selectedMenuColor = null;//选中导航颜色
+
+        #region UI Models
+
+        public class UIModel : BaseUIModel
+        {
+            public int Id { get; set; }
+
+            private string pageName = "";
+            public string PageName
+            {
+                get => pageName;
+                set
+                {
+                    pageName = value;
+                    NotifyPropertyChanged("PageName");
+                }
+            }
+
+            private string pagePath = "";
+            public string PagePath
+            {
+                get => pagePath;
+                set
+                {
+                    pagePath = value;
+                    NotifyPropertyChanged("PagePath");
+                }
+            }
+
+            private int order = 0;
+            public int Order
+            {
+                get => order;
+                set
+                {
+                    order = value;
+                    NotifyPropertyChanged("Order");
+                }
+            }
+
+            private string icon = "";
+            public string Icon
+            {
+                get => icon;
+                set
+                {
+                    icon = value;
+                    NotifyPropertyChanged("Icon");
+                }
+            }
+
+            private int fontSize = 15;
+            public int FontSize //字体大小
+            {
+                get => fontSize;
+                set
+                {
+                    fontSize = value;
+                    NotifyPropertyChanged("FontSize");
+                }
+            }
+
+            private Brush foreground = null;
+            public Brush Foreground //前景色
+            {
+                get => foreground;
+                set
+                {
+                    foreground = value;
+                    NotifyPropertyChanged("Foreground");
+                }
+            }
+            private Brush headerForeground = null;
+            public Brush HeaderForeground //前景色
+            {
+                get => headerForeground;
+                set
+                {
+                    headerForeground = value;
+                    NotifyPropertyChanged("HeaderForeground");
+                }
+            }
+
+            //public Model.Menu Tag { get; set; }//数据
+
+            //public string Header { get; set; }//标题
+        }
+
+        #endregion 
         public MainWindow()
         {
             InitializeComponent();
@@ -24,6 +121,30 @@ namespace SmartTuningSystem.View
             LblCurrUser.Text = UserGlobal.CurrUser.UserName;
             UserGlobal.MainWindow = Application.Current.MainWindow as MainWindow;
             Closing += WindowX_Closing;
+
+            selectedMenuColor = new SolidColorBrush(Colors.Black);
+            //if(UserGlobal.CurrUser.UserNo== "00001")
+            //List<Model.Menu> menus = MenuManager.GetAllMenu();
+
+            foreach (var item in UserGlobal.VUserRoleMenus)
+            {
+                if (item.MenuId != null)
+                {
+                    UIModel model = new UIModel()
+                    {
+                        Id = (int)item.MenuId,
+                        PageName = item.PageName,
+                        PagePath = item.PagePath,
+                        Order = (int)item.Order,
+                        Icon = FontAwesomeCommon.GetUnicode(item.Icon),
+                        FontSize = 15,
+                        Foreground = StyleHelper.ConvertToSolidColorBrush("#FFFFFFFF"),
+                        HeaderForeground = StyleHelper.ConvertToSolidColorBrush("#FFFFFFFF")
+                    };
+                    tvMenus.Add(model);
+                }
+            }
+            tvMenu.ItemsSource = tvMenus;
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -37,23 +158,88 @@ namespace SmartTuningSystem.View
             bool isPermission = false;
             if (tvMenu.SelectedItem != null)
             {
-                TreeViewItem targetItem = tvMenu.SelectedItem as TreeViewItem;
+                UIModel targetItem = tvMenu.SelectedItem as UIModel;
+
+                #region 更新导航字体颜色
+
+                if (tvMenus.Any(c => c.Foreground == selectedMenuColor))
+                {
+                    var menuItem = tvMenus.Single(c => c.Foreground == selectedMenuColor);
+                    menuItem.Foreground = StyleHelper.ConvertToSolidColorBrush("#FFFFFFFF");
+                    menuItem.HeaderForeground = StyleHelper.ConvertToSolidColorBrush("#FFFFFFFF");
+                    menuItem.FontSize = 15;
+                }
+                var menuItemSelection = tvMenus.Single(c => c.Id == targetItem.Id);
+                menuItemSelection.Foreground = selectedMenuColor;
+                menuItemSelection.HeaderForeground = StyleHelper.ConvertToSolidColorBrush("#FF003B67");//#FF003B67
+                menuItemSelection.FontSize = 25;
+
+                #endregion 
+
                 foreach (var ur in UserGlobal.VUserRoleMenus)
                 {
-                    if (targetItem.Header.ToString() == ur.PageName || ur.RoleNo == "00001")
+                    if (targetItem.PageName.ToString() == ur.PageName || UserGlobal.CurrUser.UserNo == "00001")
                     {
                         isPermission = true;
                         break;
                     }
                 }
                 if (isPermission)
-                    mainFrame.Source = new Uri(targetItem.Tag.ToString(), UriKind.RelativeOrAbsolute);
+                    mainFrame.Source = new Uri(targetItem.PagePath.ToString(), UriKind.RelativeOrAbsolute);
                 else
                 {
-                    MessageBoxX.Show($@"您没有{targetItem.Header.ToString()}的权限，如果需要，找管理员开通！！！", "权限提醒", this, MessageBoxButton.OK);
+                    MessageBoxX.Show($@"您没有{targetItem.PageName.ToString()}的权限，如果需要，找管理员开通！！！", "权限提醒", this, MessageBoxButton.OK);
                 }
+
+                //ModulePage page = targetItem.Tag as ModulePage;
+                //if (page == null) return;
+                //mainFrame.Source = new Uri(page.FullPath, UriKind.RelativeOrAbsolute);
+                //TreeViewItem targetItem = tvMenu.SelectedItem as TreeViewItem;
+                //foreach (var ur in UserGlobal.VUserRoleMenus)
+                //{
+                //    if (targetItem.Header.ToString() == ur.PageName || ur.RoleNo == "00001")
+                //    {
+                //        isPermission = true;
+                //        break;
+                //    }
+                //}
+                //if (isPermission)
+                //    mainFrame.Source = new Uri(targetItem.Tag.ToString(), UriKind.RelativeOrAbsolute);
+                //else
+                //{
+                //    MessageBoxX.Show($@"您没有{targetItem.Header.ToString()}的权限，如果需要，找管理员开通！！！", "权限提醒", this, MessageBoxButton.OK);
+                //}
             }
         }
+
+        private void tvMenu_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            if (tvMenu.SelectedItem != null)
+            {
+                UIModel targetItem = tvMenu.SelectedItem as UIModel;
+
+                #region 更新导航字体颜色
+
+                if (tvMenus.Any(c => c.Foreground == new SolidColorBrush(Colors.Black)))
+                {
+                    var menuItem = tvMenus.Single(c => c.Foreground == new SolidColorBrush(Colors.Black));
+                    menuItem.Foreground = StyleHelper.ConvertToSolidColorBrush("#FFFFFFFF");
+                    menuItem.HeaderForeground = StyleHelper.ConvertToSolidColorBrush("#FFFFFFFF");
+                    menuItem.FontSize = 15;
+                }
+                var menuItemSelection = tvMenus.Single(c => c.Id == targetItem.Id);
+                menuItemSelection.Foreground = new SolidColorBrush(Colors.Black);
+                menuItemSelection.HeaderForeground = StyleHelper.ConvertToSolidColorBrush("#FF003B67");//#FF003B67
+                menuItemSelection.FontSize = 25;
+
+                #endregion 
+
+                //ModulePage page = targetItem.Tag as ModulePage;
+                //if (page == null) return;
+                //mainFrame.Source = new Uri(page.FullPath, UriKind.RelativeOrAbsolute);
+            }
+        }
+
 
         #endregion
 

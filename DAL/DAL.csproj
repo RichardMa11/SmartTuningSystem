@@ -50,6 +50,7 @@
     <Compile Include="DeviceInfoService.cs" />
     <Compile Include="TuningRecordService.cs" />
     <Compile Include="SysConfigService.cs" />
+    <Compile Include="MenuService.cs" />
     <Compile Include="UserService.cs" />
     <Compile Include="RoleService.cs" />
     <Compile Include="LogService.cs" />

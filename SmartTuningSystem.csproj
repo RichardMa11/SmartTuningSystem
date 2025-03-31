@@ -109,6 +109,7 @@
     <Compile Include="Utils\BaseMainWindow.cs" />
     <Compile Include="Utils\BaseUIModel.cs" />
     <Compile Include="Utils\LogHelps.cs" />
+    <Compile Include="Utils\PositiveIntegerTextBox.cs" />
     <Compile Include="Utils\ProcessManager.cs" />
     <Compile Include="Utils\ColorHelper.cs" />
     <Compile Include="Utils\ExcelHelper.cs" />
@@ -120,6 +121,10 @@
     <Compile Include="Utils\ModelCommon.cs" />
     <Compile Include="Utils\PagerUtils.cs" />
     <Compile Include="Utils\PhoneNumberCommon.cs" />
+    <Compile Include="Utils\StyleHelper.cs" />
+    <Compile Include="View\Developing.xaml.cs">
+      <DependentUpon>Developing.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\MenuView.xaml.cs">
       <DependentUpon>MenuView.xaml</DependentUpon>
     </Compile>
@@ -138,6 +143,9 @@
     <Compile Include="View\Welcome.xaml.cs">
       <DependentUpon>Welcome.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Windows\AddMenu.xaml.cs">
+      <DependentUpon>AddMenu.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Windows\AddUser.xaml.cs">
       <DependentUpon>AddUser.xaml</DependentUpon>
     </Compile>
@@ -146,6 +154,9 @@
     </Compile>
     <Compile Include="View\Windows\EditRole.xaml.cs">
       <DependentUpon>EditRole.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Windows\IconSelectorDialog.xaml.cs">
+      <DependentUpon>IconSelectorDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Windows\UpdatePassword.xaml.cs">
       <DependentUpon>UpdatePassword.xaml</DependentUpon>
@@ -167,6 +178,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MyControls\MyPager_ZHHans.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Developing.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -210,6 +225,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="View\Windows\AddMenu.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="View\Windows\AddUser.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -219,6 +238,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\Windows\EditRole.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Windows\IconSelectorDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

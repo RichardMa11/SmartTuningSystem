@@ -1,7 +1,10 @@
-﻿using System.Windows;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using BLL;
 using Model;
+using Panuon.UI.Silver;
 using SmartTuningSystem.Extensions;
 using SmartTuningSystem.Global;
 using SmartTuningSystem.Utils;
@@ -44,8 +47,19 @@ namespace SmartTuningSystem.View.Windows
             if (!txtRoleName.NotEmpty() || !txtRoleNo.NotEmpty()) return;
             string roleName = txtRoleName.Text;
             string roleNo = txtRoleNo.Text;
+            List<Role> roles = RoleManager.GetAllRole();
             if (IsEdit)
             {
+                #region 验证
+
+                if (roles.Any(c => c.RoleName == roleName && c.RoleNo == roleNo && c.Id != editId))
+                {
+                    //存在
+                    MessageBoxX.Show($"存在相同角色名[{roleName}]和角色编码[{roleNo}]", "数据存在");
+                    return;
+                }
+
+                #endregion
                 //编辑模式
                 RoleManager.ModifyRole(new Role
                 {
@@ -60,6 +74,16 @@ namespace SmartTuningSystem.View.Windows
             }
             else
             {
+                #region 验证
+
+                if (roles.Any(c => c.RoleName == roleName && c.RoleNo == roleNo))
+                {
+                    //存在
+                    MessageBoxX.Show($"存在相同角色名[{roleName}]和角色编码[{roleNo}]", "数据存在");
+                    return;
+                }
+
+                #endregion
                 //添加模式
                 RoleManager.AddRole(new Role
                 {

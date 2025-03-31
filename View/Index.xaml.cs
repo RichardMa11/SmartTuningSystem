@@ -50,10 +50,10 @@ namespace SmartTuningSystem.View
         /// </summary>
         private void UpdateDataCount()
         {
-            lblUserCount.Content = LogManager.QueryBySql<User>(@"select * from Users with(nolock)").Count;
-            lblRoleCount.Content = LogManager.QueryBySql<Role>(@"select * from Roles with(nolock)").Count;
-            lblMenuCount.Content = LogManager.QueryBySql<Menu>(@"select * from Menus with(nolock)").Count;
-            lblDeviceCount.Content = LogManager.QueryBySql<DeviceInfo>(@"select * from DeviceInfo with(nolock)").Count;
+            lblUserCount.Content = LogManager.QueryBySql<User>(@"select * from Users with(nolock) where IsValid=1 ").Count;
+            lblRoleCount.Content = LogManager.QueryBySql<Role>(@"select * from Roles with(nolock) where IsValid=1 ").Count;
+            lblMenuCount.Content = LogManager.QueryBySql<Menu>(@"select * from Menus with(nolock) where IsValid=1 ").Count;
+            lblDeviceCount.Content = LogManager.QueryBySql<DeviceInfo>(@"select * from DeviceInfo with(nolock) where IsValid=1").Count;
         }
 
         //private async void LoadDataAsync()

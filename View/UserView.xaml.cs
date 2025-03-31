@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -34,7 +32,7 @@ namespace SmartTuningSystem.View
 
         #region Models
 
-        class UIModel : BaseUIModel
+        public class UIModel : BaseUIModel
         {
             public int Id { get; set; }
 
@@ -109,7 +107,7 @@ namespace SmartTuningSystem.View
             if (UserGlobal.MainWindow != null)
                 UserGlobal.MainWindow.WriteInfoOnBottom("打开人员管理成功。");
 
-            LogHelps.WriteLogToDb($"{UserGlobal.CurrUser.UserName}打开打开人员管理！", LogLevel.Operation);
+            LogHelps.WriteLogToDb($"{UserGlobal.CurrUser.UserName}打开人员管理！", LogLevel.Operation);
         }
 
         #region 左侧角色列表

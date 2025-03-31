@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -21,6 +22,7 @@ namespace SmartTuningSystem.View
     {
         public readonly UserManager UserManager = new UserManager();
         public readonly RoleManager RoleManager = new RoleManager();
+        public readonly MenuManager MenuManager = new MenuManager();
 
         public Login()
         {
@@ -145,12 +147,19 @@ namespace SmartTuningSystem.View
                             LogHelps.WriteLogToDb($"{userName}登录成功！", LogLevel.Authorization);
 
                             #region 加载权限，主页
-                            UserGlobal.VUserRoleMenus = LogManager.QueryBySql<VUserRoleMenu>(@"  select UserName,UserNo,PageName,PagePath,RoleNo FROM [SmartTuningSystemDB].[dbo].[Users] users with(nolock) 
+                            UserGlobal.VUserRoleMenus = LogManager.QueryBySql<VUserRoleMenu>(@"  select UserName,UserNo,PageName,PagePath,Icon,m.[Order],m.Id as MenuId FROM [SmartTuningSystemDB].[dbo].[Users] users with(nolock) 
+left join [SmartTuningSystemDB].[dbo].[UserMenu] um with(nolock) on um.UserId=users.Id and um.IsValid=1
+left join [SmartTuningSystemDB].[dbo].[Menus] m with(nolock) on um.MenuId=m.Id and m.IsValid=1
+where users.IsValid=1  
+
+union 
+
+select UserName,UserNo,PageName,PagePath,Icon,m.[Order],m.Id as MenuId FROM [SmartTuningSystemDB].[dbo].[Users] users with(nolock) 
   left join [SmartTuningSystemDB].[dbo].[UserRole] ur with(nolock)  on users.Id=ur.UserId and ur.IsValid=1
   left join [SmartTuningSystemDB].[dbo].[RoleMenu] rm with(nolock)  on ur.RoleId=rm.RoleId and rm.IsValid=1
   left join [SmartTuningSystemDB].[dbo].[Menus] m with(nolock) on rm.MenuId=m.Id and m.IsValid=1
   left join [SmartTuningSystemDB].[dbo].[Roles] r with(nolock) on ur.RoleId=r.Id and r.IsValid=1
-  where users.IsValid=1  ").Where(c => c.UserName == UserGlobal.CurrUser.UserName && c.UserNo == UserGlobal.CurrUser.UserNo).ToList();
+  where users.IsValid=1  ").Where(c => c.UserName == UserGlobal.CurrUser.UserName && c.UserNo == UserGlobal.CurrUser.UserNo).OrderBy(c => c.Order).ToList();
 
                             #endregion
 
@@ -203,11 +212,14 @@ namespace SmartTuningSystem.View
         {
             try
             {
-                var roles = LogManager.QueryBySql<Role>(@"select top 1 * from Roles where RoleNo='00001'");
+                var roles = LogManager.QueryBySql<Role>(@"select top 1 * from Roles where RoleNo='00001' and IsValid=1");
                 //var roles1 = RoleManager.GetRoleBySql(@"select top 1 * from Roles where RoleNo='00001'");
-                var users = LogManager.QueryBySql<User>(@"select top 1 * from Users");
+                var users = LogManager.QueryBySql<User>(@"  select top 1 * from Users where UserNo='00001' and UserName='admin' and IsValid=1");
+                List<Model.Menu> menus = MenuManager.GetAllMenu();
+                List<Model.UserMenu> userMenus = MenuManager.GetAllUserMenu();
+                int userId, menuId = 0;
 
-                int roleId = roles.Count == 0
+                var roleId = roles.Count == 0
                     ? RoleManager.AddRole(new Role
                     {
                         RoleName = "超级管理员",
@@ -218,7 +230,7 @@ namespace SmartTuningSystem.View
 
                 if (users.Count == 0)
                 {
-                    var userId = UserManager.AddUser(new User
+                    userId = UserManager.AddUser(new User
                     {
                         UserName = "admin",
                         UserNo = "00001",
@@ -232,6 +244,69 @@ namespace SmartTuningSystem.View
                     RoleManager.AddUserRole(new UserRole
                     {
                         RoleId = roleId,
+                        UserId = userId,
+                        CreateName = "系统",
+                        CreateNo = "0"
+                    });
+                }
+                else
+                {
+                    userId = users.First().Id;
+                }
+
+                //第一次菜单管理和权限管理初始化必备
+                if (!menus.Any(c => c.PageName == "菜单管理" && c.PagePath == "MenuView.xaml"))
+                {
+                    //add
+                    menuId = MenuManager.AddMenu(new Menu
+                    {
+                        PageName = "菜单管理",
+                        PagePath = "MenuView.xaml",
+                        Icon = "fa-gg",
+                        Order = 8,
+                        CreateName = "系统",
+                        CreateNo = "0"
+                    });
+                }
+                else
+                {
+                    menuId = menus.First(c => c.PageName == "菜单管理" && c.PagePath == "MenuView.xaml").Id;
+                }
+
+                if (!userMenus.Any(c => c.MenuId == menuId && c.UserId == userId))
+                {
+                    MenuManager.AddUserMenu(new UserMenu
+                    {
+                        MenuId = menuId,
+                        UserId = userId,
+                        CreateName = "系统",
+                        CreateNo = "0"
+                    });
+                }
+
+                if (!menus.Any(c => c.PageName == "角色授权" && c.PagePath == "RoleAuthorization.xaml"))
+                {
+                    //add
+                    menuId = MenuManager.AddMenu(new Menu
+                    {
+                        PageName = "角色授权",
+                        PagePath = "RoleAuthorization.xaml",
+                        Icon = "fa-key",
+                        Order = 9,
+                        CreateName = "系统",
+                        CreateNo = "0"
+                    });
+                }
+                else
+                {
+                    menuId = menus.First(c => c.PageName == "角色授权" && c.PagePath == "RoleAuthorization.xaml").Id;
+                }
+
+                if (!userMenus.Any(c => c.MenuId == menuId && c.UserId == userId))
+                {
+                    MenuManager.AddUserMenu(new UserMenu
+                    {
+                        MenuId = menuId,
                         UserId = userId,
                         CreateName = "系统",
                         CreateNo = "0"
