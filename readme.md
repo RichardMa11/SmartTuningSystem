@@ -30,29 +30,29 @@ Sqlserver2019 及以上
 
 # 功能截图  
 架构  
-![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/架构.jpg)  
+![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/%E6%9E%B6%E6%9E%84.png)  
 登录  
-![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/登录.jpg)  
+![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/%E7%99%BB%E5%BD%95.png)  
 欢迎页  
-![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/欢迎页.jpg)  
+![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/%E6%AC%A2%E8%BF%8E%E9%A1%B5.png)  
 首页  
-![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/首页.jpg)  
+![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/%E9%A6%96%E9%A1%B5.png)  
 测试页  
-![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/测试页.jpg)  
+![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/%E6%B5%8B%E8%AF%95%E9%A1%B5.png)  
 调机记录  
-![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/调机记录.jpg)  
+![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/%E8%B0%83%E6%9C%BA%E8%AE%B0%E5%BD%95.png)  
 人员管理  
-![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/人员管理.jpg)  
+![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/%E4%BA%BA%E5%91%98%E7%AE%A1%E7%90%86.png)  
 菜单管理  
-![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/菜单管理.jpg)  
+![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/%E8%8F%9C%E5%8D%95%E7%AE%A1%E7%90%86.png)  
 角色授权  
-![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/角色授权.jpg)  
+![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/%E8%A7%92%E8%89%B2%E6%8E%88%E6%9D%83.png)  
 菜单新增  
-![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/菜单新增.jpg)  
+![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/%E8%8F%9C%E5%8D%95%E6%96%B0%E5%A2%9E.png)  
 人员新增  
-![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/人员新增.jpg)  
+![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/%E4%BA%BA%E5%91%98%E6%96%B0%E5%A2%9E.png)  
 密码修改  
-![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/密码修改.jpg)  
+![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/%E5%AF%86%E7%A0%81%E4%BF%AE%E6%94%B9.png)  
 
 
 # 正在进行中（持续开发中，尚不完善）
