@@ -30,29 +30,29 @@ Sqlserver2019 及以上
 
 # 功能截图  
 架构  
-![image](https://github.com/RichardMa11/SmartTuningSystem/master/效果图/架构.jpg)  
+![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/架构.jpg)  
 登录  
-![image](https://github.com/RichardMa11/SmartTuningSystem/master/效果图/登录.jpg)  
+![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/登录.jpg)  
 欢迎页  
-![image](https://github.com/RichardMa11/SmartTuningSystem/master/效果图/欢迎页.jpg)  
+![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/欢迎页.jpg)  
 首页  
-![image](https://github.com/RichardMa11/SmartTuningSystem/master/效果图/首页.jpg)  
+![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/首页.jpg)  
 测试页  
-![image](https://github.com/RichardMa11/SmartTuningSystem/master/效果图/测试页.jpg)  
+![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/测试页.jpg)  
 调机记录  
-![image](https://github.com/RichardMa11/SmartTuningSystem/master/效果图/调机记录.jpg)  
+![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/调机记录.jpg)  
 人员管理  
-![image](https://github.com/RichardMa11/SmartTuningSystem/master/效果图/人员管理.jpg)  
+![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/人员管理.jpg)  
 菜单管理  
-![image](https://github.com/RichardMa11/SmartTuningSystem/master/效果图/菜单管理.jpg)  
+![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/菜单管理.jpg)  
 角色授权  
-![image](https://github.com/RichardMa11/SmartTuningSystem/master/效果图/角色授权.jpg)  
+![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/角色授权.jpg)  
 菜单新增  
-![image](https://github.com/RichardMa11/SmartTuningSystem/master/效果图/菜单新增.jpg)  
+![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/菜单新增.jpg)  
 人员新增  
-![image](https://github.com/RichardMa11/SmartTuningSystem/master/效果图/人员新增.jpg)  
+![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/人员新增.jpg)  
 密码修改  
-![image](https://github.com/RichardMa11/SmartTuningSystem/master/效果图/密码修改.jpg)  
+![image](https://github.com/RichardMa11/SmartTuningSystem/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/密码修改.jpg)  
 
 
 # 正在进行中（持续开发中，尚不完善）
