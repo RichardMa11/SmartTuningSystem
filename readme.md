@@ -28,6 +28,32 @@ EntityFramework(Code First)
 VS2019  
 Sqlserver2019 及以上
 
+# 功能截图  
+架构  
+![image](https://github.com/RichardMa11/SmartTuningSystem/master/架构.jpg)  
+登录  
+![image](https://github.com/RichardMa11/SmartTuningSystem/master/登录.jpg)  
+欢迎页  
+![image](https://github.com/RichardMa11/SmartTuningSystem/master/欢迎页.jpg)  
+首页  
+![image](https://github.com/RichardMa11/SmartTuningSystem/master/首页.jpg)  
+测试页  
+![image](https://github.com/RichardMa11/SmartTuningSystem/master/测试页.jpg)  
+调机记录  
+![image](https://github.com/RichardMa11/SmartTuningSystem/master/调机记录.jpg)  
+人员管理  
+![image](https://github.com/RichardMa11/SmartTuningSystem/master/人员管理.jpg)  
+菜单管理  
+![image](https://github.com/RichardMa11/SmartTuningSystem/master/菜单管理.jpg)  
+角色授权  
+![image](https://github.com/RichardMa11/SmartTuningSystem/master/角色授权.jpg)  
+菜单新增  
+![image](https://github.com/RichardMa11/SmartTuningSystem/master/菜单新增.jpg)  
+人员新增  
+![image](https://github.com/RichardMa11/SmartTuningSystem/master/人员新增.jpg)  
+密码修改  
+![image](https://github.com/RichardMa11/SmartTuningSystem/master/密码修改.jpg)  
+
 
 # 正在进行中（持续开发中，尚不完善）
 
