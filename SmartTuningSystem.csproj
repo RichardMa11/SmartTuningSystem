@@ -96,6 +96,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Extensions\ListExtensions.cs" />
     <Compile Include="Extensions\PageExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\TextBoxExtensions.cs" />
@@ -127,6 +128,9 @@
     </Compile>
     <Compile Include="View\MenuView.xaml.cs">
       <DependentUpon>MenuView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\RoleAuthorization.xaml.cs">
+      <DependentUpon>RoleAuthorization.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\TuningRecord.xaml.cs">
       <DependentUpon>TuningRecord.xaml</DependentUpon>
@@ -186,6 +190,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\MenuView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\RoleAuthorization.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

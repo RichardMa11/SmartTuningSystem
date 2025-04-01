@@ -109,8 +109,9 @@ namespace DAL
                 var timeTmp = DateTime.Now;
                 tmp = context.UserMenu.Add(new UserMenu
                 {
-                    MenuId = userMenu.MenuId,
                     UserId = userMenu.UserId,
+                    IncreaseMenus = userMenu.IncreaseMenus,
+                    DecrementMenus = userMenu.DecrementMenus,
                     CreateName = userMenu.CreateName,
                     CreateNo = userMenu.CreateNo,
                     CreateTime = timeTmp,
@@ -126,6 +127,21 @@ namespace DAL
             return tmp.Id;
         }
 
+        public void UpdateUserMenu(UserMenu userMenu)
+        {
+            using (CoreDbContext context = new CoreDbContext())
+            {
+                var model = context.UserMenu.Single(c => c.UserId == userMenu.UserId);
+                model.IncreaseMenus = userMenu.IncreaseMenus;
+                model.DecrementMenus = userMenu.DecrementMenus;
+                model.UpdateName = userMenu.UpdateName;
+                model.UpdateNo = userMenu.UpdateNo;
+                model.UpdateTime = DateTime.Now;
+
+                context.SaveChanges();
+            }
+        }
+
         public List<UserMenu> SelectAllUserMenu()
         {
             List<UserMenu> userMenus;
@@ -135,6 +151,17 @@ namespace DAL
             }
 
             return userMenus;
+        }
+
+        public List<RoleMenu> SelectAllRoleMenu()
+        {
+            List<RoleMenu> roleMenus;
+            using (CoreDbContext context = new CoreDbContext())
+            {
+                roleMenus = context.RoleMenu.Where(e => e.IsValid).ToList();
+            }
+
+            return roleMenus;
         }
     }
 }

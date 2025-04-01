@@ -9,6 +9,7 @@ using Model;
 using Model.View;
 using Panuon.UI.Silver;
 using Panuon.UI.Silver.Core;
+using SmartTuningSystem.Extensions;
 using SmartTuningSystem.Global;
 using SmartTuningSystem.Utils;
 using static Model.Log;
@@ -147,20 +148,60 @@ namespace SmartTuningSystem.View
                             LogHelps.WriteLogToDb($"{userName}登录成功！", LogLevel.Authorization);
 
                             #region 加载权限，主页
-                            UserGlobal.VUserRoleMenus = LogManager.QueryBySql<VUserRoleMenu>(@"  select UserName,UserNo,PageName,PagePath,Icon,m.[Order],m.Id as MenuId FROM [SmartTuningSystemDB].[dbo].[Users] users with(nolock) 
-left join [SmartTuningSystemDB].[dbo].[UserMenu] um with(nolock) on um.UserId=users.Id and um.IsValid=1
-left join [SmartTuningSystemDB].[dbo].[Menus] m with(nolock) on um.MenuId=m.Id and m.IsValid=1
-where users.IsValid=1  
-
-union 
-
-select UserName,UserNo,PageName,PagePath,Icon,m.[Order],m.Id as MenuId FROM [SmartTuningSystemDB].[dbo].[Users] users with(nolock) 
+                            //获取角色权限
+                            List<int> rolePages = new List<int>();
+                            List<int> currUserPages = new List<int>();
+                            var tempRoleMenus = LogManager.QueryBySql<VUserRoleMenu>(@"   select UserName,UserNo,PageName,PagePath,Icon,m.[Order],m.Id as MenuId FROM [SmartTuningSystemDB].[dbo].[Users] users with(nolock) 
   left join [SmartTuningSystemDB].[dbo].[UserRole] ur with(nolock)  on users.Id=ur.UserId and ur.IsValid=1
   left join [SmartTuningSystemDB].[dbo].[RoleMenu] rm with(nolock)  on ur.RoleId=rm.RoleId and rm.IsValid=1
   left join [SmartTuningSystemDB].[dbo].[Menus] m with(nolock) on rm.MenuId=m.Id and m.IsValid=1
   left join [SmartTuningSystemDB].[dbo].[Roles] r with(nolock) on ur.RoleId=r.Id and r.IsValid=1
   where users.IsValid=1  ").Where(c => c.UserName == UserGlobal.CurrUser.UserName && c.UserNo == UserGlobal.CurrUser.UserNo).OrderBy(c => c.Order).ToList();
+                            foreach (var r in tempRoleMenus)
+                            {
+                                if (r.MenuId != null)
+                                    rolePages.Add((int)r.MenuId);
+                            }
+                            //获取用户自定义权限
+                            UserMenu userMenus = MenuManager.GetAllUserMenu().FirstOrDefault(c => c.UserId == userModel.Id);//获取用户自定义权限
 
+                            if (userMenus != null && userMenus.Id > 0)
+                            {
+                                if (userMenus.IncreaseMenus.NotEmpty())
+                                {
+                                    //在角色权限基础上的增加页面
+                                    string[] increasePages = userMenus.IncreaseMenus.Split(',');
+                                    foreach (var iPage in increasePages)
+                                    {
+                                        int pageId = 0;
+                                        if (int.TryParse(iPage, out pageId))
+                                        {
+                                            currUserPages.Add(pageId);
+                                        }
+                                        else { continue; }
+                                    }
+                                }
+
+                                if (userMenus.DecrementMenus.NotEmpty())
+                                {
+                                    //在角色权限基础上的减少页面
+                                    string[] decrementPages = userMenus.DecrementMenus.Split(',');
+                                    //bool currRolesUpdate = false;//当前所有角色是否更新
+                                    foreach (var iPage in decrementPages)
+                                    {
+                                        int pageId = 0;
+                                        if (int.TryParse(iPage, out pageId))
+                                        {
+                                            if (rolePages.Contains(pageId))
+                                                rolePages.Remove(pageId); //如果有这一项 移除
+
+                                        }
+                                        else { continue; }
+                                    }
+                                }
+                            }
+                            currUserPages.AddRange(rolePages);
+                            SetUserRoleMenus(currUserPages, userModel);
                             #endregion
 
                             await Task.Delay(500);
@@ -205,6 +246,23 @@ select UserName,UserNo,PageName,PagePath,Icon,m.[Order],m.Id as MenuId FROM [Sma
             }
         }
 
+        private void SetUserRoleMenus(List<int> currUserPages, User user)
+        {
+            foreach (var m in MenuManager.GetAllMenu().Where(c => currUserPages.Contains(c.Id)).ToList())
+            {
+                UserGlobal.VUserRoleMenus.Add(new VUserRoleMenu
+                {
+                    MenuId = m.Id,
+                    UserName = user.UserName,
+                    UserNo = user.UserNo,
+                    PageName = m.PageName,
+                    PagePath = m.PagePath,
+                    Icon = m.Icon,
+                    Order = m.Order
+                });
+            }
+        }
+
         /// <summary>
         /// 填充管理员数据
         /// </summary>
@@ -216,7 +274,7 @@ select UserName,UserNo,PageName,PagePath,Icon,m.[Order],m.Id as MenuId FROM [Sma
                 //var roles1 = RoleManager.GetRoleBySql(@"select top 1 * from Roles where RoleNo='00001'");
                 var users = LogManager.QueryBySql<User>(@"  select top 1 * from Users where UserNo='00001' and UserName='admin' and IsValid=1");
                 List<Model.Menu> menus = MenuManager.GetAllMenu();
-                List<Model.UserMenu> userMenus = MenuManager.GetAllUserMenu();
+                List<RoleMenu> roleMenus = MenuManager.GetAllRoleMenu();
                 int userId, menuId = 0;
 
                 var roleId = roles.Count == 0
@@ -273,12 +331,12 @@ select UserName,UserNo,PageName,PagePath,Icon,m.[Order],m.Id as MenuId FROM [Sma
                     menuId = menus.First(c => c.PageName == "菜单管理" && c.PagePath == "MenuView.xaml").Id;
                 }
 
-                if (!userMenus.Any(c => c.MenuId == menuId && c.UserId == userId))
+                if (!roleMenus.Any(c => c.MenuId == menuId && c.RoleId == roleId))
                 {
-                    MenuManager.AddUserMenu(new UserMenu
+                    RoleManager.AddRoleMenu(new RoleMenu
                     {
                         MenuId = menuId,
-                        UserId = userId,
+                        RoleId = roleId,
                         CreateName = "系统",
                         CreateNo = "0"
                     });
@@ -302,18 +360,18 @@ select UserName,UserNo,PageName,PagePath,Icon,m.[Order],m.Id as MenuId FROM [Sma
                     menuId = menus.First(c => c.PageName == "角色授权" && c.PagePath == "RoleAuthorization.xaml").Id;
                 }
 
-                if (!userMenus.Any(c => c.MenuId == menuId && c.UserId == userId))
+                if (!roleMenus.Any(c => c.MenuId == menuId && c.RoleId == roleId))
                 {
-                    MenuManager.AddUserMenu(new UserMenu
+                    RoleManager.AddRoleMenu(new RoleMenu
                     {
                         MenuId = menuId,
-                        UserId = userId,
+                        RoleId = roleId,
                         CreateName = "系统",
                         CreateNo = "0"
                     });
                 }
 
-                if (roles.Count != 0 && users.Count == 1)
+                if (roles.Count != 0 && users.Count == 1 && roleMenus.Count == 2)
                 {
                     LogHelps.Info($@"数据库初始化成功。");
                     //LogManager.AddLog(new Log

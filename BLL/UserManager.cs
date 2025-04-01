@@ -34,6 +34,11 @@ namespace BLL
             return UserService.SelectUser(startDate, endDate);
         }
 
+        public User GetUserById(int id)
+        {
+            return UserService.SelectUserById(id);
+        }
+
         public List<User> GetUserBySql(string strSql)
         {
             return UserService.SqlStrQueryUser(strSql);

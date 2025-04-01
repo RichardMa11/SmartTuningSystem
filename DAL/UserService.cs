@@ -91,6 +91,17 @@ namespace DAL
             return users;
         }
 
+        public User SelectUserById(int id)
+        {
+            User user;
+            using (CoreDbContext context = new CoreDbContext())
+            {
+                user = context.User.First(e => e.Id == id && e.IsValid);
+            }
+
+            return user;
+        }
+
         public List<User> SqlStrQueryUser(string strSql)
         {
             List<User> users;

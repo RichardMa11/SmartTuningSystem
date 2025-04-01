@@ -122,30 +122,44 @@ namespace DAL
         public int InsertUserRole(UserRole userRole)
         {
             UserRole tmp;
-            using (CoreDbContext context = new CoreDbContext())
+            using (var context = new CoreDbContext())
             {
-                var timeTmp = DateTime.Now;
-                var tmpUserRole = context.UserRole.FirstOrDefault(c => c.UserId == userRole.UserId);
-                if (tmpUserRole != null)
+                using (var transaction = context.Database.BeginTransaction())
                 {
-                    context.UserRole.Remove(tmpUserRole);
-                    context.SaveChanges();
+                    try
+                    {
+                        var timeTmp = DateTime.Now;
+                        var tmpUserRole = context.UserRole.FirstOrDefault(c => c.UserId == userRole.UserId);
+                        if (tmpUserRole != null)
+                        {
+                            context.UserRole.Remove(tmpUserRole);
+                            context.SaveChanges();
+                        }
+
+                        tmp = context.UserRole.Add(new UserRole
+                        {
+                            RoleId = userRole.RoleId,
+                            UserId = userRole.UserId,
+                            CreateName = userRole.CreateName,
+                            CreateNo = userRole.CreateNo,
+                            CreateTime = timeTmp,
+                            UpdateName = userRole.CreateName,
+                            UpdateNo = userRole.CreateNo,
+                            UpdateTime = timeTmp,
+                            IsValid = true
+                        });
+
+                        context.SaveChanges();
+                        // 提交事务
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        // 回滚事务（所有 SaveChanges 操作均撤销）
+                        transaction.Rollback();
+                        throw new ApplicationException("事务执行失败，已回滚", ex);
+                    }
                 }
-
-                tmp = context.UserRole.Add(new UserRole
-                {
-                    RoleId = userRole.RoleId,
-                    UserId = userRole.UserId,
-                    CreateName = userRole.CreateName,
-                    CreateNo = userRole.CreateNo,
-                    CreateTime = timeTmp,
-                    UpdateName = userRole.CreateName,
-                    UpdateNo = userRole.CreateNo,
-                    UpdateTime = timeTmp,
-                    IsValid = true
-                });
-
-                context.SaveChanges();
             }
 
             return tmp.Id;
@@ -154,45 +168,60 @@ namespace DAL
         //分配人员角色2
         public void InsertUserRole(UserRoleDto2 userRoleDto2, User user)
         {
-            using (CoreDbContext context = new CoreDbContext())
+            using (var context = new CoreDbContext())
             {
-                var timeTmp = DateTime.Now;
-                var tmp = context.User.Add(new User
+                using (var transaction = context.Database.BeginTransaction())
                 {
-                    UserName = userRoleDto2.UserName,
-                    UserNo = userRoleDto2.UserNo,
-                    UserPwd = userRoleDto2.UserPwd,
-                    CanLogin = true,
-                    CreateName = user.UserName,
-                    CreateNo = user.UserNo,
-                    CreateTime = timeTmp,
-                    UpdateName = user.UserName,
-                    UpdateNo = user.UserNo,
-                    UpdateTime = timeTmp,
-                    IsValid = true
-                });
-                context.SaveChanges();
+                    try
+                    {
+                        var timeTmp = DateTime.Now;
+                        var tmp = context.User.Add(new User
+                        {
+                            UserName = userRoleDto2.UserName,
+                            UserNo = userRoleDto2.UserNo,
+                            UserPwd = userRoleDto2.UserPwd,
+                            CanLogin = true,
+                            CreateName = user.UserName,
+                            CreateNo = user.UserNo,
+                            CreateTime = timeTmp,
+                            UpdateName = user.UserName,
+                            UpdateNo = user.UserNo,
+                            UpdateTime = timeTmp,
+                            IsValid = true
+                        });
+                        context.SaveChanges();
 
-                var tmpUserRole = context.UserRole.FirstOrDefault(c => c.UserId == tmp.Id);
-                if (tmpUserRole != null)
-                {
-                    context.UserRole.Remove(tmpUserRole);
-                    context.SaveChanges();
+                        var tmpUserRole = context.UserRole.FirstOrDefault(c => c.UserId == tmp.Id);
+                        if (tmpUserRole != null)
+                        {
+                            context.UserRole.Remove(tmpUserRole);
+                            context.SaveChanges();
+                        }
+
+                        context.UserRole.Add(new UserRole
+                        {
+                            RoleId = userRoleDto2.RoleId,
+                            UserId = tmp.Id,
+                            CreateName = user.UserName,
+                            CreateNo = user.UserNo,
+                            CreateTime = timeTmp,
+                            UpdateName = user.UserName,
+                            UpdateNo = user.UserNo,
+                            UpdateTime = timeTmp,
+                            IsValid = true
+                        });
+                        context.SaveChanges();
+
+                        // 提交事务
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        // 回滚事务（所有 SaveChanges 操作均撤销）
+                        transaction.Rollback();
+                        throw new ApplicationException("事务执行失败，已回滚", ex);
+                    }
                 }
-
-                context.UserRole.Add(new UserRole
-                {
-                    RoleId = userRoleDto2.RoleId,
-                    UserId = tmp.Id,
-                    CreateName = user.UserName,
-                    CreateNo = user.UserNo,
-                    CreateTime = timeTmp,
-                    UpdateName = user.UserName,
-                    UpdateNo = user.UserNo,
-                    UpdateTime = timeTmp,
-                    IsValid = true
-                });
-                context.SaveChanges();
             }
         }
 
@@ -213,13 +242,6 @@ namespace DAL
             using (CoreDbContext context = new CoreDbContext())
             {
                 var timeTmp = DateTime.Now;
-                var tmpRoleMenu = context.RoleMenu.FirstOrDefault(c => c.RoleId == roleMenu.RoleId);
-                if (tmpRoleMenu != null)
-                {
-                    context.RoleMenu.Remove(tmpRoleMenu);
-                    context.SaveChanges();
-                }
-
                 tmp = context.RoleMenu.Add(new RoleMenu
                 {
                     RoleId = roleMenu.RoleId,
@@ -234,9 +256,63 @@ namespace DAL
                 });
 
                 context.SaveChanges();
+                //var tmpRoleMenu = context.RoleMenu.FirstOrDefault(c => c.RoleId == roleMenu.RoleId);
+                //if (tmpRoleMenu != null)
+                //{
+                //    context.RoleMenu.Remove(tmpRoleMenu);
+                //    context.SaveChanges();
+                //}
             }
 
             return tmp.Id;
+        }
+
+        //批量分配角色菜单
+        public void InsertRoleMenu(List<RoleMenu> roleMenus)
+        {
+            using (var context = new CoreDbContext())
+            {
+                // 开始事务
+                using (var transaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var timeTmp = DateTime.Now;
+                        var roleId = roleMenus.First().RoleId;
+
+                        // 批量删除旧数据（避免循环删除）
+                        var oldRecords = context.RoleMenu.Where(c => c.RoleId == roleId).ToList();
+                        context.RoleMenu.RemoveRange(oldRecords);
+                        context.SaveChanges(); // 立即提交删除操作
+
+                        // 批量插入新数据（避免循环插入）
+                        var newRecords = roleMenus.Select(r => new RoleMenu
+                        {
+                            RoleId = r.RoleId,
+                            MenuId = r.MenuId,
+                            CreateName = r.CreateName,
+                            CreateNo = r.CreateNo,
+                            CreateTime = timeTmp,
+                            UpdateName = r.CreateName,
+                            UpdateNo = r.CreateNo,
+                            UpdateTime = timeTmp,
+                            IsValid = true
+                        }).ToList();
+
+                        context.RoleMenu.AddRange(newRecords);
+                        context.SaveChanges();
+
+                        // 提交事务
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        // 回滚事务
+                        transaction.Rollback();
+                        throw new ApplicationException("事务执行失败，已回滚所有操作", ex);
+                    }
+                }
+            }
         }
 
         public void DeleteRoleMenu(int id)

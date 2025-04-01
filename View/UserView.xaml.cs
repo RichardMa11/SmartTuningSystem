@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using BLL;
 using Model;
+using Model.View;
 using Panuon.UI.Silver;
 using SmartTuningSystem.Extensions;
 using SmartTuningSystem.Global;
@@ -24,6 +25,7 @@ namespace SmartTuningSystem.View
     {
         public readonly RoleManager RoleManager = new RoleManager();
         public readonly UserManager UserManager = new UserManager();
+        public readonly MenuManager MenuManager = new MenuManager();
         public UserView()
         {
             InitializeComponent();
@@ -327,7 +329,8 @@ namespace SmartTuningSystem.View
                     RoleId = item.RoleId,
                     RoleName = item.RoleName,
                     CanLogin = item.CanLogin,
-                    UserNo = item.UserNo
+                    UserNo = item.UserNo,
+                    PageCount = GetPageCount(item.UserId)
                 };
 
                 Data.Add(_model);
@@ -338,6 +341,67 @@ namespace SmartTuningSystem.View
         }
 
         #region Grid
+
+        private int GetPageCount(int userId)
+        {
+            List<int> rolePages = new List<int>();
+            List<int> currUserPages = new List<int>();
+            #region 此处逻辑 与 登录加载权限 部分相同
+
+            var user = UserManager.GetUserById(userId);
+            var tempRoleMenus = LogManager.QueryBySql<VUserRoleMenu>(@"  select UserName,UserNo,PageName,PagePath,Icon,m.[Order],m.Id as MenuId FROM [SmartTuningSystemDB].[dbo].[Users] users with(nolock) 
+  left join [SmartTuningSystemDB].[dbo].[UserRole] ur with(nolock)  on users.Id=ur.UserId and ur.IsValid=1
+  left join [SmartTuningSystemDB].[dbo].[RoleMenu] rm with(nolock)  on ur.RoleId=rm.RoleId and rm.IsValid=1
+  left join [SmartTuningSystemDB].[dbo].[Menus] m with(nolock) on rm.MenuId=m.Id and m.IsValid=1
+  left join [SmartTuningSystemDB].[dbo].[Roles] r with(nolock) on ur.RoleId=r.Id and r.IsValid=1
+  where users.IsValid=1 ").Where(c => c.UserName == user.UserName && c.UserNo == user.UserNo).OrderBy(c => c.Order).ToList();
+            foreach (var r in tempRoleMenus)
+            {
+                if (r.MenuId != null)
+                    rolePages.Add((int)r.MenuId);
+            }
+            UserMenu userMenus = MenuManager.GetAllUserMenu().FirstOrDefault(c => c.UserId == userId);//获取用户自定义权限
+
+            if (userMenus != null && userMenus.Id > 0)
+            {
+                if (userMenus.IncreaseMenus.NotEmpty())
+                {
+                    //在角色权限基础上的增加页面
+                    string[] increasePages = userMenus.IncreaseMenus.Split(',');
+                    foreach (var iPage in increasePages)
+                    {
+                        int pageId = 0;
+                        if (int.TryParse(iPage, out pageId))
+                        {
+                            currUserPages.Add(pageId);
+                        }
+                        else { continue; }
+                    }
+                }
+
+                if (userMenus.DecrementMenus.NotEmpty())
+                {
+                    //在角色权限基础上的减少页面
+                    string[] decrementPages = userMenus.DecrementMenus.Split(',');
+                    //bool currRolesUpdate = false;//当前所有角色是否更新
+                    foreach (var iPage in decrementPages)
+                    {
+                        int pageId = 0;
+                        if (int.TryParse(iPage, out pageId))
+                        {
+                            if (rolePages.Contains(pageId))
+                                rolePages.Remove(pageId); //如果有这一项 移除
+
+                        }
+                        else { continue; }
+                    }
+                }
+            }
+            currUserPages.AddRange(rolePages);
+
+            #endregion
+            return MenuManager.GetAllMenu().Where(c => currUserPages.Contains(c.Id)).ToList().Count;
+        }
 
         //搜索
         private void txtSearchText_KeyDown(object sender, KeyEventArgs e)

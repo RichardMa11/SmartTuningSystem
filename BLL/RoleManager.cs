@@ -67,5 +67,11 @@ namespace BLL
         {
             return RoleService.InsertRoleMenu(roleMenu);
         }
+
+        //批量分配角色菜单
+        public void AddRoleMenu(List<RoleMenu> roleMenus)
+        {
+            RoleService.InsertRoleMenu(roleMenus);
+        }
     }
 }

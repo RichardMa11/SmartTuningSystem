@@ -38,9 +38,19 @@ namespace BLL
             return MenuService.InsertUserMenu(userMenu);
         }
 
+        public void ModifyUserMenu(UserMenu userMenu)
+        {
+            MenuService.UpdateUserMenu(userMenu);
+        }
+
         public List<UserMenu> GetAllUserMenu()
         {
             return MenuService.SelectAllUserMenu();
+        }
+
+        public List<RoleMenu> GetAllRoleMenu()
+        {
+            return MenuService.SelectAllRoleMenu();
         }
     }
 }
