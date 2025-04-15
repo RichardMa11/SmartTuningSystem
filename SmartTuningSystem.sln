@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "说明文档", "说明文�
 		SQL脚本.sql = SQL脚本.sql
 	EndProjectSection
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SmartTuningSystemSetup", "SmartTuningSystemSetup\SmartTuningSystemSetup.vdproj", "{16D32800-AD03-4A24-9506-DE134D120758}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,10 @@ Global
 		{FBF81B81-CC18-439C-A7F1-5D649EC60022}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FBF81B81-CC18-439C-A7F1-5D649EC60022}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FBF81B81-CC18-439C-A7F1-5D649EC60022}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16D32800-AD03-4A24-9506-DE134D120758}.Debug|Any CPU.ActiveCfg = Debug
+		{16D32800-AD03-4A24-9506-DE134D120758}.Debug|Any CPU.Build.0 = Debug
+		{16D32800-AD03-4A24-9506-DE134D120758}.Release|Any CPU.ActiveCfg = Release
+		{16D32800-AD03-4A24-9506-DE134D120758}.Release|Any CPU.Build.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

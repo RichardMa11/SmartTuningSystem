@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.35731.53
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SmartTuningSystemSetup", "SmartTuningSystemSetup.vdproj", "{845C388E-C2A7-482F-88A0-6DD86FEEA4D6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Default = Debug|Default
+		Release|Default = Release|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{845C388E-C2A7-482F-88A0-6DD86FEEA4D6}.Debug|Default.ActiveCfg = Debug
+		{845C388E-C2A7-482F-88A0-6DD86FEEA4D6}.Debug|Default.Build.0 = Debug
+		{845C388E-C2A7-482F-88A0-6DD86FEEA4D6}.Release|Default.ActiveCfg = Release
+		{845C388E-C2A7-482F-88A0-6DD86FEEA4D6}.Release|Default.Build.0 = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BF6D2E73-7C53-4ABC-97CD-0A28A7BBA544}
+	EndGlobalSection
+EndGlobal
