@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="CoreDBContext.cs" />
     <Compile Include="DbContextExtensions.cs" />
+    <Compile Include="DeviceDetailService.cs" />
     <Compile Include="DeviceInfoService.cs" />
     <Compile Include="TuningRecordService.cs" />
     <Compile Include="SysConfigService.cs" />

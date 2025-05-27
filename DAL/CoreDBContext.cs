@@ -25,8 +25,6 @@ namespace DAL
 
         public DbSet<Menu> Menu { get; set; }
 
-        public DbSet<Product> Product { get; set; }
-
         public DbSet<RoleMenu> RoleMenu { get; set; }
 
         public DbSet<SysConfig> SysConfig { get; set; }

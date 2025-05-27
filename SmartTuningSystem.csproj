@@ -126,6 +126,9 @@
     <Compile Include="View\Developing.xaml.cs">
       <DependentUpon>Developing.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\SmartTuningView.xaml.cs">
+      <DependentUpon>SmartTuningView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\MenuView.xaml.cs">
       <DependentUpon>MenuView.xaml</DependentUpon>
     </Compile>
@@ -186,6 +189,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\Developing.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\SmartTuningView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

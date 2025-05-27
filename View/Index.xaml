@@ -178,7 +178,7 @@
                             </StackPanel>
                         </StackPanel>-->
                     </TabItem>
-                    <TabItem Header="机台列表">
+                    <TabItem Header="机台产品列表">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -200,7 +200,8 @@
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="时间" Binding="{Binding CreateTime,StringFormat=yyyy-MM-dd HH:mm:ss}"/>
                                     <DataGridTextColumn Header="机台号" Binding="{Binding DeviceName}"/>
-                                    <DataGridTextColumn Header="IP地址" Binding="{Binding IpAddress}" Width="*"/>
+                                    <DataGridTextColumn Header="IP地址" Binding="{Binding IpAddress}" />
+                                    <DataGridTextColumn Header="产品品名" Binding="{Binding ProductName}" Width="*"/>
                                 </DataGrid.Columns>
                             </DataGrid>
 
@@ -212,7 +213,7 @@
                             </StackPanel>
                         </Grid>
                     </TabItem>
-                    <TabItem Header="产品列表">
+                    <TabItem Header="机台参数列表">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -233,8 +234,9 @@
                                       ItemsSource="{Binding}" IsReadOnly="True">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="时间" Binding="{Binding CreateTime,StringFormat=yyyy-MM-dd HH:mm:ss}"/>
-                                    <DataGridTextColumn Header="用户" Binding="{Binding DeviceName}"/>
-                                    <DataGridTextColumn Header="产品" Binding="{Binding IpAddress}" Width="*"/>
+                                    <DataGridTextColumn Header="点号" Binding="{Binding PointName}"/>
+                                    <DataGridTextColumn Header="夹序号（槽位）" Binding="{Binding PointPos}"/>
+                                    <DataGridTextColumn Header="参数地址" Binding="{Binding PointAddress}" Width="*"/>
                                 </DataGrid.Columns>
                             </DataGrid>
 

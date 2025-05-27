@@ -8,25 +8,25 @@ namespace BLL
     {
         public readonly DeviceInfoService DeviceInfoService = new DeviceInfoService();
 
-        //public void AddLog(Log log)
-        //{
-        //    LogService.InsertLog(log);
-        //}
+        public int AddDevice(DeviceInfo device)
+        {
+            return DeviceInfoService.InsertDevice(device);
+        }
 
-        //public List<Log> GetLogByDate(DateTime startDate, DateTime endDate)
-        //{
-        //    return LogService.SelectLog(startDate, endDate);
-        //}
+        public void ModifyDevice(DeviceInfo device)
+        {
+            DeviceInfoService.UpdateDevice(device);
+        }
 
-        //public List<Log> GetLogBySql(string strSql)
-        //{
-        //    return LogService.SqlStrQueryLog(strSql);
-        //}
+        public void RemoveDevice(DeviceInfo device)
+        {
+            DeviceInfoService.LogicDeleteDevice(device);
+        }
 
-        //public static List<T> QueryBySql<T>(string strSql) where T : class
-        //{
-        //    return DbContextExtensions.CommSqlStrQuery<T>(strSql);
-        //}
+        public void DeleteMenu(int id)
+        {
+            DeviceInfoService.DeleteDevice(id);
+        }
 
         public (List<DeviceInfo>, int) GetPagedDeviceInfo(string keyword, int pageIndex, int pageSize)
         {

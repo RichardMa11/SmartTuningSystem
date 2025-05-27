@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using BLL;
@@ -22,6 +23,7 @@ namespace SmartTuningSystem.View
         private int _pageSize = 20;
         public readonly LogManager LogManager = new LogManager();
         public readonly DeviceInfoManager DeviceInfoManager = new DeviceInfoManager();
+        public readonly DeviceDetailManager DeviceDetailManager = new DeviceDetailManager();
         public readonly UserManager UserManager = new UserManager();
         public Index()
         {
@@ -53,7 +55,9 @@ namespace SmartTuningSystem.View
             lblUserCount.Content = LogManager.QueryBySql<User>(@"select * from Users with(nolock) where IsValid=1 ").Count;
             lblRoleCount.Content = LogManager.QueryBySql<Role>(@"select * from Roles with(nolock) where IsValid=1 ").Count;
             lblMenuCount.Content = LogManager.QueryBySql<Menu>(@"select * from Menus with(nolock) where IsValid=1 ").Count;
-            lblDeviceCount.Content = LogManager.QueryBySql<DeviceInfo>(@"select * from DeviceInfo with(nolock) where IsValid=1").Count;
+            lblDeviceCount.Content = LogManager
+                .QueryBySql<DeviceInfo>(@"select * from DeviceInfo with(nolock) where IsValid=1")
+                .Select(t => t.DeviceName).Distinct().Count();
         }
 
         //private async void LoadDataAsync()
@@ -152,7 +156,7 @@ namespace SmartTuningSystem.View
 
         #endregion
 
-        #region 机台列表
+        #region 机台产品列表
 
         private int _currentDevPage = 1;
         // 事件处理
@@ -193,7 +197,7 @@ namespace SmartTuningSystem.View
 
         #endregion
 
-        #region 产品列表
+        #region 机台参数列表
 
         private int _currentProdPage = 1;
         // 事件处理
@@ -203,7 +207,7 @@ namespace SmartTuningSystem.View
         private void LoadProdData()
         {
             // 产品列表
-            var (data, total) = DeviceInfoManager.GetPagedDeviceInfo(txtSearchProduct.Text, _currentProdPage, _pageSize);
+            var (data, total) = DeviceDetailManager.GetPagedDeviceDetail(txtSearchProduct.Text, _currentProdPage, _pageSize);
 
             dgProductLogs.ItemsSource = data;
             UpdatePagingProdUI(total);

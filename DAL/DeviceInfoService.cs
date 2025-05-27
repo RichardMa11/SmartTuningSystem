@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Model;
 
@@ -6,74 +7,73 @@ namespace DAL
 {
     public class DeviceInfoService
     {
-        //public int InsertLog(Log log)
-        //{
-        //    Log tmp;
-        //    using (CoreDbContext context = new CoreDbContext())
-        //    {
-        //        //加入数据库
-        //        var timeTmp = DateTime.Now;
-        //        tmp = context.Logs.Add(new Log
-        //        {
-        //            LogStr = log.LogStr,
-        //            LogType = log.LogType,
-        //            CreateName = log.CreateName,
-        //            CreateNo = log.CreateNo,
-        //            CreateTime = timeTmp,
-        //            UpdateName = log.CreateName,
-        //            UpdateNo = log.CreateNo,
-        //            UpdateTime = timeTmp,
-        //            IsValid = true
-        //        });
+        public int InsertDevice(DeviceInfo device)
+        {
+            DeviceInfo tmp;
+            using (CoreDbContext context = new CoreDbContext())
+            {
+                //加入数据库
+                var timeTmp = DateTime.Now;
+                tmp = context.DeviceInfo.Add(new DeviceInfo
+                {
+                    DeviceName = device.DeviceName,
+                    IpAddress = device.IpAddress,
+                    ProductName = device.ProductName,
+                    CreateName = device.CreateName,
+                    CreateNo = device.CreateNo,
+                    CreateTime = timeTmp,
+                    UpdateName = device.CreateName,
+                    UpdateNo = device.CreateNo,
+                    UpdateTime = timeTmp,
+                    IsValid = true
+                });
 
-        //        context.SaveChanges();
-        //    }
+                context.SaveChanges();
+            }
 
-        //    return tmp.Id;
-        //}
+            return tmp.Id;
+        }
 
-        //public void UpdateLog(Log log)
-        //{
-        //    using (CoreDbContext context = new CoreDbContext())
-        //    {
-        //        var model = context.Logs.Single(c => c.Id == log.Id);
+        public void UpdateDevice(DeviceInfo device)
+        {
+            using (CoreDbContext context = new CoreDbContext())
+            {
+                var model = context.DeviceInfo.Single(c => c.Id == device.Id);
+                model.DeviceName = device.DeviceName;
+                model.IpAddress = device.IpAddress;
+                model.ProductName = device.ProductName;
+                model.UpdateName = device.UpdateName;
+                model.UpdateNo = device.UpdateNo;
+                model.UpdateTime = DateTime.Now;
 
-        //        context.SaveChanges();
-        //    }
-        //}
+                context.SaveChanges();
+            }
+        }
 
-        //public void DeleteLog(int id)
-        //{
-        //    using (CoreDbContext context = new CoreDbContext())
-        //    {
-        //        var log = context.Logs.FirstOrDefault(c => c.Id == id);
-        //        if (log == null) return;
-        //        context.Logs.Remove(log);
-        //        context.SaveChanges();
-        //    }
-        //}
+        public void DeleteDevice(int id)
+        {
+            using (CoreDbContext context = new CoreDbContext())
+            {
+                var device = context.DeviceInfo.FirstOrDefault(c => c.Id == id);
+                if (device == null) return;
+                context.DeviceInfo.Remove(device);
+                context.SaveChanges();
+            }
+        }
 
-        //public List<Log> SelectLog(DateTime startDate, DateTime endDate)
-        //{
-        //    List<Log> logs;
-        //    using (CoreDbContext context = new CoreDbContext())
-        //    {
-        //        logs = context.Logs.Where(e => e.CreateTime >= startDate && e.CreateTime <= endDate && e.IsValid).ToList();
-        //    }
+        public void LogicDeleteDevice(DeviceInfo device)
+        {
+            using (CoreDbContext context = new CoreDbContext())
+            {
+                var model = context.DeviceInfo.Single(c => c.Id == device.Id);
+                model.DelName = device.DelName;
+                model.DelNo = device.DelNo;
+                model.DelTime = DateTime.Now;
+                model.IsValid = false;
 
-        //    return logs;
-        //}
-
-        //public List<Log> SqlStrQueryLog(string strSql)
-        //{
-        //    List<Log> logs;
-        //    using (CoreDbContext context = new CoreDbContext())
-        //    {
-        //        logs = context.Logs.SqlQuery(strSql).ToList();
-        //    }
-
-        //    return logs;
-        //}
+                context.SaveChanges();
+            }
+        }
 
         public (List<DeviceInfo>, int) QueryPagedDeviceInfo(string keyword, int pageIndex, int pageSize)
         {
@@ -84,7 +84,8 @@ namespace DAL
                 if (!string.IsNullOrEmpty(keyword))
                     query = query.Where(x =>
                         x.DeviceName.Contains(keyword) ||
-                        x.IpAddress.Contains(keyword));
+                        x.IpAddress.Contains(keyword) ||
+                        x.ProductName.Contains(keyword));
 
                 // 分页处理
                 int total = query.Count();

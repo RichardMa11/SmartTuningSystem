@@ -45,7 +45,6 @@
     <Compile Include="CommEntity.cs" />
     <Compile Include="UserMenu.cs" />
     <Compile Include="TuningRecord.cs" />
-    <Compile Include="Product.cs" />
     <Compile Include="DeviceInfoDetail.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
