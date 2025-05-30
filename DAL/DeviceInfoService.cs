@@ -80,6 +80,7 @@ namespace DAL
             using (var db = new CoreDbContext())
             {
                 var query = db.DeviceInfo.AsQueryable();
+                query = query.Where(x => x.IsValid);
 
                 if (!string.IsNullOrEmpty(keyword))
                     query = query.Where(x =>
@@ -98,5 +99,39 @@ namespace DAL
             }
         }
 
+        public DeviceInfo SelectDeviceById(int deviceId)
+        {
+            DeviceInfo device;
+            using (CoreDbContext context = new CoreDbContext())
+            {
+                device = context.DeviceInfo.First(c => c.Id == deviceId && c.IsValid);
+            }
+
+            return device;
+        }
+
+        public List<DeviceInfo> SelectDevice(int id = 0, string device = "", string ip = "", string product = "")
+        {
+            List<DeviceInfo> devices;
+            using (CoreDbContext context = new CoreDbContext())
+            {
+                var query = context.DeviceInfo.AsQueryable();
+                if (id != 0)
+                    query = query.Where(x => x.Id == id);
+
+                if (!string.IsNullOrEmpty(device))
+                    query = query.Where(x => x.DeviceName == device);
+
+                if (!string.IsNullOrEmpty(ip))
+                    query = query.Where(x => x.IpAddress == ip);
+
+                if (!string.IsNullOrEmpty(product))
+                    query = query.Where(x => x.ProductName == product);
+
+                devices = query.OrderByDescending(x => x.DeviceName).ToList();
+            }
+
+            return devices;
+        }
     }
 }

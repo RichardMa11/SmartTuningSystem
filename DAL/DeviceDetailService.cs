@@ -78,11 +78,26 @@ namespace DAL
             }
         }
 
-        public (List<DeviceInfoDetail>, int) QueryPagedDeviceDetail(string keyword, int pageIndex, int pageSize)
+        public DeviceInfoDetail SelectDeviceDetailById(int detailId)
+        {
+            DeviceInfoDetail deviceDetail;
+            using (CoreDbContext context = new CoreDbContext())
+            {
+                deviceDetail = context.DeviceInfoDetail.First(c => c.Id == detailId && c.IsValid);
+            }
+
+            return deviceDetail;
+        }
+
+        public (List<DeviceInfoDetail>, int) QueryPagedDeviceDetail(string keyword, int pageIndex, int pageSize, int deviceId = 0)
         {
             using (var db = new CoreDbContext())
             {
                 var query = db.DeviceInfoDetail.AsQueryable();
+                query = query.Where(x => x.IsValid);
+
+                if (deviceId != 0)
+                    query = query.Where(x => x.DeviceId == deviceId);
 
                 if (!string.IsNullOrEmpty(keyword))
                     query = query.Where(x =>

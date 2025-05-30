@@ -16,4 +16,12 @@ namespace Model
         //产品品名
         public string ProductName { get; set; }
     }
+
+    public class DeviceModel
+    {
+        //机台号
+        public string DeviceName { get; set; }
+
+        public string IpAddress { get; set; }
+    }
 }

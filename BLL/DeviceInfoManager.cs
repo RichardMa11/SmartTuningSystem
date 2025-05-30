@@ -32,5 +32,15 @@ namespace BLL
         {
             return DeviceInfoService.QueryPagedDeviceInfo(keyword, pageIndex, pageSize);
         }
+
+        public DeviceInfo GetDeviceById(int deviceId)
+        {
+            return DeviceInfoService.SelectDeviceById(deviceId);
+        }
+
+        public List<DeviceInfo> GetDeviceByParam(int id = 0, string device = "", string ip = "", string product = "")
+        {
+            return DeviceInfoService.SelectDevice(id, device, ip, product);
+        }
     }
 }

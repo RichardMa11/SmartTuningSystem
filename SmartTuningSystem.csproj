@@ -126,6 +126,9 @@
     <Compile Include="View\Developing.xaml.cs">
       <DependentUpon>Developing.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\BasicDataView.xaml.cs">
+      <DependentUpon>BasicDataView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\SmartTuningView.xaml.cs">
       <DependentUpon>SmartTuningView.xaml</DependentUpon>
     </Compile>
@@ -149,6 +152,12 @@
     </Compile>
     <Compile Include="View\Welcome.xaml.cs">
       <DependentUpon>Welcome.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Windows\AddDeviceDetail.xaml.cs">
+      <DependentUpon>AddDeviceDetail.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Windows\AddDevice.xaml.cs">
+      <DependentUpon>AddDevice.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Windows\AddMenu.xaml.cs">
       <DependentUpon>AddMenu.xaml</DependentUpon>
@@ -189,6 +198,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\Developing.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\BasicDataView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -237,6 +250,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\Welcome.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Windows\AddDeviceDetail.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Windows\AddDevice.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

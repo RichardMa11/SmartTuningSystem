@@ -14,7 +14,7 @@ using Menu = Model.Menu;
 namespace SmartTuningSystem.View.Windows
 {
     /// <summary>
-    /// AddUser.xaml 的交互逻辑
+    /// AddMenu.xaml 的交互逻辑
     /// </summary>
     public partial class AddMenu : Window
     {

@@ -28,9 +28,15 @@ namespace BLL
             DeviceDetailService.DeleteDetail(id);
         }
 
-        public (List<DeviceInfoDetail>, int) GetPagedDeviceDetail(string keyword, int pageIndex, int pageSize)
+        public DeviceInfoDetail GetDeviceDetailById(int detailId)
         {
-            return DeviceDetailService.QueryPagedDeviceDetail(keyword, pageIndex, pageSize);
+            return DeviceDetailService.SelectDeviceDetailById(detailId);
+        }
+
+
+        public (List<DeviceInfoDetail>, int) GetPagedDeviceDetail(string keyword, int pageIndex, int pageSize, int deviceId = 0)
+        {
+            return DeviceDetailService.QueryPagedDeviceDetail(keyword, pageIndex, pageSize, deviceId);
         }
     }
 }
