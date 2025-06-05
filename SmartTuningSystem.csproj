@@ -109,6 +109,7 @@
     </Compile>
     <Compile Include="Utils\BaseMainWindow.cs" />
     <Compile Include="Utils\BaseUIModel.cs" />
+    <Compile Include="Utils\CNCCommunicationHelps.cs" />
     <Compile Include="Utils\LogHelps.cs" />
     <Compile Include="Utils\PositiveIntegerTextBox.cs" />
     <Compile Include="Utils\ProcessManager.cs" />
@@ -123,6 +124,9 @@
     <Compile Include="Utils\PagerUtils.cs" />
     <Compile Include="Utils\PhoneNumberCommon.cs" />
     <Compile Include="Utils\StyleHelper.cs" />
+    <Compile Include="View\ManualTuningView.xaml.cs">
+      <DependentUpon>ManualTuningView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Developing.xaml.cs">
       <DependentUpon>Developing.xaml</DependentUpon>
     </Compile>
@@ -194,6 +198,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MyControls\MyPager_ZHHans.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\ManualTuningView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

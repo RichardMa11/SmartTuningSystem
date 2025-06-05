@@ -47,6 +47,9 @@
                                       CanUserAddRows="False"
                                       CanUserSortColumns="False"
                                       AutoGenerateColumns="False"
+                                      HorizontalScrollBarVisibility="Auto"
+                                      VerticalScrollBarVisibility="Auto"
+                                      ColumnHeaderHeight="40"
                                       pu:DataGridHelper.ColumnHorizontalContentAlignment="Center" 
                                       pu:DataGridHelper.HeaderPadding="5,0"
                                       pu:DataGridHelper.HeaderMinHeight="40"
@@ -54,14 +57,22 @@
                                       pu:DataGridHelper.CellPadding="5,0"
                                       pu:DataGridHelper.HoverBackground="{DynamicResource DataGridHoverColor}" 
                                       pu:DataGridHelper.SelectedBackground="{DynamicResource DataGridSelectedColor}">
+                        <!-- 样式定义 -->
+                        <DataGrid.Resources>
+                            <Style x:Key="EllipsisText" TargetType="TextBlock">
+                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                <Setter Property="ToolTip" Value="{Binding Text, RelativeSource={RelativeSource Self}}"/>
+                            </Style>
+                        </DataGrid.Resources>
+
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="时间" Binding="{Binding CreateTime,StringFormat=yyyy-MM-dd HH:mm:ss}"/>
                             <DataGridTextColumn Header="用户名" Binding="{Binding CreateName}"/>
                             <DataGridTextColumn Header="工号" Binding="{Binding CreateNo}"/>
                             <DataGridTextColumn Header="机台" Binding="{Binding DeviceName}"/>
                             <DataGridTextColumn Header="产品" Binding="{Binding ProductName}"/>
-                            <DataGridTextColumn Header="发送前参数" Binding="{Binding BefParam}" Width="*"/>
-                            <DataGridTextColumn Header="发送参数" Binding="{Binding SendStr}" Width="*"/>
+                            <DataGridTextColumn Header="发送前参数" Binding="{Binding BefParam}" Width="*" ElementStyle="{StaticResource EllipsisText}"/>
+                            <DataGridTextColumn Header="发送参数" Binding="{Binding SendStr}" Width="*" ElementStyle="{StaticResource EllipsisText}"/>
                         </DataGrid.Columns>
                     </DataGrid>
 

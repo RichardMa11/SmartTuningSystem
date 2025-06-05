@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -131,19 +132,19 @@ namespace SmartTuningSystem.View
 
         private void BtnSelectFile_Click(object sender, RoutedEventArgs e)
         {
-            var openFileDialog = new OpenFileDialog
-            {
-                Filter = "Excel文件|*.xls;*.xlsx|所有文件|*.*",
-                Title = "选择Excel文件",
-                CheckFileExists = true,
-                Multiselect = false
-            };
+            //var openFileDialog = new OpenFileDialog
+            //{
+            //    Filter = "Excel文件|*.xls;*.xlsx|所有文件|*.*",
+            //    Title = "选择Excel文件",
+            //    CheckFileExists = true,
+            //    Multiselect = false
+            //};
 
-            if (openFileDialog.ShowDialog() == true)
-            {
-                selectedFilePath = openFileDialog.FileName;
-                txtFilePath.Text = selectedFilePath;
-            }
+            //if (openFileDialog.ShowDialog() == true)
+            //{
+            //    selectedFilePath = openFileDialog.FileName;
+            //    txtFilePath.Text = selectedFilePath;
+            //}
         }
 
         private void BtnParse_Click(object sender, RoutedEventArgs e)
@@ -206,65 +207,100 @@ namespace SmartTuningSystem.View
             //MessageBox.Show($"准备下发 {dataView.Table.Rows.Count} 条数据");
         }
 
+        private void SingleCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            var currentCheckBox = (CheckBox)sender;
+            var currentItem = (UIModel)currentCheckBox.DataContext;
+
+
+        }
+
+        //搜索
+        private void txtSearchTextParam_KeyDown(object sender, KeyEventArgs e)
+        {
+
+        }
+
+        private void btnRefParam_Click(object sender, RoutedEventArgs e)
+        {
+            var currentCheckBox = (CheckBox)sender;
+            var currentItem = (UIModel)currentCheckBox.DataContext;
+
+
+        }
+
+
+        private void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            var currentCheckBox = (CheckBox)sender;
+            var currentItem = (UIModel)currentCheckBox.DataContext;
+
+
+        }
+
+        //页码更改事件
+        private void gPagerParam_CurrentIndexChanged(object sender, Panuon.UI.Silver.Core.CurrentIndexChangedEventArgs e)
+        {
+        }
         /// <summary>
         /// 加载分页数据
         /// </summary>
         private async void UpdateGridAsync()
         {
-        //    string searchText = "";//按名称搜索
+            //    string searchText = "";//按名称搜索
 
-        //    ShowLoadingPanel();//显示Loading
-        //    if (running) return;
-        //    running = true;
+            //    ShowLoadingPanel();//显示Loading
+            //    if (running) return;
+            //    running = true;
 
-        //    Data.Clear();
-        //    List<Model.Menu> models = new List<Model.Menu>();
+            //    Data.Clear();
+            //    List<Model.Menu> models = new List<Model.Menu>();
 
-        //    await Task.Run(() =>
-        //    {
-        //        List<Model.Menu> menus = MenuManager.GetAllMenu();
-        //        if (searchText.NotEmpty())
-        //            menus = menus.Where(c => c.PageName.Contains(searchText) || c.PagePath.Contains(searchText)).ToList();
+            //    await Task.Run(() =>
+            //    {
+            //        List<Model.Menu> menus = MenuManager.GetAllMenu();
+            //        if (searchText.NotEmpty())
+            //            menus = menus.Where(c => c.PageName.Contains(searchText) || c.PagePath.Contains(searchText)).ToList();
 
-        //        dataCount = menus.Count();
-        //        //
-        //        //页码
-        //        //
-        //        pagerCount = PagerUtils.GetPagerCount(dataCount, pageSize);
-        //        if (currPage > pagerCount) currPage = pagerCount;
-        //        //更新页码
-        //        UiGlobal.RunUiAction(() =>
-        //        {
-        //            gPager.CurrentIndex = currPage;
-        //            gPager.TotalIndex = pagerCount;
-        //        });
+            //        dataCount = menus.Count();
+            //        //
+            //        //页码
+            //        //
+            //        pagerCount = PagerUtils.GetPagerCount(dataCount, pageSize);
+            //        if (currPage > pagerCount) currPage = pagerCount;
+            //        //更新页码
+            //        UiGlobal.RunUiAction(() =>
+            //        {
+            //            gPager.CurrentIndex = currPage;
+            //            gPager.TotalIndex = pagerCount;
+            //        });
 
-        //        //生成分页数据
-        //        models = menus.OrderBy(c => c.Order).ThenByDescending(c => c.CreateTime).Skip(pageSize * (currPage - 1)).Take(pageSize).ToList();
-        //    });
+            //        //生成分页数据
+            //        models = menus.OrderBy(c => c.Order).ThenByDescending(c => c.CreateTime).Skip(pageSize * (currPage - 1)).Take(pageSize).ToList();
+            //    });
 
-        //    await Task.Delay(300);
-        //    bNoData.Visibility = models.Count() == 0 ? Visibility.Visible : Visibility.Collapsed;
-        //    foreach (var item in models)
-        //    {
-        //        UIModel _model = new UIModel()
-        //        {
-        //            CreateYear = item.CreateTime.Year,
-        //            CreateTime = item.CreateTime.ToString("MM-dd HH:mm"),
-        //            Id = item.Id,
-        //            PageName = item.PageName,
-        //            PagePath = item.PagePath,
-        //            Order = item.Order,
-        //            CreateName = item.CreateName,
-        //            CreateNo = item.CreateNo,
-        //            Icon = FontAwesomeCommon.GetUnicode(item.Icon)
-        //        };
+            //    await Task.Delay(300);
+            //    bNoData.Visibility = models.Count() == 0 ? Visibility.Visible : Visibility.Collapsed;
+            //    foreach (var item in models)
+            //    {
+            //        UIModel _model = new UIModel()
+            //        {
+            //            CreateYear = item.CreateTime.Year,
+            //            CreateTime = item.CreateTime.ToString("MM-dd HH:mm"),
+            //            Id = item.Id,
+            //            PageName = item.PageName,
+            //            PagePath = item.PagePath,
+            //            Order = item.Order,
+            //            CreateName = item.CreateName,
+            //            CreateNo = item.CreateNo,
+            //            Icon = FontAwesomeCommon.GetUnicode(item.Icon)
+            //        };
 
-        //        Data.Add(_model);
-        //    }
+            //        Data.Add(_model);
+            //    }
 
-        //    HideLoadingPanel();
-        //    running = false;
+            //    HideLoadingPanel();
+            //    running = false;
         }
 
         #region Grid
@@ -464,15 +500,13 @@ namespace SmartTuningSystem.View
 
     public class NumericValidationRule : ValidationRule
     {
-        public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
+        public override ValidationResult Validate(object value, CultureInfo culture)
         {
-            if (value == null || value.ToString() == "---")
-                return ValidationResult.ValidResult;
-
-            if (double.TryParse(value.ToString(), out _))
-                return ValidationResult.ValidResult;
-
-            return new ValidationResult(false, "必须输入数字或---");
+            GlobalData.Instance.IsDataValid = double.TryParse(value?.ToString(),
+                NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint,
+                culture, out _);
+            return GlobalData.Instance.IsDataValid ? ValidationResult.ValidResult
+                : new ValidationResult(false, "请输入有效数值（可含正负号和小数点）");
         }
     }
 }

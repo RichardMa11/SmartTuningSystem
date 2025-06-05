@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using Model.View;
 using SmartTuningSystem.View;
 
@@ -51,5 +52,18 @@ namespace SmartTuningSystem.Global
         /// 是否已经登录
         /// </summary>
         public static bool IsLogin = false;
+    }
+
+
+    public class GlobalData : INotifyPropertyChanged
+    {
+        public static GlobalData Instance { get; } = new GlobalData();
+        private bool _isDataValid;
+        public bool IsDataValid
+        {
+            get => _isDataValid;
+            set { _isDataValid = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsDataValid))); }
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }
