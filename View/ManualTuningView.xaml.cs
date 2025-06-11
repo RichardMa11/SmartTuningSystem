@@ -438,6 +438,8 @@ namespace SmartTuningSystem.View
             {
                 LogHelps.WriteLogToDb($@"{UserGlobal.CurrUser.UserName}设置CNC机台数据报错：机台：[{DeviceName}],机台IP：[{Ip}],
 产品品名：[{ProductName}],报错原因：{ex.Message + ex.StackTrace}", LogLevel.Error);
+                MessageBoxX.Show($@"{UserGlobal.CurrUser.UserName}设置CNC机台数据报错：机台：[{DeviceName}],机台IP：[{Ip}],
+产品品名：[{ProductName}],报错原因：{ex.Message + ex.StackTrace}", "提示");
             }
         }
 

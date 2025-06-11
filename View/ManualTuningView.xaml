@@ -75,6 +75,19 @@
                                 <EventSetter Event="PreviewMouseLeftButtonDown" Handler="Row_PreviewMouseLeftButtonDown"/>
                             </Style>
                         </DataGrid.RowStyle>-->
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Foreground" Value="White"/>
+                                        <Setter Property="Background" Value="{DynamicResource DataGridHoverColor}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                                <Setter Property="Padding" Value="5,0"/>
+                                <Setter Property="MinHeight" Value="30"/>
+                            </Style>
+                        </DataGrid.RowStyle>
+
                         <DataGrid.Columns>
                             <DataGridTemplateColumn Header="选择" Width="Auto">
                                 <DataGridTemplateColumn.CellTemplate>
@@ -180,6 +193,20 @@
                               pu:DataGridHelper.CellPadding="5,0"
                               pu:DataGridHelper.HoverBackground="{DynamicResource DataGridHoverColor}" 
                               pu:DataGridHelper.SelectedBackground="{DynamicResource DataGridSelectedColor}">
+
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Foreground" Value="White"/>
+                                        <Setter Property="Background" Value="{DynamicResource DataGridHoverColor}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                                <Setter Property="Padding" Value="5,0"/>
+                                <Setter Property="MinHeight" Value="30"/>
+                            </Style>
+                        </DataGrid.RowStyle>
+
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="点号（编号）" Width="150" Binding="{Binding PointName}" IsReadOnly="True"/>
                             <DataGridTextColumn Header="夹序号（槽位）" Width="150" Binding="{Binding PointPos}" IsReadOnly="True"/>

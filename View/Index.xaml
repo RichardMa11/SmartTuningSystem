@@ -128,7 +128,28 @@
                             <!--<ScrollViewer Grid.Row="1">                              
                             </ScrollViewer>-->
                             <DataGrid Grid.Row="1" x:Name="dgSystemLogs" AutoGenerateColumns="False" 
-                                      ItemsSource="{Binding}" IsReadOnly="True">
+                                      ItemsSource="{Binding}" IsReadOnly="True"
+                                      pu:DataGridHelper.ColumnHorizontalContentAlignment="Center" 
+                                      pu:DataGridHelper.HeaderPadding="5,0"
+                                      pu:DataGridHelper.HeaderMinHeight="40"
+                                      pu:DataGridHelper.RowMinHeight="30"
+                                      pu:DataGridHelper.CellPadding="5,0"
+                                      pu:DataGridHelper.HoverBackground="{DynamicResource DataGridHoverColor}" 
+                                      pu:DataGridHelper.SelectedBackground="{DynamicResource DataGridSelectedColor}">
+
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Foreground" Value="White"/>
+                                                <Setter Property="Background" Value="{DynamicResource DataGridHoverColor}"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                        <Setter Property="Padding" Value="5,0"/>
+                                        <Setter Property="MinHeight" Value="30"/>
+                                    </Style>
+                                </DataGrid.RowStyle>
+
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="时间" Binding="{Binding CreateTime,StringFormat=yyyy-MM-dd HH:mm:ss}"/>
                                     <DataGridTextColumn Header="级别" Binding="{Binding LogType}"/>
@@ -196,7 +217,28 @@
                             </StackPanel>
 
                             <DataGrid Grid.Row="1" x:Name="dgDeviceLogs" AutoGenerateColumns="False" 
-                                      ItemsSource="{Binding}" IsReadOnly="True">
+                                      ItemsSource="{Binding}" IsReadOnly="True"
+                                      pu:DataGridHelper.ColumnHorizontalContentAlignment="Center" 
+                                      pu:DataGridHelper.HeaderPadding="5,0"
+                                      pu:DataGridHelper.HeaderMinHeight="40"
+                                      pu:DataGridHelper.RowMinHeight="30"
+                                      pu:DataGridHelper.CellPadding="5,0"
+                                      pu:DataGridHelper.HoverBackground="{DynamicResource DataGridHoverColor}" 
+                                      pu:DataGridHelper.SelectedBackground="{DynamicResource DataGridSelectedColor}">
+
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Foreground" Value="White"/>
+                                                <Setter Property="Background" Value="{DynamicResource DataGridHoverColor}"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                        <Setter Property="Padding" Value="5,0"/>
+                                        <Setter Property="MinHeight" Value="30"/>
+                                    </Style>
+                                </DataGrid.RowStyle>
+
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="时间" Binding="{Binding CreateTime,StringFormat=yyyy-MM-dd HH:mm:ss}"/>
                                     <DataGridTextColumn Header="机台号" Binding="{Binding DeviceName}"/>
@@ -231,7 +273,28 @@
                             </StackPanel>
 
                             <DataGrid Grid.Row="1" x:Name="dgProductLogs" AutoGenerateColumns="False" 
-                                      ItemsSource="{Binding}" IsReadOnly="True">
+                                      ItemsSource="{Binding}" IsReadOnly="True"
+                                      pu:DataGridHelper.ColumnHorizontalContentAlignment="Center" 
+                                      pu:DataGridHelper.HeaderPadding="5,0"
+                                      pu:DataGridHelper.HeaderMinHeight="40"
+                                      pu:DataGridHelper.RowMinHeight="30"
+                                      pu:DataGridHelper.CellPadding="5,0"
+                                      pu:DataGridHelper.HoverBackground="{DynamicResource DataGridHoverColor}" 
+                                      pu:DataGridHelper.SelectedBackground="{DynamicResource DataGridSelectedColor}">
+
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Foreground" Value="White"/>
+                                                <Setter Property="Background" Value="{DynamicResource DataGridHoverColor}"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                        <Setter Property="Padding" Value="5,0"/>
+                                        <Setter Property="MinHeight" Value="30"/>
+                                    </Style>
+                                </DataGrid.RowStyle>
+
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="时间" Binding="{Binding CreateTime,StringFormat=yyyy-MM-dd HH:mm:ss}"/>
                                     <DataGridTextColumn Header="点号" Binding="{Binding PointName}"/>
@@ -266,7 +329,28 @@
                             </StackPanel>
 
                             <DataGrid Grid.Row="1" x:Name="dgUserLogs" AutoGenerateColumns="False" 
-                                      ItemsSource="{Binding}" IsReadOnly="True">
+                                      ItemsSource="{Binding}" IsReadOnly="True"
+                                      pu:DataGridHelper.ColumnHorizontalContentAlignment="Center" 
+                                      pu:DataGridHelper.HeaderPadding="5,0"
+                                      pu:DataGridHelper.HeaderMinHeight="40"
+                                      pu:DataGridHelper.RowMinHeight="30"
+                                      pu:DataGridHelper.CellPadding="5,0"
+                                      pu:DataGridHelper.HoverBackground="{DynamicResource DataGridHoverColor}" 
+                                      pu:DataGridHelper.SelectedBackground="{DynamicResource DataGridSelectedColor}">
+
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Foreground" Value="White"/>
+                                                <Setter Property="Background" Value="{DynamicResource DataGridHoverColor}"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                        <Setter Property="Padding" Value="5,0"/>
+                                        <Setter Property="MinHeight" Value="30"/>
+                                    </Style>
+                                </DataGrid.RowStyle>
+
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="时间" Binding="{Binding CreateTime,StringFormat=yyyy-MM-dd HH:mm:ss}"/>
                                     <DataGridTextColumn Header="用户" Binding="{Binding UserNo}"/>

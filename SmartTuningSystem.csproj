@@ -70,6 +70,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Dll\NPOI.OOXML.dll</HintPath>
     </Reference>
+    <Reference Include="NPOI.OpenXml4Net, Version=2.5.5.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Dll\NPOI.OpenXml4Net.dll</HintPath>
+    </Reference>
     <Reference Include="Panuon.UI.Silver, Version=1.1.3.4, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Dll\Panuon.UI.Silver.dll</HintPath>
@@ -90,6 +94,9 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="Xceed.Wpf.Toolkit">
+      <HintPath>Dll\Xceed.Wpf.Toolkit.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -132,6 +139,9 @@
     </Compile>
     <Compile Include="View\BasicDataView.xaml.cs">
       <DependentUpon>BasicDataView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\SmartTuningByExcelView.xaml.cs">
+      <DependentUpon>SmartTuningByExcelView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\SmartTuningView.xaml.cs">
       <DependentUpon>SmartTuningView.xaml</DependentUpon>
@@ -210,6 +220,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\BasicDataView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\SmartTuningByExcelView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

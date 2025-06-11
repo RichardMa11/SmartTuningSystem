@@ -248,7 +248,7 @@ namespace SmartTuningSystem.View
 
         private void SetUserRoleMenus(List<int> currUserPages, User user)
         {
-            foreach (var m in MenuManager.GetAllMenu().Where(c => currUserPages.Contains(c.Id)).ToList())
+            foreach (var m in MenuManager.GetAllMenu().Where(c => currUserPages.Contains(c.Id)).OrderBy(c => c.Order).ToList())
             {
                 UserGlobal.VUserRoleMenus.Add(new VUserRoleMenu
                 {

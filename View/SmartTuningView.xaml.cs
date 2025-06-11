@@ -4,13 +4,11 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using BLL;
-using Microsoft.Win32;
 using Panuon.UI.Silver;
 using SmartTuningSystem.Extensions;
 using SmartTuningSystem.Global;
@@ -22,7 +20,7 @@ using Menu = Model.Menu;
 namespace SmartTuningSystem.View
 {
     /// <summary>
-    /// PluginsMsg.xaml 的交互逻辑
+    /// SmartTuningView.xaml 的交互逻辑
     /// </summary>
     public partial class SmartTuningView : Page
     {

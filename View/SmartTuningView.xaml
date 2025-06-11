@@ -5,13 +5,14 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:pu="clr-namespace:Panuon.UI.Silver;assembly=Panuon.UI.Silver" 
       xmlns:local="clr-namespace:SmartTuningSystem.View"
+      xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
       mc:Ignorable="d" Loaded="Page_Loaded" 
       d:DesignHeight="750" d:DesignWidth="1190"
       Title="智能调机">
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="460"/>
+            <ColumnDefinition Width="630"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0">
@@ -26,6 +27,8 @@
                 <pu:GroupBoxHelper.ExtendControl>
                     <StackPanel Margin="0,0,20,0" Orientation="Horizontal">
                         <StackPanel Margin="0,0,20,0" Orientation="Horizontal">
+                            <xctk:DateTimePicker x:Name="dpInspection" Width="180" Margin="5" Format="Custom" 
+                                                 FormatString="yyyy-MM-dd HH:mm:ss" Value="{Binding InspectionTime}" Watermark="送检时间"/>
                             <TextBox  BorderBrush="White"
                                       x:Name="txtSearchText"
                                       Margin="10,2,2,2"
@@ -82,6 +85,20 @@
                               pu:DataGridHelper.CellPadding="5,0"
                               pu:DataGridHelper.HoverBackground="{DynamicResource DataGridHoverColor}" 
                               pu:DataGridHelper.SelectedBackground="{DynamicResource DataGridSelectedColor}">
+
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Foreground" Value="White"/>
+                                        <Setter Property="Background" Value="{DynamicResource DataGridHoverColor}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                                <Setter Property="Padding" Value="5,0"/>
+                                <Setter Property="MinHeight" Value="30"/>
+                            </Style>
+                        </DataGrid.RowStyle>
+
                         <!--<DataGrid.RowStyle>
                             <Style TargetType="DataGridRow">
                                 <EventSetter Event="PreviewMouseLeftButtonDown" Handler="Row_PreviewMouseLeftButtonDown"/>
@@ -192,6 +209,20 @@
                               pu:DataGridHelper.CellPadding="5,0"
                               pu:DataGridHelper.HoverBackground="{DynamicResource DataGridHoverColor}" 
                               pu:DataGridHelper.SelectedBackground="{DynamicResource DataGridSelectedColor}">
+
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Foreground" Value="White"/>
+                                        <Setter Property="Background" Value="{DynamicResource DataGridHoverColor}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                                <Setter Property="Padding" Value="5,0"/>
+                                <Setter Property="MinHeight" Value="30"/>
+                            </Style>
+                        </DataGrid.RowStyle>
+
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Dim. No." Width="100"  Binding="{Binding DimNo}"/>
                             <DataGridTextColumn Header="Nominal Dim." Width="100" Binding="{Binding NominalDim}"/>
