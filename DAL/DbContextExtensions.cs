@@ -33,5 +33,16 @@ namespace DAL
 
             return list;
         }
+
+        public static int CommSqlStrExecute(string strSql)
+        {
+            int i = 0;
+            using (CoreDbContext context = new CoreDbContext())
+            {
+                i = context.Database.ExecuteSqlCommand(strSql);
+            }
+
+            return i;
+        }
     }
 }

@@ -29,6 +29,11 @@ namespace BLL
             return DbContextExtensions.CommSqlStrQuery<T>(strSql);
         }
 
+        public static int ExecuteBySql(string strSql)
+        {
+            return DbContextExtensions.CommSqlStrExecute(strSql);
+        }
+
         public (List<Log>, int) GetPagedLogs(DateTime? startTime, DateTime? endTime, int? logType, string keyword, int pageIndex, int pageSize)
         {
             return LogService.QueryPagedLogs(startTime, endTime, logType, keyword, pageIndex, pageSize);

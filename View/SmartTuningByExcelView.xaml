@@ -125,7 +125,7 @@
                                 </Binding>
                             </DataGridTextColumn.Binding>
                         </DataGridTextColumn>
-                        <DataGridTextColumn Header="变量当前值" Width="80" Binding="{Binding ParamCurrValue}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="变量当前值" Width="100" Binding="{Binding ParamCurrValue}" ElementStyle="{StaticResource EllipsisText}" IsReadOnly="True"/>
                     </DataGrid.Columns>
                 </DataGrid>
 

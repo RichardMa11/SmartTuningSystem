@@ -105,27 +105,28 @@ namespace SmartTuningSystem.View.Windows
             var deviceModel = LogManager
                 .QueryBySql<DeviceModel>(
                     @"select distinct DeviceName,IpAddress from DeviceInfo with(nolock) where IsValid=1 ").ToList();
-
-            //验证机台、IP唯一
-            if (deviceModel.Any(c => c.DeviceName == name && c.IpAddress != ip))
-            {
-                //存在
-                MessageBoxX.Show($"存在机台编号[{name}]并且IP不为[{ip}]的数据，机台和ip必须唯一", "数据存在");
-                return;
-            }
-
-            if (deviceModel.Any(c => c.DeviceName != name && c.IpAddress == ip))
-            {
-                //存在
-                MessageBoxX.Show($"存在IP为[{ip}]并且机台编号不为[{name}]的数据，机台和ip必须唯一", "数据存在");
-                return;
-            }
-
             #endregion
 
             if (IsEdit)
             {
                 #region 验证
+
+                DeviceInfo device = DeviceInfoManager.GetDeviceById(editId);
+                deviceModel = deviceModel.FindAll(c => c.DeviceName != device.DeviceName || c.IpAddress != device.IpAddress).ToList();
+                //验证机台、IP唯一
+                if (deviceModel.Any(c => c.DeviceName == name && c.IpAddress != ip))
+                {
+                    //存在
+                    MessageBoxX.Show($"存在机台编号[{name}]并且IP不为[{ip}]的数据，机台和ip必须唯一", "数据存在");
+                    return;
+                }
+
+                if (deviceModel.Any(c => c.DeviceName != name && c.IpAddress == ip))
+                {
+                    //存在
+                    MessageBoxX.Show($"存在IP为[{ip}]并且机台编号不为[{name}]的数据，机台和ip必须唯一", "数据存在");
+                    return;
+                }
 
                 //机台、IP、产品品名唯一
                 var deviceInfos = DeviceInfoManager.GetDeviceByParam(device: name, ip: ip, product: product);
@@ -139,6 +140,9 @@ namespace SmartTuningSystem.View.Windows
                 #endregion
 
                 #region  编辑状态
+
+                //更新所有这个机台、IP
+                LogManager.ExecuteBySql($@"Update DeviceInfo set DeviceName='{name}' ,IpAddress='{ip}' where DeviceName='{device.DeviceName}' and IpAddress='{device.IpAddress}' and IsValid=1");
 
                 DeviceInfoManager.ModifyDevice(new DeviceInfo
                 {
@@ -159,6 +163,21 @@ namespace SmartTuningSystem.View.Windows
             else
             {
                 #region 验证
+
+                //验证机台、IP唯一
+                if (deviceModel.Any(c => c.DeviceName == name && c.IpAddress != ip))
+                {
+                    //存在
+                    MessageBoxX.Show($"存在机台编号[{name}]并且IP不为[{ip}]的数据，机台和ip必须唯一", "数据存在");
+                    return;
+                }
+
+                if (deviceModel.Any(c => c.DeviceName != name && c.IpAddress == ip))
+                {
+                    //存在
+                    MessageBoxX.Show($"存在IP为[{ip}]并且机台编号不为[{name}]的数据，机台和ip必须唯一", "数据存在");
+                    return;
+                }
 
                 //机台、IP、产品品名唯一
                 if (DeviceInfoManager.GetDeviceByParam(device: name, ip: ip, product: product).Count != 0)

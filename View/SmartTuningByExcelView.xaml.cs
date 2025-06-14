@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -75,12 +76,21 @@ namespace SmartTuningSystem.View
             }
 
             //变量当前值
-            public double ParamCurrValue { get; set; }
+            public string ParamCurrValue { get; set; }
             public Brush RowColor { get; set; }
             public void CalculateFields()
             {
-                Deviation = MeasureValue - NominalDim;
+                USL = NominalDim + TolMax;
+                LSL = NominalDim - TolMin;
                 Tolerance = (USL - LSL) * 0.5 * 0.6;
+
+                if (MeasureValue == 0)
+                {
+                    RowColor = Brushes.Gainsboro;
+                    return;
+                }
+
+                Deviation = MeasureValue - NominalDim;
                 var qualified = "";
                 if (Deviation > 0)
                 {
@@ -182,6 +192,7 @@ namespace SmartTuningSystem.View
 
                 Data.Clear();
                 List<UIModel> dataList = new List<UIModel>();
+                Dictionary<int, string> devicePointPosList = new Dictionary<int, string>();
                 await Task.Run(() =>
                 {
                     //解析Excel，生成调机报告
@@ -189,41 +200,44 @@ namespace SmartTuningSystem.View
                     {
                         IWorkbook workbook = new XSSFWorkbook(fs);
                         ISheet sheet = workbook.GetSheetAt(0);
-
-                        for (int i = 1; i <= sheet.LastRowNum; i++)
-                        {
-                            IRow row = sheet.GetRow(i);
-                            if (row == null) continue;
-
-                            _productName = row.GetCell(0)?.ToString();
-                            break;
-                        }
+                        _productName = sheet.GetRow(1).GetCell(1)?.ToString();
 
                         _deviceInfoModels = LogManager.QueryBySql<DeviceInfoModel>($@"   select [DeviceName],[IpAddress],[ProductName],[PointName],[PointPos],[PointAddress] FROM [SmartTuningSystemDB].[dbo].[DeviceInfo] dev with(nolock) 
 left join [SmartTuningSystemDB].[dbo].[DeviceInfoDetail] det with(nolock) on dev.Id=det.DeviceId and det.IsValid=1
 where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
 
-                        for (int i = 1; i <= sheet.LastRowNum; i++)
+                        //devicePointPosList.AddRange(from r in sheet.GetRow(5).Cells where !string.IsNullOrEmpty(r.ToString()) select r.ToString());
+                        foreach (var r in sheet.GetRow(5).Cells.Where(r => !string.IsNullOrEmpty(r.ToString())))
+                        {
+                            devicePointPosList.Add(r.ColumnIndex, r.ToString());
+                        }
+
+                        for (int i = 6; i <= sheet.LastRowNum; i++)
                         {
                             IRow row = sheet.GetRow(i);
                             if (row == null) continue;
+                            if (string.IsNullOrEmpty(row.GetCell(0)?.ToString())) break;
 
-                            var temp = _deviceInfoModels.First(x => x.DeviceName == row.GetCell(0)?.ToString() &&
-                                                           x.PointName == row.GetCell(0)?.ToString()
-                                                           && x.PointPos == row.GetCell(0)?.ToString());
-                            var data = new UIModel
+                            foreach (var d in devicePointPosList)
                             {
-                                DeviceName = row.GetCell(0)?.ToString(),
-                                NominalDim = GetDoubleValue(row.GetCell(1)),
-                                TolMax = GetDoubleValue(row.GetCell(2)),
-                                TolMin = GetDoubleValue(row.GetCell(4)),
-                                USL = GetDoubleValue(row.GetCell(5)),
-                                LSL = GetDoubleValue(row.GetCell(6)),
-                                ParamCurrValue = Convert.ToDouble(CNCCommunicationHelps.GetCncValue(temp.IpAddress, temp.PointAddress))
-                            };
+                                var data = new UIModel
+                                {
+                                    DeviceName = d.Value.Split('_')[0],
+                                    PointName = row.GetCell(0)?.ToString(),
+                                    PointPos = d.Value.Split('_')[1],
+                                    NominalDim = GetDoubleValue(row.GetCell(2)),
+                                    TolMax = GetDoubleValue(row.GetCell(3)),
+                                    TolMin = GetDoubleValue(row.GetCell(4)),
+                                    MeasureValue = GetDoubleValue(row.GetCell(d.Key))
+                                };
+                                var temp = _deviceInfoModels.FirstOrDefault(x => x.DeviceName == data.DeviceName &&
+                                                                        x.PointName == data.PointName && x.PointPos == data.PointPos);
+                                data.ParamCurrValue = temp == null ?
+                                    "没有维护参数地址值，请先去基础数据维护！！！" : CNCCommunicationHelps.GetCncValue(temp.IpAddress, temp.PointAddress).ToString(CultureInfo.CurrentCulture);
 
-                            data.CalculateFields();
-                            dataList.Add(data);
+                                data.CalculateFields();
+                                dataList.Add(data);
+                            }
                         }
                     }
                 });
@@ -236,6 +250,7 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
                 }
 
                 ApplyRowStyles();
+                txtProductName.Text = _productName ?? "";
                 HideLoadingPanel();
                 _running = false;
                 GlobalData.Instance.IsDataValid = true;
@@ -258,10 +273,17 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
             try
             {
                 string befParam = "", sendParam = "", deviceNames = "";
+                if (Data.Any(x => x.RecommendedCompensation != 0 && x.ParamCurrValue.Contains("维护参数地址值")))
+                {
+                    MessageBoxX.Show($"有要推荐补偿值，但是参数基础数据没有维护的数据存在！", "提示");
+                    return;
+                }
+
                 foreach (var tempData in Data.GroupBy(p => p.DeviceName))
                 {
                     foreach (var t in tempData)
                     {
+                        if (t.RecommendedCompensation == 0) continue;
                         var temp = _deviceInfoModels.First(x => x.DeviceName == t.DeviceName && x.PointName == t.PointName && x.PointPos == t.PointPos);
                         if (befParam == "")
                             befParam += $@"地址：[{temp.PointAddress}],值：[{t.ParamCurrValue}]|";

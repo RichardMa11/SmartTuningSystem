@@ -319,7 +319,16 @@ namespace SmartTuningSystem.View
         {
             public int Id { get; set; }
 
-            public int DeviceId { get; set; }
+            private int deviceId = 0;
+            public int DeviceId
+            {
+                get => deviceId;
+                set
+                {
+                    deviceId = value;
+                    NotifyPropertyChanged("DeviceId");
+                }
+            }
 
             private string pointName = "";
             public string PointName
