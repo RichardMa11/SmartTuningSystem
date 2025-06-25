@@ -82,7 +82,7 @@ namespace SmartTuningSystem.View
             {
                 USL = NominalDim + TolMax;
                 LSL = NominalDim - TolMin;
-                Tolerance = (USL - LSL) * 0.5 * 0.6;
+                Tolerance = Math.Round((USL - LSL) * 0.5 * 0.6, 4);
 
                 if (MeasureValue == 0)
                 {
@@ -90,7 +90,7 @@ namespace SmartTuningSystem.View
                     return;
                 }
 
-                Deviation = MeasureValue - NominalDim;
+                Deviation = Math.Round(MeasureValue - NominalDim, 4);
                 var qualified = "";
                 if (Deviation > 0)
                 {
@@ -114,7 +114,7 @@ namespace SmartTuningSystem.View
                 {
                     StatusDescription = "情况2:偏差值绝对值>=调机公差&&合格偏上";
                     CompensationDescription = "按照偏差值的50%推荐补偿值";
-                    RecommendedCompensation = -Deviation * 0.5;
+                    RecommendedCompensation = Math.Round(-Deviation * 0.5, 4);
                     RowColor = Brushes.Gold;
                 }
                 else if (Math.Abs(Deviation) >= Tolerance && Deviation < 0 && qualified != "NG")
@@ -122,14 +122,14 @@ namespace SmartTuningSystem.View
                     StatusDescription = "情况3:偏差值绝对值>=调机公差&&合格偏下";
                     CompensationDescription = "按照偏差值的50%推荐补偿值";
                     //RecommendedCompensation = (-Deviation * 0.5).ToString("F4");
-                    RecommendedCompensation = -Deviation * 0.5;
+                    RecommendedCompensation = Math.Round(-Deviation * 0.5, 4);
                     RowColor = Brushes.Gold;
                 }
                 else if (Math.Abs(Deviation) < NominalDim * 0.5 && qualified == "NG")
                 {
                     StatusDescription = "情况4:超差NG&偏差值<标准值*0.5";
                     CompensationDescription = "按照偏差值的80%推荐补偿值";
-                    RecommendedCompensation = -Deviation * 0.8;
+                    RecommendedCompensation = Math.Round(-Deviation * 0.8, 4);
                     RowColor = Brushes.Coral;
                 }
                 else if (Math.Abs(Deviation) >= NominalDim * 0.5 && qualified == "NG")
