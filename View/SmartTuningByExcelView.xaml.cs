@@ -272,7 +272,8 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
 
             try
             {
-                string befParam = "", sendParam = "", deviceNames = "";
+                string befParam = "", sendParam = "";
+                List<string> deviceNames = new List<string>();
                 if (Data.Any(x => x.RecommendedCompensation != 0 && x.ParamCurrValue.Contains("维护参数地址值")))
                 {
                     MessageBoxX.Show($"有要推荐补偿值，但是参数基础数据没有维护的数据存在！", "提示");
@@ -297,11 +298,14 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
 
                         CNCCommunicationHelps.SetCncValue(temp.IpAddress, temp.PointAddress, Convert.ToDecimal(t.RecommendedCompensation));
                     }
+
+                    if (string.IsNullOrEmpty(befParam)) continue;
                     LogHelps.WriteTuningRecord(tempData.Key, _productName, sendParam.TrimEnd('|'), befParam.TrimEnd('|'));
-                    deviceNames = string.Join(",", tempData.Key);
+                    deviceNames.Add(tempData.Key);
+                    befParam = ""; sendParam = "";
                 }
 
-                MessageBoxX.Show($"{UserGlobal.CurrUser.UserName} 操作：设置CNC机台数据：机台：[{deviceNames}],产品品名：[{ _productName}]成功!", "IPQC调机");
+                MessageBoxX.Show($"{UserGlobal.CurrUser.UserName} 操作：设置CNC机台数据：机台：[{string.Join(",", deviceNames)}],产品品名：[{ _productName}]成功!", "智能调机");
             }
             catch (Exception ex)
             {

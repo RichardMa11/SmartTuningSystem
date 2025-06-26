@@ -41,19 +41,19 @@ namespace SmartTuningSystem.MyControls
             currUserPages = new List<int>();//初始化当前页面数据
             listBoxes = new List<ListBox>();
 
-            //await Task.Run(() =>
-            //{
-            //    using (CoreDBContext context = new CoreDBContext())
-            //    {
-            //        string rolePluginsStr = context.RolePlugins.Any(c => c.RoleId == _roleId) ? context.RolePlugins.First(c => c.RoleId == _roleId).Pages : "";
-            //        if (rolePluginsStr.NotEmpty())
-            //            currUserPages = rolePluginsStr.Split(',').ToList().String2Int();//将List<string>转为List<int>
+            await Task.Run(() =>
+            {
+                //using (CoreDBContext context = new CoreDBContext())
+                //{
+                //    string rolePluginsStr = context.RolePlugins.Any(c => c.RoleId == _roleId) ? context.RolePlugins.First(c => c.RoleId == _roleId).Pages : "";
+                //    if (rolePluginsStr.NotEmpty())
+                //        currUserPages = rolePluginsStr.Split(',').ToList().String2Int();//将List<string>转为List<int>
 
-            //        plugins = context.Plugins.OrderBy(c => c.Order).ToList();
-            //        modules = context.PluginsModule.ToList();
-            //        pages = context.ModulePage.ToList();
-            //    }
-            //});
+                //    plugins = context.Plugins.OrderBy(c => c.Order).ToList();
+                //    modules = context.PluginsModule.ToList();
+                //    pages = context.ModulePage.ToList();
+                //}
+            });
 
             //for (int i = 0; i < plugins.Count; i++)
             //{
@@ -105,67 +105,67 @@ namespace SmartTuningSystem.MyControls
             currUserPages = new List<int>();//初始化当前页面数据
             listBoxes = new List<ListBox>();
 
-            //await Task.Run(() =>
-            //{
-            //    using (CoreDBContext context = new CoreDBContext())
-            //    {
-            //        #region 此处逻辑 与 客户端=》加载权限 部分相同
+            await Task.Run(() =>
+            {
+                //using (CoreDBContext context = new CoreDBContext())
+                //{
+                //    #region 此处逻辑 与 客户端=》加载权限 部分相同
 
-            //        var userModel = context.User.First(c => c.Id == _userId);//用户数据
-            //        string rolePluginsStr = context.RolePlugins.Any(c => c.RoleId == userModel.RoleId) ? context.RolePlugins.First(c => c.RoleId == userModel.RoleId).Pages : "";
-            //        UserPlugins userPlugins = context.UserPlugins.FirstOrDefault(c => c.UserId == userModel.Id);//获取用户自定义权限
-            //        if (userPlugins != null && userPlugins.Id > 0)
-            //        {
-            //            if (userPlugins.IncreasePages.NotEmpty())
-            //            {
-            //                //在角色权限基础上的增加页面
-            //                string[] increasePages = userPlugins.IncreasePages.Split(',');
-            //                foreach (var _iPage in increasePages)
-            //                {
-            //                    int _pageId = 0;
-            //                    if (int.TryParse(_iPage, out _pageId))
-            //                    {
-            //                        string _iStr = rolePluginsStr.NotEmpty() ? $",{_pageId}" : _pageId.ToString();
-            //                        rolePluginsStr += _iStr;//将字符串追加到末尾
-            //                    }
-            //                    else
-            //                    {
-            //                        continue;
-            //                    }
-            //                }
-            //            }
-            //            if (userPlugins.DecrementPages.NotEmpty())
-            //            {
-            //                //在角色权限基础上的减少页面
-            //                string[] decrementPages = userPlugins.DecrementPages.Split(',');
-            //                List<string> _currRoles = rolePluginsStr.Split(',').ToList();//当前的所有角色
-            //                bool _currRolesUpdate = false;//当前所有角色是否更新
-            //                foreach (var _iPage in decrementPages)
-            //                {
-            //                    if (_iPage.NotEmpty())
-            //                    {
-            //                        if (_currRoles.Contains(_iPage))
-            //                        {
-            //                            _currRolesUpdate = true;
-            //                            _currRoles.Remove(_iPage); //如果有这一项 移除
-            //                        }
-            //                    }
-            //                    else { continue; }
-            //                }
-            //                if (_currRolesUpdate)
-            //                    rolePluginsStr = string.Join(",", _currRoles); //如果有更改，重新整理移除后的字符串
-            //            }
-            //        }
-            //        if (rolePluginsStr.NotEmpty())
-            //            currUserPages = rolePluginsStr.Split(',').ToList().String2Int();//将List<string>转为List<int>
+                //    var userModel = context.User.First(c => c.Id == _userId);//用户数据
+                //    string rolePluginsStr = context.RolePlugins.Any(c => c.RoleId == userModel.RoleId) ? context.RolePlugins.First(c => c.RoleId == userModel.RoleId).Pages : "";
+                //    UserPlugins userPlugins = context.UserPlugins.FirstOrDefault(c => c.UserId == userModel.Id);//获取用户自定义权限
+                //    if (userPlugins != null && userPlugins.Id > 0)
+                //    {
+                //        if (userPlugins.IncreasePages.NotEmpty())
+                //        {
+                //            //在角色权限基础上的增加页面
+                //            string[] increasePages = userPlugins.IncreasePages.Split(',');
+                //            foreach (var _iPage in increasePages)
+                //            {
+                //                int _pageId = 0;
+                //                if (int.TryParse(_iPage, out _pageId))
+                //                {
+                //                    string _iStr = rolePluginsStr.NotEmpty() ? $",{_pageId}" : _pageId.ToString();
+                //                    rolePluginsStr += _iStr;//将字符串追加到末尾
+                //                }
+                //                else
+                //                {
+                //                    continue;
+                //                }
+                //            }
+                //        }
+                //        if (userPlugins.DecrementPages.NotEmpty())
+                //        {
+                //            //在角色权限基础上的减少页面
+                //            string[] decrementPages = userPlugins.DecrementPages.Split(',');
+                //            List<string> _currRoles = rolePluginsStr.Split(',').ToList();//当前的所有角色
+                //            bool _currRolesUpdate = false;//当前所有角色是否更新
+                //            foreach (var _iPage in decrementPages)
+                //            {
+                //                if (_iPage.NotEmpty())
+                //                {
+                //                    if (_currRoles.Contains(_iPage))
+                //                    {
+                //                        _currRolesUpdate = true;
+                //                        _currRoles.Remove(_iPage); //如果有这一项 移除
+                //                    }
+                //                }
+                //                else { continue; }
+                //            }
+                //            if (_currRolesUpdate)
+                //                rolePluginsStr = string.Join(",", _currRoles); //如果有更改，重新整理移除后的字符串
+                //        }
+                //    }
+                //    if (rolePluginsStr.NotEmpty())
+                //        currUserPages = rolePluginsStr.Split(',').ToList().String2Int();//将List<string>转为List<int>
 
-            //        #endregion
+                //    #endregion
 
-            //        plugins = context.Plugins.OrderBy(c => c.Order).ToList();
-            //        modules = context.PluginsModule.ToList();
-            //        pages = context.ModulePage.ToList();
-            //    }
-            //});
+                //    plugins = context.Plugins.OrderBy(c => c.Order).ToList();
+                //    modules = context.PluginsModule.ToList();
+                //    pages = context.ModulePage.ToList();
+                //}
+            });
 
             //for (int i = 0; i < plugins.Count; i++)
             //{

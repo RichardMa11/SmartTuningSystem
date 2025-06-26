@@ -99,7 +99,7 @@ namespace SmartTuningSystem.View
             }
         }
 
-        private async void BtnGenerateTuningRpt_Click(object sender, RoutedEventArgs e)
+        private void BtnGenerateTuningRpt_Click(object sender, RoutedEventArgs e)
         {
             //            if (string.IsNullOrEmpty(_selectedFilePath) || !File.Exists(_selectedFilePath))
             //            {

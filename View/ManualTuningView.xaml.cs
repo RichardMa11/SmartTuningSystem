@@ -418,6 +418,7 @@ namespace SmartTuningSystem.View
                 string befParam = "", sendParam = "";
                 foreach (var p in DataDetail)
                 {
+                    if (p.ParamModifyValue == 0) continue;
                     if (befParam == "")
                         befParam += $@"地址：[{p.PointAddress}],值：[{p.ParamCurrValue}]|";
                     else
