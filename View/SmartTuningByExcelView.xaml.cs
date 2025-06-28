@@ -186,7 +186,7 @@ namespace SmartTuningSystem.View
 
             try
             {
-                ShowLoadingPanel();//显示Loading
+                ShowLoadingPanel(); //显示Loading
                 if (_running) return;
                 _running = true;
 
@@ -202,7 +202,8 @@ namespace SmartTuningSystem.View
                         ISheet sheet = workbook.GetSheetAt(0);
                         _productName = sheet.GetRow(1).GetCell(1)?.ToString();
 
-                        _deviceInfoModels = LogManager.QueryBySql<DeviceInfoModel>($@"   select [DeviceName],[IpAddress],[ProductName],[PointName],[PointPos],[PointAddress] FROM [SmartTuningSystemDB].[dbo].[DeviceInfo] dev with(nolock) 
+                        _deviceInfoModels = LogManager.QueryBySql<DeviceInfoModel>(
+                            $@"   select [DeviceName],[IpAddress],[ProductName],[PointName],[PointPos],[PointAddress] FROM [SmartTuningSystemDB].[dbo].[DeviceInfo] dev with(nolock) 
 left join [SmartTuningSystemDB].[dbo].[DeviceInfoDetail] det with(nolock) on dev.Id=det.DeviceId and det.IsValid=1
 where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
 
@@ -231,9 +232,11 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
                                     MeasureValue = GetDoubleValue(row.GetCell(d.Key))
                                 };
                                 var temp = _deviceInfoModels.FirstOrDefault(x => x.DeviceName == data.DeviceName &&
-                                                                        x.PointName == data.PointName && x.PointPos == data.PointPos);
-                                data.ParamCurrValue = temp == null ?
-                                    "没有维护参数地址值，请先去基础数据维护！！！" : CNCCommunicationHelps.GetCncValue(temp.IpAddress, temp.PointAddress).ToString(CultureInfo.CurrentCulture);
+                                    x.PointName == data.PointName && x.PointPos == data.PointPos);
+                                data.ParamCurrValue = temp == null
+                                    ? "没有维护参数地址值，请先去基础数据维护！！！"
+                                    : CNCCommunicationHelps.GetCncValue(temp.IpAddress, temp.PointAddress)
+                                        .ToString(CultureInfo.CurrentCulture);
 
                                 data.CalculateFields();
                                 dataList.Add(data);
@@ -251,14 +254,18 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
 
                 ApplyRowStyles();
                 txtProductName.Text = _productName ?? "";
-                HideLoadingPanel();
-                _running = false;
-                GlobalData.Instance.IsDataValid = true;
             }
             catch (Exception ex)
             {
-                LogHelps.WriteLogToDb($@"{UserGlobal.CurrUser.UserName}生产调机报告报错；报错原因：{ex.Message + ex.StackTrace}", LogLevel.Error);
+                LogHelps.WriteLogToDb($@"{UserGlobal.CurrUser.UserName}生产调机报告报错；报错原因：{ex.Message + ex.StackTrace}",
+                    LogLevel.Error);
                 MessageBoxX.Show($@"{UserGlobal.CurrUser.UserName}生产调机报告报错；报错原因：{ex.Message + ex.StackTrace}", "提示");
+            }
+            finally
+            {
+                HideLoadingPanel();
+                _running = false;
+                GlobalData.Instance.IsDataValid = true;
             }
         }
 
