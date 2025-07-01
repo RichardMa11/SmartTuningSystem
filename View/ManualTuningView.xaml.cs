@@ -415,6 +415,8 @@ namespace SmartTuningSystem.View
         {
             try
             {
+                if (MessageBoxX.Show($"是否确认要下发数据给机台？", "提示", System.Windows.Application.Current.MainWindow, MessageBoxButton.YesNo) == MessageBoxResult.No) return;
+
                 string befParam = "", sendParam = "";
                 foreach (var p in DataDetail)
                 {

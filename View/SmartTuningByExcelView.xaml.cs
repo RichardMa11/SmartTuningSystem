@@ -277,6 +277,8 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
                 return;
             }
 
+            if (MessageBoxX.Show($"是否确认要下发数据给机台？", "提示", System.Windows.Application.Current.MainWindow, MessageBoxButton.YesNo) == MessageBoxResult.No) return;
+
             try
             {
                 string befParam = "", sendParam = "";
