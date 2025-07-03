@@ -183,6 +183,7 @@ namespace SmartTuningSystem.View
                 MessageBoxX.Show("请先选择有效的Excel文件", "提示");
                 return;
             }
+            //Dictionary<string, ushort> tempConnect = new Dictionary<string, ushort>();
 
             try
             {
@@ -206,6 +207,7 @@ namespace SmartTuningSystem.View
                             $@"   select [DeviceName],[IpAddress],[ProductName],[PointName],[PointPos],[PointAddress] FROM [SmartTuningSystemDB].[dbo].[DeviceInfo] dev with(nolock) 
 left join [SmartTuningSystemDB].[dbo].[DeviceInfoDetail] det with(nolock) on dev.Id=det.DeviceId and det.IsValid=1
 where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
+                        //tempConnect = CNCCommunicationHelps.ConnectCnc(_deviceInfoModels.Select(t => t.IpAddress).ToList());//开启连接
 
                         //devicePointPosList.AddRange(from r in sheet.GetRow(5).Cells where !string.IsNullOrEmpty(r.ToString()) select r.ToString());
                         foreach (var r in sheet.GetRow(5).Cells.Where(r => !string.IsNullOrEmpty(r.ToString())))
@@ -237,6 +239,10 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
                                     ? "没有维护参数地址值，请先去基础数据维护！！！"
                                     : CNCCommunicationHelps.GetCncValue(temp.IpAddress, temp.PointAddress)
                                         .ToString(CultureInfo.CurrentCulture);
+                                //data.ParamCurrValue = temp == null
+                                //    ? "没有维护参数地址值，请先去基础数据维护！！！"
+                                //    : CNCCommunicationHelps.GetCncValue(tempConnect, temp.IpAddress, temp.PointAddress)
+                                //        .ToString(CultureInfo.CurrentCulture);
 
                                 data.CalculateFields();
                                 dataList.Add(data);
@@ -263,6 +269,7 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
             }
             finally
             {
+                //CNCCommunicationHelps.DisConnectCnc(tempConnect);//断开连接
                 HideLoadingPanel();
                 _running = false;
                 GlobalData.Instance.IsDataValid = true;
@@ -289,6 +296,7 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
                     return;
                 }
 
+                //var tempConnect = CNCCommunicationHelps.ConnectCnc(_deviceInfoModels.Select(t => t.IpAddress).ToList());//开启连接
                 foreach (var tempData in Data.GroupBy(p => p.DeviceName))
                 {
                     foreach (var t in tempData)
@@ -306,6 +314,7 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
                             sendParam += $@"{Environment.NewLine}地址：[{temp.PointAddress}],值：[{t.RecommendedCompensation}]|";
 
                         CNCCommunicationHelps.SetCncValue(temp.IpAddress, temp.PointAddress, Convert.ToDecimal(t.RecommendedCompensation));
+                        //CNCCommunicationHelps.SetCncValue(tempConnect, temp.IpAddress, temp.PointAddress, Convert.ToDecimal(t.RecommendedCompensation));
                     }
 
                     if (string.IsNullOrEmpty(befParam)) continue;
@@ -313,6 +322,7 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
                     deviceNames.Add(tempData.Key);
                     befParam = ""; sendParam = "";
                 }
+                //CNCCommunicationHelps.DisConnectCnc(tempConnect);//断开连接
 
                 MessageBoxX.Show($"{UserGlobal.CurrUser.UserName} 操作：设置CNC机台数据：机台：[{string.Join(",", deviceNames)}],产品品名：[{ _productName}]成功!", "智能调机");
             }

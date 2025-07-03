@@ -370,6 +370,8 @@ namespace SmartTuningSystem.View
 
             await Task.Delay(300);
             bNoDataParam.Visibility = models.Count() == 0 ? Visibility.Visible : Visibility.Collapsed;
+
+            //var tempConnect = CNCCommunicationHelps.ConnectCnc(new List<string> { Ip });//开启连接
             foreach (var item in models)
             {
                 UIModelDetail _model = new UIModelDetail
@@ -380,10 +382,12 @@ namespace SmartTuningSystem.View
                     PointAddress = item.PointAddress,
                     DeviceId = item.DeviceId,
                     ParamCurrValue = CNCCommunicationHelps.GetCncValue(Ip, item.PointAddress)
+                    //ParamCurrValue = CNCCommunicationHelps.GetCncValue(tempConnect, Ip, item.PointAddress)
                 };
 
                 DataDetail.Add(_model);
             }
+            //CNCCommunicationHelps.DisConnectCnc(tempConnect);//断开连接
 
             HideLoadingPanelParam();
             runningParam = false;
@@ -418,6 +422,7 @@ namespace SmartTuningSystem.View
                 if (MessageBoxX.Show($"是否确认要下发数据给机台？", "提示", System.Windows.Application.Current.MainWindow, MessageBoxButton.YesNo) == MessageBoxResult.No) return;
 
                 string befParam = "", sendParam = "";
+                //var tempConnect = CNCCommunicationHelps.ConnectCnc(new List<string> { Ip });//开启连接
                 foreach (var p in DataDetail)
                 {
                     if (p.ParamModifyValue == 0) continue;
@@ -432,7 +437,9 @@ namespace SmartTuningSystem.View
                         sendParam += $@"{Environment.NewLine}地址：[{p.PointAddress}],值：[{p.ParamModifyValue}]|";
 
                     CNCCommunicationHelps.SetCncValue(Ip, p.PointAddress, p.ParamModifyValue);
+                    //CNCCommunicationHelps.SetCncValue(tempConnect, Ip, p.PointAddress, p.ParamModifyValue);
                 }
+                //CNCCommunicationHelps.DisConnectCnc(tempConnect);//断开连接
 
                 LogHelps.WriteTuningRecord(DeviceName, ProductName, sendParam.TrimEnd('|'), befParam.TrimEnd('|'));
                 MessageBoxX.Show($"{UserGlobal.CurrUser.UserName} 操作：设置CNC机台数据：机台：[{DeviceName}],机台IP：[{Ip}],产品品名：[{ ProductName}]成功!", "IPQC调机");
