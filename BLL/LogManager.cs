@@ -11,7 +11,8 @@ namespace BLL
 
         public void AddLog(Log log)
         {
-            LogService.InsertLog(log);
+            //LogService.InsertLog(log);
+            LogService.InsertLogNew(log);
         }
 
         public List<Log> GetLogByDate(DateTime startDate, DateTime endDate)

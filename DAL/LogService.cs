@@ -33,6 +33,59 @@ namespace DAL
             return tmp.Id;
         }
 
+        /// <summary>
+        /// 为了防止日志太多（sql express 最大容量10G)
+        /// </summary>
+        /// <param name="log"></param>
+        /// <returns></returns>
+        public int InsertLogNew(Log log)
+        {
+            Log tmp;
+            using (var context = new CoreDbContext())
+            {
+                using (var transaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        //加入数据库
+                        var timeTmp = DateTime.Now;
+                        tmp = context.Logs.Add(new Log
+                        {
+                            LogStr = log.LogStr,
+                            LogType = log.LogType,
+                            CreateName = log.CreateName,
+                            CreateNo = log.CreateNo,
+                            CreateTime = timeTmp,
+                            UpdateName = log.CreateName,
+                            UpdateNo = log.CreateNo,
+                            UpdateTime = timeTmp,
+                            IsValid = true
+                        });
+                        context.SaveChanges();
+
+                        var cutoffDate = DateTime.Now.AddMonths(-3);
+                        var tmpLogs = context.Logs.Where(e => e.CreateTime < cutoffDate).ToList();
+                        if (tmpLogs.Count > 0)
+                        {
+                            context.Logs.RemoveRange(tmpLogs);
+                            context.SaveChanges();
+                        }
+
+                        // 提交事务
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        // 回滚事务（所有 SaveChanges 操作均撤销）
+                        transaction.Rollback();
+                        throw new ApplicationException("事务执行失败，已回滚", ex);
+                    }
+                }
+            }
+
+            return tmp.Id;
+        }
+
         public void UpdateLog(Log log)
         {
             using (CoreDbContext context = new CoreDbContext())
