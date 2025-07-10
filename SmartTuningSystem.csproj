@@ -81,6 +81,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Dll\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="LingYanAutoUpdate, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Dll\LingYanAutoUpdate.dll</HintPath>
+    </Reference>
     <Reference Include="LiveCharts, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Dll\LiveCharts.dll</HintPath>
@@ -188,6 +192,9 @@
     <Compile Include="View\RoleAuthorization.xaml.cs">
       <DependentUpon>RoleAuthorization.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\GeneralSetting.xaml.cs">
+      <DependentUpon>GeneralSetting.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\TuningRecord.xaml.cs">
       <DependentUpon>TuningRecord.xaml</DependentUpon>
     </Compile>
@@ -272,6 +279,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\RoleAuthorization.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\GeneralSetting.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -362,6 +373,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="UpdateAppFloder\LingYanAutoUpdateServer.exe.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Resource Include="Assets\iconFonts\iconfont.ttf" />
     <None Include="NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -385,11 +399,21 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Dll\LingYanAutoUpdate.dll" />
     <Content Include="Fwlib64.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="fwlibe64.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UpdateAppFloder\LingYanAutoUpdateServer.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UpdateAppFloder\Newtonsoft.Json.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UpdateAppFloder\System.IO.Compression.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Resource Include="sts.ico" />
     <Resource Include="Assets\Images\pic12.jpg" />

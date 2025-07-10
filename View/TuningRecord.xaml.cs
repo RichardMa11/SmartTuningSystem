@@ -12,7 +12,7 @@ using static Model.Log;
 namespace SmartTuningSystem.View
 {
     /// <summary>
-    /// AdminIndex.xaml 的交互逻辑
+    /// TuningRecord.xaml 的交互逻辑
     /// </summary>
     public partial class TuningRecord : Page
     {

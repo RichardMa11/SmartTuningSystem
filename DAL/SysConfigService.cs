@@ -25,7 +25,8 @@ namespace DAL
                     UpdateName = sysConfig.CreateName,
                     UpdateNo = sysConfig.CreateNo,
                     UpdateTime = timeTmp,
-                    IsValid = true
+                    IsValid = true,
+                    Remark = sysConfig.Remark
                 });
 
                 context.SaveChanges();

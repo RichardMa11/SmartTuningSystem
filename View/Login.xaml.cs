@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -66,6 +67,28 @@ namespace SmartTuningSystem.View
             if (connectionSucceed)
             {
                 handler.UpdateMessage("连接成功,请登录...");
+
+                #region 自动更新
+
+                var sysConfigs = LogManager.QueryBySql<SysConfig>(@"select * from SysConfig s where (s.[Key]='UpdateUrl' or s.[Key]='UpdateVersion') and IsValid=1");
+                string updateUrl = sysConfigs.FirstOrDefault(t => t.Key == "UpdateUrl")?.Value;
+                string updateVersion = sysConfigs.FirstOrDefault(t => t.Key == "UpdateVersion")?.Value;
+                if (updateUrl != null && updateVersion != null)
+                {
+                    string localVersion = "0.0";
+                    string versionPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Version.txt");
+                    if (File.Exists(versionPath))
+                        localVersion = File.ReadAllText(versionPath).Trim();
+
+                    // 参数1：窗体标题// 参数2：升级压缩包的URL// 参数3：存放最新版本号的文件路径// 参数4：本地版本号// 参数5：服务器上的版本号
+                    if (updateVersion != localVersion)
+                    {
+                        LingYanAutoUpdate.LingYanAutoUpdateManager.Setting("自动升级", updateUrl, versionPath, localVersion, updateVersion);
+                        LingYanAutoUpdate.LingYanAutoUpdateManager.ToRun();
+                    }
+                }
+
+                #endregion
             }
             await Task.Delay(200);
             handler.Close();
