@@ -59,6 +59,18 @@
                                     Click="btnRef_Click"
                                     FontFamily="{StaticResource FontAwesome}"
                                     pu:ButtonHelper.HoverBrush="Orange" />
+                            <Button FontSize="16"
+                                    Margin="10,0,0,0"
+                                    Width="28"
+                                    Height="28"
+                                    ToolTip="导入Excel"
+                                    pu:ButtonHelper.ButtonStyle="Link"
+                                    Foreground="#EAEAEA"
+                                    Content="&#xf090;"
+                                    x:Name="btnImportIp"
+                                    Click="btnImportIp_Click"
+                                    FontFamily="{StaticResource FontAwesome}"
+                                    pu:ButtonHelper.HoverBrush="Orange" />
                         </StackPanel>
                     </StackPanel>
                 </pu:GroupBoxHelper.ExtendControl>
@@ -190,6 +202,18 @@
                                     Content="&#xf021;"
                                     x:Name="btnRefParam"
                                     Click="btnRefParam_Click"
+                                    FontFamily="{StaticResource FontAwesome}"
+                                    pu:ButtonHelper.HoverBrush="Orange" />
+                            <Button FontSize="16"
+                                    Margin="10,0,0,0"
+                                    Width="28"
+                                    Height="28"
+                                    ToolTip="导入Excel"
+                                    pu:ButtonHelper.ButtonStyle="Link"
+                                    Foreground="#EAEAEA"
+                                    Content="&#xf090;"
+                                    x:Name="btnImportParam"
+                                    Click="btnImportParam_Click"
                                     FontFamily="{StaticResource FontAwesome}"
                                     pu:ButtonHelper.HoverBrush="Orange" />
                         </StackPanel>

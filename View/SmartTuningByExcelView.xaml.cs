@@ -31,6 +31,7 @@ namespace SmartTuningSystem.View
         private string _selectedFilePath;
         private string _productName;
         private List<DeviceInfoModel> _deviceInfoModels = new List<DeviceInfoModel>();
+        public double AllowedRange { get; set; } = 0.05;
 
         #region UI Models
 
@@ -74,6 +75,8 @@ namespace SmartTuningSystem.View
                     NotifyPropertyChanged("RecommendedCompensation");
                 }
             }
+
+            public double ReferenceValue { get; set; }
 
             //变量当前值
             public string ParamCurrValue { get; set; }
@@ -139,6 +142,8 @@ namespace SmartTuningSystem.View
                     RecommendedCompensation = 0;
                     RowColor = Brushes.Red;
                 }
+
+                ReferenceValue = RecommendedCompensation;
             }
         }
 
@@ -373,6 +378,30 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
         private double GetDoubleValue(ICell cell)
         {
             return cell?.CellType == CellType.Numeric ? cell.NumericCellValue : 0;
+        }
+
+        private void DataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            GlobalData.Instance.IsDataValid = true;
+            if (e.EditAction != DataGridEditAction.Commit || e.Column.Header.ToString() != "推荐补偿值") return;
+            var textBox = e.EditingElement as TextBox;
+            var model = (UIModel)e.Row.Item;
+
+            if (double.TryParse(textBox.Text, out double parsedValue))
+            {
+                if (Math.Abs(parsedValue - model.ReferenceValue) > AllowedRange)
+                {
+                    MessageBoxX.Show($"调整范围不能超过±{AllowedRange}", "验证错误");
+                    e.Cancel = true; // 阻止编辑完成
+                    GlobalData.Instance.IsDataValid = false;
+                }
+            }
+            else
+            {
+                MessageBoxX.Show("请输入有效数值（可含正负号和小数点）", "格式错误");
+                e.Cancel = true;
+                GlobalData.Instance.IsDataValid = false;
+            }
         }
     }
 }

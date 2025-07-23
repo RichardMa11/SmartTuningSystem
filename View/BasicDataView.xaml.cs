@@ -273,6 +273,11 @@ namespace SmartTuningSystem.View
             }
         }
 
+        private void btnImportIp_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateGridDetailAsync(DeviceId);
+        }
+
         #region Loading
 
         private void ShowLoadingPanel()
@@ -515,6 +520,11 @@ namespace SmartTuningSystem.View
                     DeviceId = a.Model.DeviceId
                 });
             }
+        }
+
+        private void btnImportParam_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateGridDetailAsync(DeviceId);
         }
 
         #region Loading

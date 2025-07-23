@@ -70,7 +70,7 @@ namespace DAL
         {
             using (CoreDbContext context = new CoreDbContext())
             {
-                var model = context.Role.Single(c => c.Id == user.Id);
+                var model = context.User.Single(c => c.Id == user.Id);
                 model.DelName = user.DelName;
                 model.DelNo = user.DelNo;
                 model.DelTime = DateTime.Now;
