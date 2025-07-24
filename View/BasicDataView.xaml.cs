@@ -1,13 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using BLL;
+using Microsoft.Win32;
 using Model;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
 using Panuon.UI.Silver;
 using SmartTuningSystem.Extensions;
 using SmartTuningSystem.Global;
@@ -275,7 +281,128 @@ namespace SmartTuningSystem.View
 
         private void btnImportIp_Click(object sender, RoutedEventArgs e)
         {
-            UpdateGridDetailAsync(DeviceId);
+            var openFileDialog = new OpenFileDialog
+            {
+                Filter = "Excel文件|*.xls;*.xlsx|所有文件|*.*",
+                Title = "选择Excel文件",
+                CheckFileExists = true,
+                Multiselect = false
+            };
+
+            if (openFileDialog.ShowDialog() != true) return;
+
+            if (string.IsNullOrEmpty(openFileDialog.FileName) || !File.Exists(openFileDialog.FileName))
+            {
+                MessageBoxX.Show("请先选择有效的Excel文件", "提示");
+                return;
+            }
+
+            try
+            {
+                List<DeviceInfo> deviceInfos = new List<DeviceInfo>();
+                //解析Excel
+                using (FileStream fs = new FileStream(openFileDialog.FileName, FileMode.Open))
+                {
+                    IWorkbook workbook = new XSSFWorkbook(fs);
+                    ISheet sheet = workbook.GetSheetAt(0);
+
+                    for (int i = 1; i <= sheet.LastRowNum; i++)
+                    {
+                        IRow row = sheet.GetRow(i);
+                        if (row == null) continue;
+                        if (string.IsNullOrEmpty(row.GetCell(0)?.ToString())) break;
+
+                        var temp = new DeviceInfo
+                        {
+                            DeviceName = row.GetCell(0).ToString(),
+                            IpAddress = row.GetCell(1).ToString(),
+                            ProductName = row.GetCell(2).ToString()
+                        };
+                        deviceInfos.Add(temp);
+                    }
+                }
+
+                //insert 
+                InsertIp(deviceInfos);
+            }
+            catch (Exception ex)
+            {
+                LogHelps.WriteLogToDb($@"{UserGlobal.CurrUser.UserName}导入机台IP文件报错；报错原因：{ex.Message + ex.StackTrace}", LogLevel.Error);
+                MessageBoxX.Show($@"{UserGlobal.CurrUser.UserName}导入机台IP文件报错；报错原因：{ex.Message + ex.StackTrace}", "提示");
+            }
+            finally
+            {
+                UpdateGridAsync();
+            }
+        }
+
+        private void InsertIp(List<DeviceInfo> deviceInfoTemp)
+        {
+            foreach (var d in deviceInfoTemp)
+            {
+                #region 验证1
+
+                if (!d.DeviceName.NotEmpty() || !d.IpAddress.NotEmpty() || !d.ProductName.NotEmpty())
+                {
+                    LogHelps.WriteLogToDb($"{UserGlobal.CurrUser.UserName}操作批量导入IP：机台编号[{d.DeviceName}]、ip[{d.IpAddress}]以及产品品名[{d.ProductName}]有为空！",
+                        LogLevel.Error);
+                    continue;
+                }
+
+                Regex ipRegex = new Regex(@"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$");
+                if (!ipRegex.IsMatch(d.IpAddress))
+                {
+                    LogHelps.WriteLogToDb($"{UserGlobal.CurrUser.UserName}操作批量导入IP：IP地址格式错误，ip[{d.IpAddress}]", LogLevel.Error);
+                    continue;
+                }
+
+                var deviceModel = LogManager.QueryBySql<DeviceModel>(
+                        @"select distinct DeviceName,IpAddress from DeviceInfo with(nolock) where IsValid=1 ").ToList();
+                #endregion
+
+                #region 验证2
+
+                //验证机台、IP唯一
+                if (deviceModel.Any(c => c.DeviceName == d.DeviceName && c.IpAddress != d.IpAddress))
+                {
+                    LogHelps.WriteLogToDb($"{UserGlobal.CurrUser.UserName}操作批量导入IP：存在机台编号[{d.DeviceName}]并且IP不为[{d.IpAddress}]的数据，机台和ip必须唯一"
+                        , LogLevel.Error);
+                    continue;
+                }
+
+                if (deviceModel.Any(c => c.DeviceName != d.DeviceName && c.IpAddress == d.IpAddress))
+                {
+                    LogHelps.WriteLogToDb($"{UserGlobal.CurrUser.UserName}操作批量导入IP：存在IP为[{d.IpAddress}]并且机台编号不为[{d.DeviceName}]的数据，机台和ip必须唯一"
+                        , LogLevel.Error);
+                    continue;
+                }
+
+                //机台、IP、产品品名唯一
+                if (DeviceInfoManager.GetDeviceByParam(device: d.DeviceName, ip: d.IpAddress, product: d.ProductName).Count != 0)
+                {
+                    LogHelps.WriteLogToDb($"{UserGlobal.CurrUser.UserName}操作批量导入IP：存在相同机台编号[{d.DeviceName}]、ip[{d.IpAddress}]以及产品品名[{d.ProductName}]"
+                        , LogLevel.Error);
+                    continue;
+                }
+
+                #endregion
+
+                #region  添加状态
+
+                DeviceInfoManager.AddDevice(new DeviceInfo
+                {
+                    DeviceName = d.DeviceName,
+                    IpAddress = d.IpAddress,
+                    ProductName = d.ProductName,
+                    CreateName = UserGlobal.CurrUser.UserName,
+                    CreateNo = UserGlobal.CurrUser.UserNo
+                });
+
+                #endregion
+
+                LogHelps.WriteLogToDb($"{UserGlobal.CurrUser.UserName}操作：机台编号[{d.DeviceName}]、ip[{d.IpAddress}]以及产品品名[{d.ProductName}]添加成功！"
+                    , LogLevel.Operation);
+            }
         }
 
         #region Loading
@@ -524,7 +651,144 @@ namespace SmartTuningSystem.View
 
         private void btnImportParam_Click(object sender, RoutedEventArgs e)
         {
-            UpdateGridDetailAsync(DeviceId);
+            if (DeviceId == 0)
+            {
+                MessageBoxX.Show("没有选择机台产品！", "提示");
+                return;
+            }
+
+            var openFileDialog = new OpenFileDialog
+            {
+                Filter = "Excel文件|*.xls;*.xlsx|所有文件|*.*",
+                Title = "选择Excel文件",
+                CheckFileExists = true,
+                Multiselect = false
+            };
+
+            if (openFileDialog.ShowDialog() != true) return;
+
+            if (string.IsNullOrEmpty(openFileDialog.FileName) || !File.Exists(openFileDialog.FileName))
+            {
+                MessageBoxX.Show("请先选择有效的Excel文件", "提示");
+                return;
+            }
+
+            try
+            {
+                List<DeviceInfoDetail> deviceDetails = new List<DeviceInfoDetail>();
+                //解析Excel
+                using (FileStream fs = new FileStream(openFileDialog.FileName, FileMode.Open))
+                {
+                    IWorkbook workbook = new XSSFWorkbook(fs);
+                    ISheet sheet = workbook.GetSheetAt(0);
+
+                    for (int i = 1; i <= sheet.LastRowNum; i++)
+                    {
+                        IRow row = sheet.GetRow(i);
+                        if (row == null) continue;
+                        if (string.IsNullOrEmpty(row.GetCell(0)?.ToString())) break;
+
+                        var temp = new DeviceInfoDetail
+                        {
+                            PointName = row.GetCell(0).ToString(),
+                            PointPos = row.GetCell(1).ToString(),
+                            PointAddress = row.GetCell(2).ToString()
+                        };
+                        deviceDetails.Add(temp);
+                    }
+                }
+
+                //insert 
+                InsertParam(deviceDetails);
+            }
+            catch (Exception ex)
+            {
+                LogHelps.WriteLogToDb($@"{UserGlobal.CurrUser.UserName}导入机台参数地址文件报错；报错原因：{ex.Message + ex.StackTrace}", LogLevel.Error);
+                MessageBoxX.Show($@"{UserGlobal.CurrUser.UserName}导入机台参数地址文件报错；报错原因：{ex.Message + ex.StackTrace}", "提示");
+            }
+            finally
+            {
+                UpdateGridDetailAsync(DeviceId);
+            }
+        }
+
+        private void InsertParam(List<DeviceInfoDetail> deviceDetailTemp)
+        {
+            foreach (var d in deviceDetailTemp)
+            {
+                #region 验证1
+
+                if (!d.PointName.NotEmpty() || !d.PointPos.NotEmpty() || !d.PointAddress.NotEmpty())
+                {
+                    LogHelps.WriteLogToDb($"{UserGlobal.CurrUser.UserName}操作批量导入参数地址：点号（编号）[{d.PointName}]、夹序号（槽位）[{d.PointPos}]和参数地址为[{d.PointAddress}]有为空！",
+                        LogLevel.Error);
+                    continue;
+                }
+
+                #endregion
+
+                var deviceModel = LogManager.QueryBySql<DeviceInfoDetail>
+                    ($@"select * from DeviceInfoDetail with(nolock) where IsValid=1 and DeviceId={DeviceId} ").ToList();
+
+                #region 验证2
+
+                //验证参数地址唯一
+                if (deviceModel.Any(c => c.PointAddress == d.PointAddress))
+                {
+                    LogHelps.WriteLogToDb($"{UserGlobal.CurrUser.UserName}操作批量导入参数地址：存在参数地址为[{d.PointAddress}]的数据，参数地址必须唯一",
+                        LogLevel.Error);
+                    continue;
+                }
+
+                //验证点号（编号）、夹序号、参数地址俩俩唯一
+                if (deviceModel.Any(c => c.PointName == d.PointName && c.PointPos == d.PointPos))
+                {
+                    LogHelps.WriteLogToDb($"{UserGlobal.CurrUser.UserName}操作批量导入参数地址：存在点号（编号）[{d.PointName}]和夹序号（槽位）为[{d.PointPos}]的数据，点号（编号）和夹序号（槽位）必须唯一",
+                        LogLevel.Error);
+                    continue;
+                }
+
+                if (deviceModel.Any(c => c.PointName == d.PointName && c.PointAddress == d.PointAddress))
+                {
+                    LogHelps.WriteLogToDb($"{UserGlobal.CurrUser.UserName}操作批量导入参数地址：存在点号（编号）[{d.PointName}]和参数地址为[{d.PointAddress}]的数据，点号（编号）和参数地址必须唯一",
+                        LogLevel.Error);
+                    continue;
+                }
+
+                if (deviceModel.Any(c => c.PointPos == d.PointPos && c.PointAddress == d.PointAddress))
+                {
+                    LogHelps.WriteLogToDb($"{UserGlobal.CurrUser.UserName}操作批量导入参数地址：存在夹序号（槽位）[{d.PointPos}]和参数地址为[{d.PointAddress}]的数据，夹序号（槽位）和参数地址必须唯一",
+                        LogLevel.Error);
+                    continue;
+                }
+
+                //点号（编号）、夹序号、参数地址唯一
+                if (deviceModel.Any(c => c.PointName == d.PointName && c.PointPos == d.PointPos && c.PointAddress == d.PointAddress))
+                {
+                    LogHelps.WriteLogToDb($"{UserGlobal.CurrUser.UserName}操作批量导入参数地址：存在点号（编号）[{d.PointName}]、夹序号（槽位）[{d.PointPos}]和参数地址为[{d.PointAddress}]的数据，" +
+                                          $"点号（编号）、夹序号（槽位）和参数地址必须唯一", LogLevel.Error);
+                    continue;
+                }
+
+                #endregion
+
+                #region  添加状态
+
+                DeviceDetailManager.AddDeviceDetail(new DeviceInfoDetail
+                {
+                    PointName = d.PointName,
+                    PointPos = d.PointPos,
+                    PointAddress = d.PointAddress,
+                    DeviceId = DeviceId,
+                    CreateName = UserGlobal.CurrUser.UserName,
+                    CreateNo = UserGlobal.CurrUser.UserNo
+                });
+
+                #endregion
+
+                LogHelps.WriteLogToDb($"{UserGlobal.CurrUser.UserName}操作：点号（编号）[{d.PointName}]、夹序号（槽位）[{d.PointPos}]和参数地址为[{d.PointAddress}]添加成功！"
+                    , LogLevel.Operation);
+            }
         }
 
         #region Loading
