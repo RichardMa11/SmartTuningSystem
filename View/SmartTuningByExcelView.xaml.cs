@@ -65,8 +65,8 @@ namespace SmartTuningSystem.View
             public string CompensationDescription { get; set; }
             //推荐补偿值
 
-            private double recommendedCompensation = 0;
-            public double RecommendedCompensation
+            private double? recommendedCompensation;
+            public double? RecommendedCompensation
             {
                 get => recommendedCompensation;
                 set
@@ -76,7 +76,7 @@ namespace SmartTuningSystem.View
                 }
             }
 
-            public double ReferenceValue { get; set; }
+            public double? ReferenceValue { get; set; }
 
             //变量当前值
             public string ParamCurrValue { get; set; }
@@ -110,7 +110,7 @@ namespace SmartTuningSystem.View
                 {
                     StatusDescription = "情况1:偏差值绝对值<调机公差";
                     CompensationDescription = "不推荐补偿值";
-                    RecommendedCompensation = 0;
+                    //RecommendedCompensation = 0;
                     RowColor = Brushes.LightGreen;
                 }
                 else if (Math.Abs(Deviation) >= Tolerance && Deviation > 0 && qualified != "NG")
@@ -139,7 +139,7 @@ namespace SmartTuningSystem.View
                 {
                     StatusDescription = "情况5:超差NG&偏差值>=标准值*0.5";
                     CompensationDescription = "不推荐，报警";
-                    RecommendedCompensation = 0;
+                    //RecommendedCompensation = 0;
                     RowColor = Brushes.Red;
                 }
 
@@ -295,7 +295,7 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
             {
                 string befParam = "", sendParam = "";
                 List<string> deviceNames = new List<string>();
-                if (Data.Any(x => x.RecommendedCompensation != 0 && x.ParamCurrValue.Contains("维护参数地址值")))
+                if (Data.Any(x => x.RecommendedCompensation != null && x.ParamCurrValue.Contains("维护参数地址值")))
                 {
                     MessageBoxX.Show($"有要推荐补偿值，但是参数基础数据没有维护的数据存在！", "提示");
                     return;
@@ -306,7 +306,7 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
                 {
                     foreach (var t in tempData)
                     {
-                        if (t.RecommendedCompensation == 0) continue;
+                        if (t.RecommendedCompensation == null) continue;
                         var temp = _deviceInfoModels.First(x => x.DeviceName == t.DeviceName && x.PointName == t.PointName && x.PointPos == t.PointPos);
                         if (befParam == "")
                             befParam += $@"地址：[{temp.PointAddress}],值：[{t.ParamCurrValue}]|";
@@ -382,14 +382,15 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
 
         private void DataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
-            GlobalData.Instance.IsDataValid = true;
             if (e.EditAction != DataGridEditAction.Commit || e.Column.Header.ToString() != "推荐补偿值") return;
             var textBox = e.EditingElement as TextBox;
             var model = (UIModel)e.Row.Item;
+            if (model.ReferenceValue == null) return;
 
+            GlobalData.Instance.IsDataValid = true;
             if (double.TryParse(textBox.Text, out double parsedValue))
             {
-                if (Math.Abs(parsedValue - model.ReferenceValue) > AllowedRange)
+                if (Math.Abs(parsedValue - Convert.ToDouble(model.ReferenceValue)) > AllowedRange)
                 {
                     MessageBoxX.Show($"调整范围不能超过±{AllowedRange}", "验证错误");
                     e.Cancel = true; // 阻止编辑完成

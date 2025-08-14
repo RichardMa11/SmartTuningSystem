@@ -116,6 +116,8 @@ namespace DAL
             using (CoreDbContext context = new CoreDbContext())
             {
                 var query = context.DeviceInfo.AsQueryable();
+                query = query.Where(x => x.IsValid);
+
                 if (id != 0)
                     query = query.Where(x => x.Id == id);
 

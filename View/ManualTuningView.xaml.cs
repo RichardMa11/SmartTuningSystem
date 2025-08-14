@@ -315,8 +315,8 @@ namespace SmartTuningSystem.View
                 }
             }
 
-            private decimal paramModifyValue = 0;
-            public decimal ParamModifyValue
+            private decimal? paramModifyValue;
+            public decimal? ParamModifyValue
             {
                 get => paramModifyValue;
                 set
@@ -365,7 +365,7 @@ namespace SmartTuningSystem.View
                 });
 
                 //生成分页数据
-                models = data.OrderBy(c => c.PointName).ToList();
+                models = data.OrderBy(c => c.PointName).ThenBy(c => c.PointPos).ToList();
             });
 
             await Task.Delay(300);
@@ -425,7 +425,7 @@ namespace SmartTuningSystem.View
                 //var tempConnect = CNCCommunicationHelps.ConnectCnc(new List<string> { Ip });//开启连接
                 foreach (var p in DataDetail)
                 {
-                    if (p.ParamModifyValue == 0) continue;
+                    if (p.ParamModifyValue == null) continue;
                     if (befParam == "")
                         befParam += $@"地址：[{p.PointAddress}],值：[{p.ParamCurrValue}]|";
                     else
@@ -436,7 +436,7 @@ namespace SmartTuningSystem.View
                     else
                         sendParam += $@"{Environment.NewLine}地址：[{p.PointAddress}],值：[{p.ParamModifyValue}]|";
 
-                    CNCCommunicationHelps.SetCncValue(Ip, p.PointAddress, p.ParamModifyValue);
+                    CNCCommunicationHelps.SetCncValue(Ip, p.PointAddress, Convert.ToDecimal(p.ParamModifyValue));
                     //CNCCommunicationHelps.SetCncValue(tempConnect, Ip, p.PointAddress, p.ParamModifyValue);
                 }
                 //CNCCommunicationHelps.DisConnectCnc(tempConnect);//断开连接
