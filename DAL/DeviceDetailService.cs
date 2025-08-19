@@ -107,7 +107,7 @@ namespace DAL
 
                 // 分页处理
                 int total = query.Count();
-                var data = query.OrderByDescending(x => x.CreateTime)
+                var data = query.OrderBy(x => x.CreateTime)
                     .Skip((pageIndex - 1) * pageSize)
                     .Take(pageSize)
                     .ToList();

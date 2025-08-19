@@ -365,7 +365,7 @@ namespace SmartTuningSystem.View
                 });
 
                 //生成分页数据
-                models = data.OrderBy(c => c.PointName).ThenBy(c => c.PointPos).ToList();
+                models = data.OrderBy(c => c.Id).ThenBy(c => c.PointName).ThenBy(c => c.PointPos).ToList();
             });
 
             await Task.Delay(300);
