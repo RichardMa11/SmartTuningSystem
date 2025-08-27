@@ -258,6 +258,12 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
 
                 await Task.Delay(300);
                 bNoData.Visibility = dataList.Count() == 0 ? Visibility.Visible : Visibility.Collapsed;
+                if (!string.IsNullOrEmpty(txtDeviceName.Text))
+                    dataList = dataList.Where(t => t.DeviceName == txtDeviceName.Text).ToList();
+
+                if (!string.IsNullOrEmpty(txtPointName.Text))
+                    dataList = dataList.Where(t => t.PointName == txtPointName.Text).ToList();
+
                 foreach (var d in dataList)
                 {
                     Data.Add(d);
@@ -279,6 +285,12 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
                 _running = false;
                 GlobalData.Instance.IsDataValid = true;
             }
+        }
+
+        //刷新
+        private void btnRef_Click(object sender, RoutedEventArgs e)
+        {
+            BtnGenerateTuningRpt_Click(null, null);
         }
 
         private void BtnSend_Click(object sender, RoutedEventArgs e)

@@ -20,6 +20,11 @@
                    pu:GroupBoxHelper.ShadowColor="LightGray">
             <pu:GroupBoxHelper.ExtendControl>
                 <Grid>
+                    <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
                     <StackPanel Margin="0,0,20,0" Orientation="Horizontal" Height="40">
                         <TextBox x:Name="txtProductName" Width="200" Margin="5" VerticalAlignment="Center"  BorderThickness="0,0,0,0"
                                  TextWrapping="Wrap" pu:TextBoxHelper.Watermark="产品品名" pu:TextBoxHelper.Icon="&#xf288;" IsEnabled="False"/>
@@ -56,6 +61,64 @@
                             x:Name="btnAdd" Click="btnAdd_Click"/>-->
 
                     </StackPanel>
+                </Grid>
+                    <Grid Grid.Row="1">
+                    <StackPanel Margin="0,0,20,0" Orientation="Horizontal" Height="40">
+                           <TextBox  BorderBrush="White"
+                                      x:Name="txtDeviceName"
+                                      Margin="10,2,2,2"
+                                      MinWidth="200"
+                                      BorderThickness="0,0,0,1"
+                                      pu:TextBoxHelper.Watermark="在这里,按机台搜索"
+                                      pu:TextBoxHelper.FocusedBorderBrush="White"
+                                      pu:TextBoxHelper.FocusedShadowColor="{x:Null}"
+                                      pu:TextBoxHelper.Icon="&#xf002;"/>
+                           <TextBox  BorderBrush="White"
+                                     x:Name="txtPointName"
+                                     Margin="10,2,2,2"
+                                     MinWidth="200"
+                                     BorderThickness="0,0,0,1"
+                                     pu:TextBoxHelper.Watermark="在这里,按点号（编号）搜索"
+                                     pu:TextBoxHelper.FocusedBorderBrush="White"
+                                     pu:TextBoxHelper.FocusedShadowColor="{x:Null}"
+                                     pu:TextBoxHelper.Icon="&#xf002;"/>
+                            <Button FontSize="16"
+                                Margin="10,0,0,0"
+                                Width="28"
+                                Height="28"
+                                ToolTip="刷新"
+                                pu:ButtonHelper.ButtonStyle="Link"
+                                Foreground="#EAEAEA"
+                                Content="&#xf021;"
+                                x:Name="btnRef"
+                                Click="btnRef_Click"
+                                FontFamily="{StaticResource FontAwesome}"
+                                pu:ButtonHelper.HoverBrush="Orange" />
+
+                            <!--<TextBox  BorderBrush="White"
+                                  x:Name="txtSearchText"
+                                  Margin="10,2,2,2"
+                                  MinWidth="200"
+                                  BorderThickness="0,0,0,1"
+                                  KeyDown="txtSearchText_KeyDown"
+                                  pu:TextBoxHelper.Watermark="在这里,按名称搜索菜单"
+                                  pu:TextBoxHelper.FocusedBorderBrush="White"
+                                  pu:TextBoxHelper.FocusedShadowColor="{x:Null}"
+                                  pu:TextBoxHelper.Icon="&#xf002;"/>
+                        <Button FontSize="16"
+                                Width="28"
+                                Height="28"
+                             Margin="10,0,0,0"
+                                ToolTip="添加"
+                                pu:ButtonHelper.ButtonStyle="Link"
+                                Foreground="#EAEAEA"
+                                Content="&#xf067;"
+                                FontFamily="{StaticResource FontAwesome}"
+                                pu:ButtonHelper.HoverBrush="Orange"
+                            x:Name="btnAdd" Click="btnAdd_Click"/>-->
+
+                    </StackPanel>
+                </Grid>
                 </Grid>
             </pu:GroupBoxHelper.ExtendControl>
             <Grid>
@@ -104,8 +167,8 @@
                     </DataGrid.Resources>
 
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="机台" Width="*" ElementStyle="{StaticResource EllipsisText}" Binding="{Binding DeviceName}" IsReadOnly="True"/>
-                        <DataGridTextColumn Header="点号（编号）" Width="100"  Binding="{Binding PointName}" IsReadOnly="True" />
+                        <DataGridTextColumn Header="机台" Width="*" ElementStyle="{StaticResource EllipsisText}" Binding="{Binding DeviceName}" IsReadOnly="False"/>
+                        <DataGridTextColumn Header="点号（编号）" Width="100"  Binding="{Binding PointName}" IsReadOnly="False" />
                         <DataGridTextColumn Header="夹序号（槽位）" Width="110"  Binding="{Binding PointPos}" IsReadOnly="True" />
                         <DataGridTextColumn Header="标准值" Width="55" Binding="{Binding NominalDim}" IsReadOnly="True"/>
                         <DataGridTextColumn Header="+Tol" Width="55" Binding="{Binding TolMax}" IsReadOnly="True"/>
