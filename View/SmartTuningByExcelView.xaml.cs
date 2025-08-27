@@ -264,6 +264,8 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
                 if (!string.IsNullOrEmpty(txtPointName.Text))
                     dataList = dataList.Where(t => t.PointName == txtPointName.Text).ToList();
 
+                dataList = dataList.Where(t => t.ParamCurrValue != "没有维护参数地址值，请先去基础数据维护！！！").ToList();
+
                 foreach (var d in dataList)
                 {
                     Data.Add(d);
