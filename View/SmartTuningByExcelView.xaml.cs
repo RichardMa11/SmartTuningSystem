@@ -31,7 +31,8 @@ namespace SmartTuningSystem.View
         private string _selectedFilePath;
         private string _productName;
         private List<DeviceInfoModel> _deviceInfoModels = new List<DeviceInfoModel>();
-        public double AllowedRange { get; set; } = 0.05;
+        public readonly SysConfigManager SysConfigManager = new SysConfigManager();
+        public double AllowedRange { get; set; } = 0.15;
 
         #region UI Models
 
@@ -117,7 +118,11 @@ namespace SmartTuningSystem.View
                 {
                     StatusDescription = "情况2:偏差值绝对值>=调机公差&&合格偏上";
                     CompensationDescription = "按照偏差值的50%推荐补偿值";
-                    RecommendedCompensation = Math.Round(-Deviation * 0.5, 4);
+                    if (ParamCurrValue == "没有维护参数地址值，请先去基础数据维护！！！")
+                        RecommendedCompensation = Math.Round(-Deviation * 0.5, 4);
+                    else
+                        RecommendedCompensation = Math.Round(-Deviation * 0.5, 4) + Convert.ToDouble(ParamCurrValue);
+
                     RowColor = Brushes.Gold;
                 }
                 else if (Math.Abs(Deviation) >= Tolerance && Deviation < 0 && qualified != "NG")
@@ -125,14 +130,22 @@ namespace SmartTuningSystem.View
                     StatusDescription = "情况3:偏差值绝对值>=调机公差&&合格偏下";
                     CompensationDescription = "按照偏差值的50%推荐补偿值";
                     //RecommendedCompensation = (-Deviation * 0.5).ToString("F4");
-                    RecommendedCompensation = Math.Round(-Deviation * 0.5, 4);
+                    if (ParamCurrValue == "没有维护参数地址值，请先去基础数据维护！！！")
+                        RecommendedCompensation = Math.Round(-Deviation * 0.5, 4);
+                    else
+                        RecommendedCompensation = Math.Round(-Deviation * 0.5, 4) + Convert.ToDouble(ParamCurrValue);
+
                     RowColor = Brushes.Gold;
                 }
                 else if (Math.Abs(Deviation) < NominalDim * 0.5 && qualified == "NG")
                 {
                     StatusDescription = "情况4:超差NG&偏差值<标准值*0.5";
                     CompensationDescription = "按照偏差值的80%推荐补偿值";
-                    RecommendedCompensation = Math.Round(-Deviation * 0.8, 4);
+                    if (ParamCurrValue == "没有维护参数地址值，请先去基础数据维护！！！")
+                        RecommendedCompensation = Math.Round(-Deviation * 0.8, 4);
+                    else
+                        RecommendedCompensation = Math.Round(-Deviation * 0.8, 4) + Convert.ToDouble(ParamCurrValue);
+
                     RowColor = Brushes.Coral;
                 }
                 else if (Math.Abs(Deviation) >= NominalDim * 0.5 && qualified == "NG")
@@ -159,6 +172,8 @@ namespace SmartTuningSystem.View
         {
             GlobalData.Instance.IsDataValid = true;
             list.ItemsSource = Data;//绑定数据源
+            if (!string.IsNullOrEmpty(SysConfigManager.GetSysConfigByKey("AllowedRange").FirstOrDefault()?.Value))
+                AllowedRange = Convert.ToDouble(SysConfigManager.GetSysConfigByKey("AllowedRange").FirstOrDefault()?.Value);
 
             if (UserGlobal.MainWindow != null)
                 UserGlobal.MainWindow.WriteInfoOnBottom("打开智能调机成功。");
