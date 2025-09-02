@@ -432,7 +432,7 @@ namespace SmartTuningSystem.View
                         befParam += $@"{Environment.NewLine}地址：[{p.PointAddress}],值：[{p.ParamCurrValue}]|";
 
                     if (sendParam == "")
-                        sendParam += $@"地址：[{p.PointAddress}],值：[{p.ParamModifyValue}]|";
+                        sendParam += $@"【手动调机】地址：[{p.PointAddress}],值：[{p.ParamModifyValue}]|";
                     else
                         sendParam += $@"{Environment.NewLine}地址：[{p.PointAddress}],值：[{p.ParamModifyValue}]|";
 

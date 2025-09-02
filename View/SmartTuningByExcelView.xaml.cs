@@ -44,6 +44,8 @@ namespace SmartTuningSystem.View
             public string PointName { get; set; }
             //夹序号（槽位）
             public string PointPos { get; set; }
+            //参数地址
+            public string PointAddress { get; set; }
             //标准值
             public double NominalDim { get; set; }
             //+Tol
@@ -263,7 +265,7 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
                                 //    ? "没有维护参数地址值，请先去基础数据维护！！！"
                                 //    : CNCCommunicationHelps.GetCncValue(tempConnect, temp.IpAddress, temp.PointAddress)
                                 //        .ToString(CultureInfo.CurrentCulture);
-
+                                data.PointAddress = temp?.PointAddress;
                                 data.CalculateFields();
                                 dataList.Add(data);
                             }
@@ -342,10 +344,25 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
                         else
                             befParam += $@"{Environment.NewLine}地址：[{temp.PointAddress}],值：[{t.ParamCurrValue}]|";
 
+                        //if (sendParam == "")
+                        //    sendParam += $@"【智能调机】地址：[{temp.PointAddress}],值：[{t.RecommendedCompensation}]|";
+                        //else
+                        //    sendParam += $@"{Environment.NewLine}地址：[{temp.PointAddress}],值：[{t.RecommendedCompensation}]|";
+
                         if (sendParam == "")
-                            sendParam += $@"地址：[{temp.PointAddress}],值：[{t.RecommendedCompensation}]|";
+                        {
+                            if (Math.Abs(Convert.ToDouble(t.ReferenceValue) - Convert.ToDouble(t.RecommendedCompensation)) == 0)
+                                sendParam += $@"【智能调机】地址：[{temp.PointAddress}],值：[{t.RecommendedCompensation}]|";
+                            else
+                                sendParam += $@"【智能调机】地址：[{temp.PointAddress}],值：[{t.RecommendedCompensation}]|,推荐值:[{t.ReferenceValue}]|";
+                        }
                         else
-                            sendParam += $@"{Environment.NewLine}地址：[{temp.PointAddress}],值：[{t.RecommendedCompensation}]|";
+                        {
+                            if (Math.Abs(Convert.ToDouble(t.ReferenceValue) - Convert.ToDouble(t.RecommendedCompensation)) == 0)
+                                sendParam += $@"{Environment.NewLine}地址：[{temp.PointAddress}],值：[{t.RecommendedCompensation}]|";
+                            else
+                                sendParam += $@"{Environment.NewLine}地址：[{temp.PointAddress}],值：[{t.RecommendedCompensation}]|,推荐值:[{t.ReferenceValue}]|";
+                        }
 
                         CNCCommunicationHelps.SetCncValue(temp.IpAddress, temp.PointAddress, Convert.ToDecimal(t.RecommendedCompensation));
                         //CNCCommunicationHelps.SetCncValue(tempConnect, temp.IpAddress, temp.PointAddress, Convert.ToDecimal(t.RecommendedCompensation));

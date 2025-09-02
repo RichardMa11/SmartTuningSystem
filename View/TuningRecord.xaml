@@ -34,6 +34,7 @@
                         <DatePicker x:Name="dpEnd" Width="140" Margin="5"/>
                         <TextBox x:Name="txtSearch" Width="300" Margin="5"/>
                         <Button x:Name="btnSearch" Content="查询" Click="Search_Click" Margin="5" Width="80" pu:ButtonHelper.Icon="&#xf002;"/>
+                        <Button x:Name="btnExport" Content="导出" Click="Export_Click" Margin="5" Width="80" pu:ButtonHelper.Icon="&#xf045;"/>
                     </StackPanel>
 
                     <!-- 可滚动数据区 -->
