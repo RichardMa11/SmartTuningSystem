@@ -427,14 +427,14 @@ namespace SmartTuningSystem.View
                 {
                     if (p.ParamModifyValue == null) continue;
                     if (befParam == "")
-                        befParam += $@"地址：[{p.PointAddress}],值：[{p.ParamCurrValue}]|";
+                        befParam += $@"FAI编号：[{p.PointName}],地址：[{p.PointAddress}],值：[{p.ParamCurrValue}]|";
                     else
-                        befParam += $@"{Environment.NewLine}地址：[{p.PointAddress}],值：[{p.ParamCurrValue}]|";
+                        befParam += $@"{Environment.NewLine}FAI编号：[{p.PointName}],地址：[{p.PointAddress}],值：[{p.ParamCurrValue}]|";
 
                     if (sendParam == "")
-                        sendParam += $@"【手动调机】地址：[{p.PointAddress}],值：[{p.ParamModifyValue}]|";
+                        sendParam += $@"【手动调机】FAI编号：[{p.PointName}],地址：[{p.PointAddress}],值：[{p.ParamModifyValue}]|";
                     else
-                        sendParam += $@"{Environment.NewLine}地址：[{p.PointAddress}],值：[{p.ParamModifyValue}]|";
+                        sendParam += $@"{Environment.NewLine}FAI编号：[{p.PointName}],地址：[{p.PointAddress}],值：[{p.ParamModifyValue}]|";
 
                     CNCCommunicationHelps.SetCncValue(Ip, p.PointAddress, Convert.ToDecimal(p.ParamModifyValue));
                     //CNCCommunicationHelps.SetCncValue(tempConnect, Ip, p.PointAddress, p.ParamModifyValue);

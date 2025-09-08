@@ -340,9 +340,9 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
                         if (t.RecommendedCompensation == null) continue;
                         var temp = _deviceInfoModels.First(x => x.DeviceName == t.DeviceName && x.PointName == t.PointName && x.PointPos == t.PointPos);
                         if (befParam == "")
-                            befParam += $@"地址：[{temp.PointAddress}],值：[{t.ParamCurrValue}]|";
+                            befParam += $@"FAI编号：[{temp.PointName}],地址：[{temp.PointAddress}],值：[{t.ParamCurrValue}]|";
                         else
-                            befParam += $@"{Environment.NewLine}地址：[{temp.PointAddress}],值：[{t.ParamCurrValue}]|";
+                            befParam += $@"{Environment.NewLine}FAI编号：[{temp.PointName}],地址：[{temp.PointAddress}],值：[{t.ParamCurrValue}]|";
 
                         //if (sendParam == "")
                         //    sendParam += $@"【智能调机】地址：[{temp.PointAddress}],值：[{t.RecommendedCompensation}]|";
@@ -352,16 +352,16 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
                         if (sendParam == "")
                         {
                             if (Math.Abs(Convert.ToDouble(t.ReferenceValue) - Convert.ToDouble(t.RecommendedCompensation)) == 0)
-                                sendParam += $@"【智能调机】地址：[{temp.PointAddress}],值：[{t.RecommendedCompensation}]|";
+                                sendParam += $@"【智能调机】FAI编号：[{temp.PointName}],地址：[{temp.PointAddress}],值：[{t.RecommendedCompensation}]|";
                             else
-                                sendParam += $@"【智能调机】地址：[{temp.PointAddress}],值：[{t.RecommendedCompensation}]|,推荐值:[{t.ReferenceValue}]|";
+                                sendParam += $@"【智能调机】FAI编号：[{temp.PointName}],地址：[{temp.PointAddress}],值：[{t.RecommendedCompensation}]|,推荐值:[{t.ReferenceValue}]|";
                         }
                         else
                         {
                             if (Math.Abs(Convert.ToDouble(t.ReferenceValue) - Convert.ToDouble(t.RecommendedCompensation)) == 0)
-                                sendParam += $@"{Environment.NewLine}地址：[{temp.PointAddress}],值：[{t.RecommendedCompensation}]|";
+                                sendParam += $@"{Environment.NewLine}FAI编号：[{temp.PointName}],地址：[{temp.PointAddress}],值：[{t.RecommendedCompensation}]|";
                             else
-                                sendParam += $@"{Environment.NewLine}地址：[{temp.PointAddress}],值：[{t.RecommendedCompensation}]|,推荐值:[{t.ReferenceValue}]|";
+                                sendParam += $@"{Environment.NewLine}FAI编号：[{temp.PointName}],地址：[{temp.PointAddress}],值：[{t.RecommendedCompensation}]|,推荐值:[{t.ReferenceValue}]|";
                         }
 
                         CNCCommunicationHelps.SetCncValue(temp.IpAddress, temp.PointAddress, Convert.ToDecimal(t.RecommendedCompensation));
