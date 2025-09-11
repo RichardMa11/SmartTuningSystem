@@ -304,8 +304,8 @@ namespace SmartTuningSystem.View
                 }
             }
 
-            private decimal paramCurrValue = 0;
-            public decimal ParamCurrValue
+            private decimal? paramCurrValue;
+            public decimal? ParamCurrValue
             {
                 get => paramCurrValue;
                 set

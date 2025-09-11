@@ -175,8 +175,8 @@ namespace SmartTuningSystem.View
             //            }
             //            catch (Exception ex)
             //            {
-            //                LogHelps.WriteLogToDb($@"{UserGlobal.CurrUser.UserName}生产调机报告报错；报错原因：{ex.Message + ex.StackTrace}", LogLevel.Error);
-            //                MessageBoxX.Show($@"{UserGlobal.CurrUser.UserName}生产调机报告报错；报错原因：{ex.Message + ex.StackTrace}", "提示");
+            //                LogHelps.WriteLogToDb($@"{UserGlobal.CurrUser.UserName} 生成调机报告报错；报错原因：{ex.Message + ex.StackTrace}", LogLevel.Error);
+            //                MessageBoxX.Show($@"{UserGlobal.CurrUser.UserName} 生成调机报告报错；报错原因：{ex.Message + ex.StackTrace}", "提示");
             //            }
         }
 

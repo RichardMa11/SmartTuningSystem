@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -32,6 +31,8 @@ namespace SmartTuningSystem.View
         private string _productName;
         private List<DeviceInfoModel> _deviceInfoModels = new List<DeviceInfoModel>();
         public readonly SysConfigManager SysConfigManager = new SysConfigManager();
+        public readonly InspectionLockManager InspectionLockManager = new InspectionLockManager();
+        //public ObservableCollection<string> Items { get; set; }
         public double AllowedRange { get; set; } = 0.15;
 
         #region UI Models
@@ -46,6 +47,9 @@ namespace SmartTuningSystem.View
             public string PointPos { get; set; }
             //参数地址
             public string PointAddress { get; set; }
+
+            //送检锁定值
+            public decimal? LockValue { get; set; }
             //标准值
             public double NominalDim { get; set; }
             //+Tol
@@ -123,7 +127,17 @@ namespace SmartTuningSystem.View
                     if (ParamCurrValue == "没有维护参数地址值，请先去基础数据维护！！！")
                         RecommendedCompensation = Math.Round(-Deviation * 0.5, 4);
                     else
-                        RecommendedCompensation = Math.Round(-Deviation * 0.5, 4) + Convert.ToDouble(ParamCurrValue);
+                    {
+                        if (LockValue == null)
+                        {
+                            if (!string.IsNullOrEmpty(ParamCurrValue))
+                                RecommendedCompensation = Math.Round(-Deviation * 0.5, 4) + Convert.ToDouble(ParamCurrValue);
+                            else
+                                RecommendedCompensation = Math.Round(-Deviation * 0.5, 4);
+                        }
+                        else
+                            RecommendedCompensation = Math.Round(-Deviation * 0.5, 4) + Convert.ToDouble(LockValue);
+                    }
 
                     RowColor = Brushes.Gold;
                 }
@@ -135,7 +149,17 @@ namespace SmartTuningSystem.View
                     if (ParamCurrValue == "没有维护参数地址值，请先去基础数据维护！！！")
                         RecommendedCompensation = Math.Round(-Deviation * 0.5, 4);
                     else
-                        RecommendedCompensation = Math.Round(-Deviation * 0.5, 4) + Convert.ToDouble(ParamCurrValue);
+                    {
+                        if (LockValue == null)
+                        {
+                            if (!string.IsNullOrEmpty(ParamCurrValue))
+                                RecommendedCompensation = Math.Round(-Deviation * 0.5, 4) + Convert.ToDouble(ParamCurrValue);
+                            else
+                                RecommendedCompensation = Math.Round(-Deviation * 0.5, 4);
+                        }
+                        else
+                            RecommendedCompensation = Math.Round(-Deviation * 0.5, 4) + Convert.ToDouble(LockValue);
+                    }
 
                     RowColor = Brushes.Gold;
                 }
@@ -146,7 +170,17 @@ namespace SmartTuningSystem.View
                     if (ParamCurrValue == "没有维护参数地址值，请先去基础数据维护！！！")
                         RecommendedCompensation = Math.Round(-Deviation * 0.8, 4);
                     else
-                        RecommendedCompensation = Math.Round(-Deviation * 0.8, 4) + Convert.ToDouble(ParamCurrValue);
+                    {
+                        if (LockValue == null)
+                        {
+                            if (!string.IsNullOrEmpty(ParamCurrValue))
+                                RecommendedCompensation = Math.Round(-Deviation * 0.8, 4) + Convert.ToDouble(ParamCurrValue);
+                            else
+                                RecommendedCompensation = Math.Round(-Deviation * 0.8, 4);
+                        }
+                        else
+                            RecommendedCompensation = Math.Round(-Deviation * 0.8, 4) + Convert.ToDouble(LockValue);
+                    }
 
                     RowColor = Brushes.Coral;
                 }
@@ -174,6 +208,11 @@ namespace SmartTuningSystem.View
         {
             GlobalData.Instance.IsDataValid = true;
             list.ItemsSource = Data;//绑定数据源
+            comboLock.ItemsSource = InspectionLockManager.GetAllLock().OrderByDescending(t => t.Id).Select(t => t.LockName).ToList().Distinct();
+            //foreach (var t in InspectionLockManager.GetAllLock().Select(t => t.LockName).ToList().Distinct())
+            //{
+            //    basicCombo.ItemsSource.Add(t);
+            //}
             if (!string.IsNullOrEmpty(SysConfigManager.GetSysConfigByKey("AllowedRange").FirstOrDefault()?.Value))
                 AllowedRange = Convert.ToDouble(SysConfigManager.GetSysConfigByKey("AllowedRange").FirstOrDefault()?.Value);
 
@@ -205,6 +244,14 @@ namespace SmartTuningSystem.View
                 MessageBoxX.Show("请先选择有效的Excel文件", "提示");
                 return;
             }
+
+            if (comboLock.SelectedValue == null)
+            {
+                MessageBoxX.Show("请先选择送检锁定时间", "提示");
+                return;
+            }
+            string lockName = comboLock.SelectedValue.ToString();
+
             //Dictionary<string, ushort> tempConnect = new Dictionary<string, ushort>();
 
             try
@@ -259,13 +306,17 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
                                     x.PointName == data.PointName && x.PointPos == data.PointPos);
                                 data.ParamCurrValue = temp == null
                                     ? "没有维护参数地址值，请先去基础数据维护！！！"
-                                    : CNCCommunicationHelps.GetCncValue(temp.IpAddress, temp.PointAddress)
-                                        .ToString(CultureInfo.CurrentCulture);
+                                    : CNCCommunicationHelps.GetCncValue(temp.IpAddress, temp.PointAddress).ToString();
                                 //data.ParamCurrValue = temp == null
                                 //    ? "没有维护参数地址值，请先去基础数据维护！！！"
                                 //    : CNCCommunicationHelps.GetCncValue(tempConnect, temp.IpAddress, temp.PointAddress)
                                 //        .ToString(CultureInfo.CurrentCulture);
+
                                 data.PointAddress = temp?.PointAddress;
+                                var lockTemp = InspectionLockManager.GetLockByLockName(lockName).FirstOrDefault(l =>
+                                    l.IpAddress == temp?.IpAddress && l.PointAddress == temp?.PointAddress);
+                                data.LockValue = lockTemp?.LockValue;
+
                                 data.CalculateFields();
                                 dataList.Add(data);
                             }
@@ -293,9 +344,9 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
             }
             catch (Exception ex)
             {
-                LogHelps.WriteLogToDb($@"{UserGlobal.CurrUser.UserName}生产调机报告报错；报错原因：{ex.Message + ex.StackTrace}",
+                LogHelps.WriteLogToDb($@"{UserGlobal.CurrUser.UserName} 生成调机报告报错；报错原因：{ex.Message + ex.StackTrace}",
                     LogLevel.Error);
-                MessageBoxX.Show($@"{UserGlobal.CurrUser.UserName}生产调机报告报错；报错原因：{ex.Message + ex.StackTrace}", "提示");
+                MessageBoxX.Show($@"{UserGlobal.CurrUser.UserName} 生成调机报告报错；报错原因：{ex.Message + ex.StackTrace}", "提示");
             }
             finally
             {
@@ -450,5 +501,6 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
                 GlobalData.Instance.IsDataValid = false;
             }
         }
+
     }
 }

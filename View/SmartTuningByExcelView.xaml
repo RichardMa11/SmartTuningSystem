@@ -64,15 +64,20 @@
                 </Grid>
                     <Grid Grid.Row="1">
                     <StackPanel Margin="0,0,20,0" Orientation="Horizontal" Height="40">
-                           <TextBox  BorderBrush="White"
-                                      x:Name="txtDeviceName"
+                            <Label Content="送检锁定时间选择：" Margin="10,2,2,2"
+                                   MinWidth="100" />
+                            <ComboBox x:Name="comboLock" 
                                       Margin="10,2,2,2"
-                                      MinWidth="200"
-                                      BorderThickness="0,0,0,1"
-                                      pu:TextBoxHelper.Watermark="在这里,按机台搜索"
-                                      pu:TextBoxHelper.FocusedBorderBrush="White"
-                                      pu:TextBoxHelper.FocusedShadowColor="{x:Null}"
-                                      pu:TextBoxHelper.Icon="&#xf002;"/>
+                                      MinWidth="180"/>
+                            <TextBox  BorderBrush="White"
+                                  x:Name="txtDeviceName"
+                                  Margin="10,2,2,2"
+                                  MinWidth="200"
+                                  BorderThickness="0,0,0,1"
+                                  pu:TextBoxHelper.Watermark="在这里,按机台搜索"
+                                  pu:TextBoxHelper.FocusedBorderBrush="White"
+                                  pu:TextBoxHelper.FocusedShadowColor="{x:Null}"
+                                  pu:TextBoxHelper.Icon="&#xf002;"/>
                            <TextBox  BorderBrush="White"
                                      x:Name="txtPointName"
                                      Margin="10,2,2,2"
@@ -190,6 +195,7 @@
                             </DataGridTextColumn.Binding>
                         </DataGridTextColumn>
                         <DataGridTextColumn Header="参数地址" Width="100" Binding="{Binding PointAddress}" ElementStyle="{StaticResource EllipsisText}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="送检锁定值" Width="100" Binding="{Binding LockValue}" ElementStyle="{StaticResource EllipsisText}" IsReadOnly="True"/>
                         <DataGridTextColumn Header="变量当前值" Width="100" Binding="{Binding ParamCurrValue}" ElementStyle="{StaticResource EllipsisText}" IsReadOnly="True"/>
                         <DataGridTextColumn Header="参考值" Width="100" Binding="{Binding ReferenceValue}" IsReadOnly="True" Visibility="Collapsed"/>
                     </DataGrid.Columns>

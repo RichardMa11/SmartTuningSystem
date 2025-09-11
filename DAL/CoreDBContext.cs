@@ -35,6 +35,8 @@ namespace DAL
 
         public DbSet<UserMenu> UserMenu { get; set; }
 
+        public DbSet<InspectionLock> InspectionLock { get; set; }
+
         #endregion
 
         #region  权限相关

@@ -171,6 +171,9 @@
     <Compile Include="Utils\PagerUtils.cs" />
     <Compile Include="Utils\PhoneNumberCommon.cs" />
     <Compile Include="Utils\StyleHelper.cs" />
+    <Compile Include="View\InspectionLock.xaml.cs">
+      <DependentUpon>InspectionLock.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\ManualTuningView.xaml.cs">
       <DependentUpon>ManualTuningView.xaml</DependentUpon>
     </Compile>
@@ -251,6 +254,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MyControls\MyPager_ZHHans.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\InspectionLock.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

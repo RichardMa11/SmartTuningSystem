@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="DeviceDetailManager.cs" />
     <Compile Include="DeviceInfoManager.cs" />
+    <Compile Include="InspectionLockManager.cs" />
     <Compile Include="TuningRecordManager.cs" />
     <Compile Include="LogManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

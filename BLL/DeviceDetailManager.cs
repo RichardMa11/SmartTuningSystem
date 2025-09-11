@@ -33,6 +33,11 @@ namespace BLL
             return DeviceDetailService.SelectDeviceDetailById(detailId);
         }
 
+        public List<DeviceInfoDetail> SelectDeviceDetailByDevId(int devId)
+        {
+            return DeviceDetailService.SelectDeviceDetailByDevId(devId);
+        }
+
 
         public (List<DeviceInfoDetail>, int) GetPagedDeviceDetail(string keyword, int pageIndex, int pageSize, int deviceId = 0)
         {

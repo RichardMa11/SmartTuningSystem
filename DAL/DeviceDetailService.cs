@@ -89,6 +89,17 @@ namespace DAL
             return deviceDetail;
         }
 
+        public List<DeviceInfoDetail> SelectDeviceDetailByDevId(int devId)
+        {
+            List<DeviceInfoDetail> deviceDetails;
+            using (CoreDbContext context = new CoreDbContext())
+            {
+                deviceDetails = context.DeviceInfoDetail.Where(c => c.DeviceId == devId && c.IsValid).ToList();
+            }
+
+            return deviceDetails;
+        }
+
         public (List<DeviceInfoDetail>, int) QueryPagedDeviceDetail(string keyword, int pageIndex, int pageSize, int deviceId = 0)
         {
             using (var db = new CoreDbContext())

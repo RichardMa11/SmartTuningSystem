@@ -9,9 +9,9 @@ namespace SmartTuningSystem.Utils
     public class CNCCommunicationHelps
     {
         //默认端口号：8193（FOCAS2 协议常用）
-        public static decimal GetCncValue(string ip, string paramAddress)
+        public static decimal? GetCncValue(string ip, string paramAddress)
         {
-            decimal value = 0;
+            decimal? value = null;
             try
             {
                 if (Focas64.cnc_allclibhndl3(ip, 8193, 3, out var temp) == Focas64.EW_OK) //连接设备
