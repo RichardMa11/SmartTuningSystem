@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -225,23 +226,51 @@ namespace SmartTuningSystem.View
                 ButtonBrush = "#5DBBEC".ToColor().ToBrush(),
             });
             string lockNameTemp = DateTime.Now.ToString("yyyyMMddHHmmss");
+            //foreach (var item in list.Items.OfType<UIModel>())
+            //{
+            //    if (!item.IsSelected) continue;
+            //    foreach (var d in DeviceDetailManager.SelectDeviceDetailByDevId(item.Id))
+            //    {
+            //        InspectionLockManager.AddLock(new Model.InspectionLock
+            //        {
+            //            LockName = lockNameTemp,
+            //            IpAddress = item.IpAddress,
+            //            PointAddress = d.PointAddress,
+            //            LockValue = CNCCommunicationHelps.GetCncValue(item.IpAddress, d.PointAddress),
+            //            CreateName = UserGlobal.CurrUser.UserName,
+            //            CreateNo = UserGlobal.CurrUser.UserNo
+            //        });
+            //    }
+            //}
+
+            // 开启所有设备连接
+            var ips = list.Items.OfType<UIModel>().Where(t => t.IsSelected).Select(t => t.IpAddress).ToList();
+            Stopwatch sw = Stopwatch.StartNew();
+            Dictionary<string, ushort> connectHand = CNCCommunicationHelps.ConnectCnc(ips);
+            LogHelps.WriteLogToDb($"开启所有设备连接耗时: {sw.ElapsedMilliseconds}ms", LogLevel.Info);
+            List<Model.InspectionLock> locks = new List<Model.InspectionLock>();
             foreach (var item in list.Items.OfType<UIModel>())
             {
                 if (!item.IsSelected) continue;
                 foreach (var d in DeviceDetailManager.SelectDeviceDetailByDevId(item.Id))
                 {
-                    InspectionLockManager.AddLock(new Model.InspectionLock
+                    locks.Add(new Model.InspectionLock
                     {
                         LockName = lockNameTemp,
                         IpAddress = item.IpAddress,
                         PointAddress = d.PointAddress,
-                        LockValue = CNCCommunicationHelps.GetCncValue(item.IpAddress, d.PointAddress),
+                        LockValue = CNCCommunicationHelps.GetCncValue(connectHand, item.IpAddress, d.PointAddress),
                         CreateName = UserGlobal.CurrUser.UserName,
                         CreateNo = UserGlobal.CurrUser.UserNo
                     });
                 }
             }
-
+            LogHelps.WriteLogToDb($"获取所有设备参数值耗时: {sw.ElapsedMilliseconds}ms", LogLevel.Info);
+            //关闭所有设备
+            CNCCommunicationHelps.DisConnectCnc(connectHand);
+            LogHelps.WriteLogToDb($"关闭所有设备耗时: {sw.ElapsedMilliseconds}ms", LogLevel.Info);
+            InspectionLockManager.BulkAddLock(locks);
+            LogHelps.WriteLogToDb($"写入数据库耗时: {sw.ElapsedMilliseconds}ms", LogLevel.Info);
             handler.UpdateMessage("锁定成功。");
             await Task.Delay(1000);
             handler.Close();

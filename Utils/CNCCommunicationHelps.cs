@@ -80,9 +80,9 @@ namespace SmartTuningSystem.Utils
             return value;
         }
 
-        public static decimal GetCncValue(Dictionary<string, ushort> dicIps, string ip, string paramAddress)
+        public static decimal? GetCncValue(Dictionary<string, ushort> dicIps, string ip, string paramAddress)
         {
-            decimal value = 0;
+            decimal? value = null;
             try
             {
                 foreach (var i in dicIps)

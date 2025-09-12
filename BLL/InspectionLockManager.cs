@@ -13,6 +13,11 @@ namespace BLL
             InspectionLockService.InsertLock(inspectionLock);
         }
 
+        public void BulkAddLock(List<InspectionLock> inspectionLocks)
+        {
+            InspectionLockService.BulkInsertLock(inspectionLocks);
+        }
+
         public List<InspectionLock> GetLockByLockName(string lockName)
         {
             return InspectionLockService.SelectLocks(lockName);
