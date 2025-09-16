@@ -252,7 +252,8 @@ namespace SmartTuningSystem.View
             }
             string lockName = comboLock.SelectedValue.ToString();
 
-            //Dictionary<string, ushort> tempConnect = new Dictionary<string, ushort>();
+            //连接句柄
+            Dictionary<string, ushort> tempConnect = new Dictionary<string, ushort>();
 
             try
             {
@@ -263,6 +264,7 @@ namespace SmartTuningSystem.View
                 Data.Clear();
                 List<UIModel> dataList = new List<UIModel>();
                 Dictionary<int, string> devicePointPosList = new Dictionary<int, string>();
+                List<Model.InspectionLock> lockNameTemp;
                 await Task.Run(() =>
                 {
                     //解析Excel，生成调机报告
@@ -276,7 +278,8 @@ namespace SmartTuningSystem.View
                             $@"   select [DeviceName],[IpAddress],[ProductName],[PointName],[PointPos],[PointAddress] FROM [SmartTuningSystemDB].[dbo].[DeviceInfo] dev with(nolock) 
 left join [SmartTuningSystemDB].[dbo].[DeviceInfoDetail] det with(nolock) on dev.Id=det.DeviceId and det.IsValid=1
 where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
-                        //tempConnect = CNCCommunicationHelps.ConnectCnc(_deviceInfoModels.Select(t => t.IpAddress).ToList());//开启连接
+                        lockNameTemp = InspectionLockManager.GetLockByLockName(lockName).ToList();
+                        tempConnect = CNCCommunicationHelps.ConnectCnc(_deviceInfoModels.Select(t => t.IpAddress).ToList());//开启连接
 
                         //devicePointPosList.AddRange(from r in sheet.GetRow(5).Cells where !string.IsNullOrEmpty(r.ToString()) select r.ToString());
                         foreach (var r in sheet.GetRow(5).Cells.Where(r => !string.IsNullOrEmpty(r.ToString())))
@@ -304,16 +307,15 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
                                 };
                                 var temp = _deviceInfoModels.FirstOrDefault(x => x.DeviceName == data.DeviceName &&
                                     x.PointName == data.PointName && x.PointPos == data.PointPos);
-                                data.ParamCurrValue = temp == null
-                                    ? "没有维护参数地址值，请先去基础数据维护！！！"
-                                    : CNCCommunicationHelps.GetCncValue(temp.IpAddress, temp.PointAddress).ToString();
                                 //data.ParamCurrValue = temp == null
                                 //    ? "没有维护参数地址值，请先去基础数据维护！！！"
-                                //    : CNCCommunicationHelps.GetCncValue(tempConnect, temp.IpAddress, temp.PointAddress)
-                                //        .ToString(CultureInfo.CurrentCulture);
+                                //    : CNCCommunicationHelps.GetCncValue(temp.IpAddress, temp.PointAddress).ToString();
+                                data.ParamCurrValue = temp == null
+                                    ? "没有维护参数地址值，请先去基础数据维护！！！"
+                                    : CNCCommunicationHelps.GetCncValue(tempConnect, temp.IpAddress, temp.PointAddress).ToString();
 
                                 data.PointAddress = temp?.PointAddress;
-                                var lockTemp = InspectionLockManager.GetLockByLockName(lockName).FirstOrDefault(l =>
+                                var lockTemp = lockNameTemp.FirstOrDefault(l =>
                                     l.IpAddress == temp?.IpAddress && l.PointAddress == temp?.PointAddress);
                                 data.LockValue = lockTemp?.LockValue;
 
@@ -350,7 +352,7 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
             }
             finally
             {
-                //CNCCommunicationHelps.DisConnectCnc(tempConnect);//断开连接
+                CNCCommunicationHelps.DisConnectCnc(tempConnect);//断开连接
                 HideLoadingPanel();
                 _running = false;
                 GlobalData.Instance.IsDataValid = true;
