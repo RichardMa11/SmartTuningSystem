@@ -276,7 +276,7 @@ namespace SmartTuningSystem.View
 
                         _deviceInfoModels = LogManager.QueryBySql<DeviceInfoModel>(
                             $@"   select [DeviceName],[IpAddress],[ProductName],[PointName],[PointPos],[PointAddress] FROM [SmartTuningSystemDB].[dbo].[DeviceInfo] dev with(nolock) 
-left join [SmartTuningSystemDB].[dbo].[DeviceInfoDetail] det with(nolock) on dev.Id=det.DeviceId and det.IsValid=1
+left join [SmartTuningSystemDB].[dbo].[DeviceInfoDetail] det with(nolock) on dev.Id=det.DeviceId and det.IsValid=1 and det.IsUsedSmart=1
 where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
                         lockNameTemp = InspectionLockManager.GetLockByLockName(lockName).ToList();
                         tempConnect = CNCCommunicationHelps.ConnectCnc(_deviceInfoModels.Select(t => t.IpAddress).ToList());//开启连接

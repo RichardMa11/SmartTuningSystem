@@ -18,6 +18,11 @@ namespace BLL
             DeviceDetailService.UpdateDeviceDetail(detail);
         }
 
+        public void ModifyDeviceDetail(List<DeviceInfoDetail> details)
+        {
+            DeviceDetailService.UpdateDeviceDetail(details);
+        }
+
         public void RemoveDeviceDetail(DeviceInfoDetail detail)
         {
             DeviceDetailService.LogicDeleteDeviceDetail(detail);

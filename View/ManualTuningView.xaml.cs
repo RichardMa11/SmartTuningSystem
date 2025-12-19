@@ -26,6 +26,10 @@ namespace SmartTuningSystem.View
         public string Ip = "127.0.0.1";
         public string ProductName = "";
         public string DeviceName = "";
+        public readonly SysConfigManager SysConfigManager = new SysConfigManager();
+        public double AllowedRange { get; set; } = 0.05;
+
+        public List<UserPermissionDto> UserPermissions = new List<UserPermissionDto>();
 
         public ManualTuningView()
         {
@@ -38,6 +42,15 @@ namespace SmartTuningSystem.View
             UpdateGridAsync();
             list.ItemsSource = Data;//绑定数据源
             listParam.ItemsSource = DataDetail;//绑定数据源
+            if (!string.IsNullOrEmpty(SysConfigManager.GetSysConfigByKey("AllowedRange").FirstOrDefault()?.Value))
+                AllowedRange = Convert.ToDouble(SysConfigManager.GetSysConfigByKey("AllowedRange").FirstOrDefault()?.Value);
+
+            UserPermissions = LogManager.QueryBySql<UserPermissionDto>(@"   select PermissionCode,UserName,UserNo FROM [SmartTuningSystemDB].[dbo].[Users] users with(nolock) 
+  left join [SmartTuningSystemDB].[dbo].[UserRole] ur with(nolock)  on users.Id=ur.UserId and ur.IsValid=1
+  left join [SmartTuningSystemDB].[dbo].[RolePermission] rp with(nolock)  on ur.RoleId=rp.RoleId and rp.IsValid=1
+  left join [SmartTuningSystemDB].[dbo].[Permission] p with(nolock) on rp.PermissionId=p.Id and p.IsValid=1
+  left join [SmartTuningSystemDB].[dbo].[Roles] r with(nolock) on ur.RoleId=r.Id and r.IsValid=1
+  where users.IsValid=1   ").Where(c => c.UserName == UserGlobal.CurrUser.UserName && c.UserNo == UserGlobal.CurrUser.UserNo).OrderBy(c => c.PermissionCode).ToList();
 
             if (UserGlobal.MainWindow != null)
                 UserGlobal.MainWindow.WriteInfoOnBottom("打开手动调机-IPQC界面成功。");
@@ -442,6 +455,7 @@ namespace SmartTuningSystem.View
                 //CNCCommunicationHelps.DisConnectCnc(tempConnect);//断开连接
 
                 LogHelps.WriteTuningRecord(DeviceName, ProductName, sendParam.TrimEnd('|'), befParam.TrimEnd('|'));
+                UpdateGridDetailAsync(DeviceId);
                 MessageBoxX.Show($"{UserGlobal.CurrUser.UserName} 操作：设置CNC机台数据：机台：[{DeviceName}],机台IP：[{Ip}],产品品名：[{ ProductName}]成功!", "IPQC调机");
             }
             catch (Exception ex)
@@ -450,6 +464,52 @@ namespace SmartTuningSystem.View
 产品品名：[{ProductName}],报错原因：{ex.Message + ex.StackTrace}", LogLevel.Error);
                 MessageBoxX.Show($@"{UserGlobal.CurrUser.UserName}设置CNC机台数据报错：机台：[{DeviceName}],机台IP：[{Ip}],
 产品品名：[{ProductName}],报错原因：{ex.Message + ex.StackTrace}", "提示");
+            }
+        }
+
+        private void DataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            if (e.EditAction != DataGridEditAction.Commit || e.Column.Header.ToString() != "参数修改值") return;
+            var textBox = e.EditingElement as TextBox;
+            var model = (UIModelDetail)e.Row.Item;
+            if (model.ParamCurrValue == null) return;
+
+            GlobalData.Instance.IsDataValid = true;
+            if (double.TryParse(textBox.Text, out double parsedValue))
+            {
+                var tempRecords = LogManager.QueryBySql<Model.TuningRecord>($@"   SELECT * 
+                FROM [SmartTuningSystemDB].[dbo].[TuningRecord] r 
+                WHERE 
+                  r.DeviceName = '{DeviceName}'  -- 参数化设备名
+                  AND r.ProductName = '{ProductName}'  -- 参数化产品名
+                  AND r.IsValid=1
+                  -- 筛选当天24小时：大于等于当天0点，小于次日0点（覆盖所有毫秒）
+                  AND r.CreateTime >= CAST(GETDATE() AS DATE)  
+                  AND r.CreateTime < DATEADD(DAY, 1, CAST(GETDATE() AS DATE));   ").Where(t => t.SendStr.Contains(model.PointAddress)).ToList();
+                //先判断次数
+                if (tempRecords.Count > 0 && UserPermissions.All(u => u.PermissionCode != "A001"))
+                {
+                    MessageBoxX.Show($"FAI编号：[{model.PointName}],地址：[{model.PointAddress}]今天已经调整过，" +
+                                     $"手动调机一天只能调整一次,若是确实需要调整，请联系组长或者经理等更高权限的人员！", "验证错误");
+                    e.Cancel = true; // 阻止编辑完成
+                    GlobalData.Instance.IsDataValid = false;
+                    UpdateGridDetailAsync(DeviceId);
+                }
+                else //再范围
+                {
+                    if (Math.Abs(parsedValue - Convert.ToDouble(model.ParamCurrValue)) > AllowedRange && UserPermissions.All(u => u.PermissionCode != "A002"))
+                    {
+                        MessageBoxX.Show($"调整范围不能超过±{AllowedRange},若是确实需要更改大数值，请联系组长或者经理等更高权限的人员！", "验证错误");
+                        e.Cancel = true; // 阻止编辑完成
+                        GlobalData.Instance.IsDataValid = false;
+                    }
+                }
+            }
+            else
+            {
+                MessageBoxX.Show("请输入有效数值（可含正负号和小数点）", "格式错误");
+                e.Cancel = true;
+                GlobalData.Instance.IsDataValid = false;
             }
         }
 

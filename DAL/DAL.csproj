@@ -51,6 +51,7 @@
     <Compile Include="DeviceDetailService.cs" />
     <Compile Include="DeviceInfoService.cs" />
     <Compile Include="InspectionLockService.cs" />
+    <Compile Include="PermissionService.cs" />
     <Compile Include="TuningRecordService.cs" />
     <Compile Include="SysConfigService.cs" />
     <Compile Include="MenuService.cs" />

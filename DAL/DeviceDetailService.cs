@@ -53,6 +53,57 @@ namespace DAL
             }
         }
 
+        public void UpdateDeviceDetail(List<DeviceInfoDetail> details)
+        {
+            // 1. 空值/空列表校验
+            if (details == null || !details.Any())
+            {
+                throw new ArgumentException("待更新的设备详情列表不能为空", nameof(details));
+            }
+
+            // 2. 校验列表中实体的ID有效性（避免ID为0/负数等无效值）
+            var invalidEntities = details.Where(d => d.Id <= 0).ToList();
+            if (invalidEntities.Any())
+            {
+                var invalidIds = string.Join(",", invalidEntities.Select(d => d.Id));
+                throw new ArgumentException($"以下实体的ID无效（ID需大于0）：{invalidIds}", nameof(details));
+            }
+
+            using (CoreDbContext context = new CoreDbContext())
+            {
+                // 3. 提取所有待更新的ID，查询数据库中对应的实体（确保基于数据库最新数据更新）
+                var ids = details.Select(d => d.Id).ToList();
+                var dbModels = context.DeviceInfoDetail
+                    .Where(c => ids.Contains(c.Id))
+                    .ToList();
+
+                // 4. 校验是否存在「数据库中不存在的ID」（贴合原逻辑的异常行为）
+                var dbIds = dbModels.Select(m => m.Id).ToList();
+                var notExistIds = ids.Except(dbIds).ToList();
+                if (notExistIds.Any())
+                {
+                    throw new InvalidOperationException($"以下ID不存在于DeviceInfoDetail表，无法更新：{string.Join(",", notExistIds)}");
+                }
+
+                // 5. 批量更新属性（IsUsedSmart设为true）
+                // 若需要更新传入实体的其他属性，可在此处扩展映射逻辑
+                foreach (var dbModel in dbModels)
+                {
+                    var inputModel = details.First(d => d.Id == dbModel.Id);
+                    // 核心更新：IsUsedSmart设为true（和原逻辑一致）
+                    dbModel.IsUsedSmart = inputModel.IsUsedSmart;
+
+                    // 【可选扩展】若需同步传入实体的其他属性（比如备注、操作人等）
+                    // var inputModel = details.First(d => d.Id == dbModel.Id);
+                    // dbModel.Remark = inputModel.Remark; // 示例：同步备注
+                    // dbModel.Operator = inputModel.Operator; // 示例：同步操作人
+                }
+
+                // 6. 提交更改到数据库
+                context.SaveChanges();
+            }
+        }
+
         public void DeleteDetail(int id)
         {
             using (CoreDbContext context = new CoreDbContext())

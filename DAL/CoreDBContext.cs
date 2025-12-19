@@ -37,6 +37,10 @@ namespace DAL
 
         public DbSet<InspectionLock> InspectionLock { get; set; }
 
+        public DbSet<Permission> Permission { get; set; }
+
+        public DbSet<RolePermission> RolePermission { get; set; }
+
         #endregion
 
         #region  权限相关

@@ -185,6 +185,39 @@
                                     Width="28"
                                     Height="28"
                                     Margin="10,0,0,0"
+                                    ToolTip="全选"
+                                    pu:ButtonHelper.ButtonStyle="Link"
+                                    Foreground="#EAEAEA"
+                                    Content="&#xf00c;"
+                                    FontFamily="{StaticResource FontAwesome}"
+                                    pu:ButtonHelper.HoverBrush="Orange"
+                                    x:Name="btnSelAll" Click="SelectAll_Click"/>
+                            <Button FontSize="16"
+                                    Width="28"
+                                    Height="28"
+                                    Margin="10,0,0,0"
+                                    ToolTip="反选"
+                                    pu:ButtonHelper.ButtonStyle="Link"
+                                    Foreground="#EAEAEA"
+                                    Content="&#xf00d;"
+                                    FontFamily="{StaticResource FontAwesome}"
+                                    pu:ButtonHelper.HoverBrush="Orange"
+                                    x:Name="btnInvertSel" Click="InvertSelection_Click"/>
+                            <Button FontSize="16"
+                                    Width="28"
+                                    Height="28"
+                                    Margin="10,0,0,0"
+                                    ToolTip="保存"
+                                    pu:ButtonHelper.ButtonStyle="Link"
+                                    Foreground="#EAEAEA"
+                                    Content="&#xf0c7;"
+                                    FontFamily="{StaticResource FontAwesome}"
+                                    pu:ButtonHelper.HoverBrush="Orange"
+                                    x:Name="btnSave" Click="Save_Click"/>
+                            <Button FontSize="16"
+                                    Width="28"
+                                    Height="28"
+                                    Margin="10,0,0,0"
                                     ToolTip="添加"
                                     pu:ButtonHelper.ButtonStyle="Link"
                                     Foreground="#EAEAEA"
@@ -251,9 +284,18 @@
                         </DataGrid.RowStyle>
 
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="点号（编号）" Width="150" Binding="{Binding PointName}" />
-                            <DataGridTextColumn Header="夹序号（槽位）" Width="150" Binding="{Binding PointPos}" />
-                            <DataGridTextColumn Header="参数地址" Width="150" Binding="{Binding PointAddress}" />
+                            <DataGridTemplateColumn Header="是否用于智能调机" Width="Auto">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding IsUsedSmart, Mode=TwoWay}"
+                                                  Click="MultiCheckBox_Click"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTextColumn Header="点号（编号）" Width="120" Binding="{Binding PointName}" />
+                            <DataGridTextColumn Header="夹序号（槽位）" Width="120" Binding="{Binding PointPos}" />
+                            <DataGridTextColumn Header="参数地址" Width="120" Binding="{Binding PointAddress}" />
                             <DataGridTemplateColumn Header="操作" Width="*" >
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>

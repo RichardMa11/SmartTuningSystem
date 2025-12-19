@@ -494,6 +494,18 @@ namespace SmartTuningSystem.View
                     NotifyPropertyChanged("PointAddress");
                 }
             }
+
+
+            private bool isUsedSmart = false;
+            public bool IsUsedSmart
+            {
+                get => isUsedSmart;
+                set
+                {
+                    isUsedSmart = value;
+                    NotifyPropertyChanged("IsUsedSmart");
+                }
+            }
         }
 
         #endregion
@@ -547,7 +559,8 @@ namespace SmartTuningSystem.View
                     PointName = item.PointName,
                     PointPos = item.PointPos,
                     PointAddress = item.PointAddress,
-                    DeviceId = item.DeviceId
+                    DeviceId = item.DeviceId,
+                    IsUsedSmart = item.IsUsedSmart
                 };
 
                 DataDetail.Add(_model);
@@ -820,5 +833,49 @@ namespace SmartTuningSystem.View
         #endregion
 
         #endregion
+
+        private void MultiCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            var currentCheckBox = (CheckBox)sender;
+            var currentItem = (UIModelDetail)currentCheckBox.DataContext;
+
+            // 直接绑定CheckBox状态到IsSelected属性
+            currentItem.IsUsedSmart = currentCheckBox.IsChecked == true;
+        }
+
+        private void SelectAll_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var item in listParam.Items.OfType<UIModelDetail>())
+            {
+                item.IsUsedSmart = true;
+            }
+        }
+
+        private void InvertSelection_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var item in listParam.Items.OfType<UIModelDetail>())
+            {
+                item.IsUsedSmart = !item.IsUsedSmart;
+            }
+        }
+
+        private void Save_Click(object sender, RoutedEventArgs e)
+        {
+            List<DeviceInfoDetail> tempDetails = new List<DeviceInfoDetail>();
+            foreach (var item in listParam.Items.OfType<UIModelDetail>())
+            {
+                tempDetails.Add(new DeviceInfoDetail
+                {
+                    Id = item.Id,
+                    PointName = item.PointName,
+                    PointPos = item.PointPos,
+                    PointAddress = item.PointAddress,
+                    DeviceId = item.DeviceId,
+                    IsUsedSmart = item.IsUsedSmart
+                });
+            }
+            DeviceDetailManager.ModifyDeviceDetail(tempDetails);
+            //DeviceDetailManager.ModifyDeviceDetailByIds(listParam.Items.OfType<UIModelDetail>().Where(t => t.IsUsedSmart).Select(t => t.Id).ToList());
+        }
     }
 }

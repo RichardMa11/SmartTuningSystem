@@ -192,7 +192,8 @@
                               pu:DataGridHelper.RowMinHeight="30"
                               pu:DataGridHelper.CellPadding="5,0"
                               pu:DataGridHelper.HoverBackground="{DynamicResource DataGridHoverColor}" 
-                              pu:DataGridHelper.SelectedBackground="{DynamicResource DataGridSelectedColor}">
+                              pu:DataGridHelper.SelectedBackground="{DynamicResource DataGridSelectedColor}"
+                              CellEditEnding="DataGrid_CellEditEnding">
 
                         <DataGrid.RowStyle>
                             <Style TargetType="DataGridRow">

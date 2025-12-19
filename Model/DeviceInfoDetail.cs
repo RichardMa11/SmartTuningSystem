@@ -18,5 +18,7 @@ namespace Model
         public string PointAddress { get; set; }
 
         public int DeviceId { get; set; }
+
+        public bool IsUsedSmart { get; set; }
     }
 }

@@ -44,6 +44,8 @@
   <ItemGroup>
     <Compile Include="CommEntity.cs" />
     <Compile Include="InspectionLock.cs" />
+    <Compile Include="Permission.cs" />
+    <Compile Include="RolePermission.cs" />
     <Compile Include="UserMenu.cs" />
     <Compile Include="TuningRecord.cs" />
     <Compile Include="DeviceInfoDetail.cs" />
