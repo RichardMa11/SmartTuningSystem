@@ -875,6 +875,10 @@ namespace SmartTuningSystem.View
                 });
             }
             DeviceDetailManager.ModifyDeviceDetail(tempDetails);
+
+            LogHelps.WriteLogToDb($@"{UserGlobal.CurrUser.UserName}成功保存机台参数是否用于智能调机。", LogLevel.Operation);
+            MessageBoxX.Show($@"{UserGlobal.CurrUser.UserName}成功保存机台参数是否用于智能调机。", "提示");
+
             //DeviceDetailManager.ModifyDeviceDetailByIds(listParam.Items.OfType<UIModelDetail>().Where(t => t.IsUsedSmart).Select(t => t.Id).ToList());
         }
     }
