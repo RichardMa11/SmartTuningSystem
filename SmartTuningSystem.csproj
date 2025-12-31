@@ -186,6 +186,9 @@
     <Compile Include="View\PermissionAuthorization.xaml.cs">
       <DependentUpon>PermissionAuthorization.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\SmartTuningByExcelViewForSZX.xaml.cs">
+      <DependentUpon>SmartTuningByExcelViewForSZX.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\SmartTuningByExcelView.xaml.cs">
       <DependentUpon>SmartTuningByExcelView.xaml</DependentUpon>
     </Compile>
@@ -277,6 +280,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\PermissionAuthorization.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\SmartTuningByExcelViewForSZX.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
