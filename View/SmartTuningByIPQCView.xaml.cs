@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using BLL;
-using Microsoft.Win32;
 using Model;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
@@ -21,14 +20,12 @@ using static Model.Log;
 namespace SmartTuningSystem.View
 {
     /// <summary>
-    /// SmartTuningByExcelView.xaml 的交互逻辑
+    /// SmartTuningByIPQCView.xaml 的交互逻辑
     /// </summary>
-    public partial class SmartTuningByExcelView : Page
+    public partial class SmartTuningByIPQCView : Page
     {
         ObservableCollection<UIModel> Data = new ObservableCollection<UIModel>();//页面数据集合
         bool _running = false;//是否正在执行查询
-        private string _selectedFilePath;
-        private string _productName;
         private List<DeviceInfoModel> _deviceInfoModels = new List<DeviceInfoModel>();
         public readonly SysConfigManager SysConfigManager = new SysConfigManager();
         public readonly InspectionLockManager InspectionLockManager = new InspectionLockManager();
@@ -198,7 +195,7 @@ namespace SmartTuningSystem.View
 
         #endregion 
 
-        public SmartTuningByExcelView()
+        public SmartTuningByIPQCView()
         {
             InitializeComponent();
             this.StartPageInAnimation();
@@ -222,29 +219,8 @@ namespace SmartTuningSystem.View
             LogHelps.WriteLogToDb($"{UserGlobal.CurrUser.UserName}打开智能调机界面！", LogLevel.Operation);
         }
 
-        private void BtnSelectFile_Click(object sender, RoutedEventArgs e)
-        {
-            var openFileDialog = new OpenFileDialog
-            {
-                Filter = "Excel文件|*.xls;*.xlsx|所有文件|*.*",
-                Title = "选择Excel文件",
-                CheckFileExists = true,
-                Multiselect = false
-            };
-
-            if (openFileDialog.ShowDialog() != true) return;
-            _selectedFilePath = openFileDialog.FileName;
-            txtFilePath.Text = _selectedFilePath;
-        }
-
         private async void BtnGenerateTuningRpt_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(_selectedFilePath) || !File.Exists(_selectedFilePath))
-            {
-                MessageBoxX.Show("请先选择有效的Excel文件", "提示");
-                return;
-            }
-
             if (comboLock.SelectedValue == null)
             {
                 MessageBoxX.Show("请先选择送检锁定时间", "提示");
@@ -268,16 +244,15 @@ namespace SmartTuningSystem.View
                 await Task.Run(() =>
                 {
                     //解析Excel，生成调机报告
-                    using (FileStream fs = new FileStream(_selectedFilePath, FileMode.Open))
+                    using (FileStream fs = new FileStream("_selectedFilePath", FileMode.Open))
                     {
                         IWorkbook workbook = new XSSFWorkbook(fs);
                         ISheet sheet = workbook.GetSheetAt(0);
-                        _productName = sheet.GetRow(1).GetCell(1)?.ToString();
 
                         _deviceInfoModels = LogManager.QueryBySql<DeviceInfoModel>(
                             $@"   select [DeviceName],[IpAddress],[ProductName],[PointName],[PointPos],[PointAddress] FROM [SmartTuningSystemDB].[dbo].[DeviceInfo] dev with(nolock) 
 left join [SmartTuningSystemDB].[dbo].[DeviceInfoDetail] det with(nolock) on dev.Id=det.DeviceId and det.IsValid=1 and det.IsUsedSmart=1
-where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
+where dev.IsValid=1 and ProductName='test'  ").ToList();
                         lockNameTemp = InspectionLockManager.GetLockByLockName(lockName).ToList();
                         tempConnect = CNCCommunicationHelps.ConnectCnc(_deviceInfoModels.Select(t => t.IpAddress).Distinct().ToList());//开启连接
 
@@ -342,7 +317,7 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
                 }
 
                 ApplyRowStyles();
-                txtProductName.Text = _productName ?? "";
+                //txtProductName.Text = _productName ?? "";
             }
             catch (Exception ex)
             {
@@ -422,18 +397,17 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
                     }
 
                     if (string.IsNullOrEmpty(befParam)) continue;
-                    LogHelps.WriteTuningRecord(tempData.Key, _productName, sendParam.TrimEnd('|'), befParam.TrimEnd('|'));
+                    LogHelps.WriteTuningRecord(tempData.Key, "_productName", sendParam.TrimEnd('|'), befParam.TrimEnd('|'));
                     deviceNames.Add(tempData.Key);
                     befParam = ""; sendParam = "";
                 }
                 //CNCCommunicationHelps.DisConnectCnc(tempConnect);//断开连接
 
-                MessageBoxX.Show($"{UserGlobal.CurrUser.UserName} 操作：设置CNC机台数据：机台：[{string.Join(",", deviceNames)}],产品品名：[{ _productName}]成功!", "智能调机");
+                MessageBoxX.Show($"{UserGlobal.CurrUser.UserName} 操作：设置CNC机台数据：机台：[{string.Join(",", deviceNames)}]成功!", "智能调机");
             }
             catch (Exception ex)
             {
-                LogHelps.WriteLogToDb($@"{UserGlobal.CurrUser.UserName}设置CNC机台数据报错：
-                产品品名：[{_productName}],报错原因：{ex.Message + ex.StackTrace}", LogLevel.Error);
+                LogHelps.WriteLogToDb($@"{UserGlobal.CurrUser.UserName}设置CNC机台数据报错：报错原因：{ex.Message + ex.StackTrace}", LogLevel.Error);
             }
         }
 

@@ -226,7 +226,7 @@ namespace SmartTuningSystem.View
         {
             var openFileDialog = new OpenFileDialog
             {
-                Filter = "Excel文件|*.xls;*.xlsx|所有文件|*.*",
+                Filter = "Excel文件|*.xls;*.xlsx;*.xlsm|所有文件|*.*",
                 Title = "选择Excel文件",
                 CheckFileExists = true,
                 Multiselect = false
@@ -263,7 +263,6 @@ namespace SmartTuningSystem.View
 
                 Data.Clear();
                 List<UIModel> dataList = new List<UIModel>();
-                Dictionary<int, string> devicePointPosList = new Dictionary<int, string>();
                 List<Model.InspectionLock> lockNameTemp;
                 await Task.Run(() =>
                 {
@@ -272,39 +271,49 @@ namespace SmartTuningSystem.View
                     {
                         IWorkbook workbook = new XSSFWorkbook(fs);
                         ISheet sheet = workbook.GetSheetAt(0);
-                        _productName = sheet.GetRow(1).GetCell(1)?.ToString();
+                        _productName = sheet.GetRow(0).GetCell(0)?.ToString().Split('_')[1];
 
                         _deviceInfoModels = LogManager.QueryBySql<DeviceInfoModel>(
                             $@"   select [DeviceName],[IpAddress],[ProductName],[PointName],[PointPos],[PointAddress] FROM [SmartTuningSystemDB].[dbo].[DeviceInfo] dev with(nolock) 
 left join [SmartTuningSystemDB].[dbo].[DeviceInfoDetail] det with(nolock) on dev.Id=det.DeviceId and det.IsValid=1 and det.IsUsedSmart=1
 where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
                         lockNameTemp = InspectionLockManager.GetLockByLockName(lockName).ToList();
-                        tempConnect = CNCCommunicationHelps.ConnectCnc(_deviceInfoModels.Select(t => t.IpAddress).ToList());//开启连接
+                        tempConnect = CNCCommunicationHelps.ConnectCnc(_deviceInfoModels.Select(t => t.IpAddress).Distinct().ToList());//开启连接
 
-                        //devicePointPosList.AddRange(from r in sheet.GetRow(5).Cells where !string.IsNullOrEmpty(r.ToString()) select r.ToString());
-                        foreach (var r in sheet.GetRow(5).Cells.Where(r => !string.IsNullOrEmpty(r.ToString())))
+                        foreach (var s in workbook)
                         {
-                            devicePointPosList.Add(r.ColumnIndex, r.ToString());
-                        }
-
-                        for (int i = 6; i <= sheet.LastRowNum; i++)
-                        {
-                            IRow row = sheet.GetRow(i);
-                            if (row == null) continue;
-                            if (string.IsNullOrEmpty(row.GetCell(0)?.ToString())) break;
-
-                            foreach (var d in devicePointPosList)
+                            int inspectRow = 0;
+                            //devicePointPosList.AddRange(from r in sheet.GetRow(5).Cells where !string.IsNullOrEmpty(r.ToString()) select r.ToString());
+                            foreach (var r in s.GetRow(1).Cells.Where(r => !string.IsNullOrEmpty(r.ToString())))
                             {
+                                if (DateTime.ParseExact(r.ToString(), "yyyy/MM/dd", System.Globalization.CultureInfo.InvariantCulture) ==
+                                    DateTime.ParseExact(lockName.Substring(0, 8), "yyyyMMdd", System.Globalization.CultureInfo.InvariantCulture))
+                                {
+                                    inspectRow = r.ColumnIndex;
+                                    break;
+                                }
+                            }
+
+                            if (inspectRow == 0)
+                                break;
+
+                            for (int i = 4; i <= s.LastRowNum; i++)
+                            {
+                                IRow row = s.GetRow(i);
+                                if (row == null) continue;
+                                if (string.IsNullOrEmpty(row.GetCell(5)?.ToString())) break;
+
                                 var data = new UIModel
                                 {
-                                    DeviceName = d.Value.Split('_')[0],
-                                    PointName = row.GetCell(0)?.ToString(),
-                                    PointPos = d.Value.Split('_')[1],
-                                    NominalDim = GetDoubleValue(row.GetCell(2)),
-                                    TolMax = GetDoubleValue(row.GetCell(3)),
-                                    TolMin = GetDoubleValue(row.GetCell(4)),
-                                    MeasureValue = GetDoubleValue(row.GetCell(d.Key))
+                                    DeviceName = s.SheetName,
+                                    PointName = row.GetCell(5)?.ToString(),
+                                    PointPos = s.GetRow(3).GetCell(inspectRow)?.ToString(),
+                                    NominalDim = GetDoubleValue(row.GetCell(6)),
+                                    TolMax = GetDoubleValue(row.GetCell(7)),
+                                    TolMin = GetDoubleValue(row.GetCell(8)),
+                                    MeasureValue = GetDoubleValue(row.GetCell(inspectRow))
                                 };
+
                                 var temp = _deviceInfoModels.FirstOrDefault(x => x.DeviceName == data.DeviceName &&
                                     x.PointName == data.PointName && x.PointPos == data.PointPos);
                                 //data.ParamCurrValue = temp == null

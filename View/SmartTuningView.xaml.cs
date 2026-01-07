@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,6 +28,9 @@ namespace SmartTuningSystem.View
         public string Ip = "127.0.0.1";
         public string ProductName = "";
         public string DeviceName = "";
+        private static ApiClient _apiClient;
+        public readonly SysConfigManager SysConfigManager = new SysConfigManager();
+        public string MeasureApi = "/IPQC_API/QuerySizeMeasurementData";
 
         public SmartTuningView()
         {
@@ -36,6 +40,22 @@ namespace SmartTuningSystem.View
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            string ipqcHttp = "http://awase1ipqc81:8080";
+            if (!string.IsNullOrEmpty(SysConfigManager.GetSysConfigByKey("IPQC_HTTP").FirstOrDefault()?.Value))
+                ipqcHttp = SysConfigManager.GetSysConfigByKey("IPQC_HTTP").FirstOrDefault()?.Value;
+
+            if (!string.IsNullOrEmpty(SysConfigManager.GetSysConfigByKey("MEASURE_API").FirstOrDefault()?.Value))
+                MeasureApi = SysConfigManager.GetSysConfigByKey("MEASURE_API").FirstOrDefault()?.Value;
+
+            _apiClient = new ApiClient(ipqcHttp)
+            {
+                LogRequestResponse = msg =>
+                {
+                    LogHelps.Info($"[API] {DateTime.Now:HH:mm:ss} {msg}");
+                    //File.AppendAllText("api.log", $"{msg}\n\n");
+                }
+            };
+
             UpdateGridAsync();
             list.ItemsSource = Data;//绑定数据源
             listParam.ItemsSource = DataDetail;//绑定数据源
@@ -99,8 +119,38 @@ namespace SmartTuningSystem.View
             }
         }
 
-        private void BtnGenerateTuningRpt_Click(object sender, RoutedEventArgs e)
+        private async void BtnGenerateTuningRpt_Click(object sender, RoutedEventArgs e)
         {
+            // 初始化客户端
+            //var apiClient = new ApiClient("https://api.example.com/v1");
+            // 设置认证令牌
+            //_apiClient.SetBearerToken("your-access-token");
+
+            try
+            {
+                // POST 请求示例
+                var requestData = new Request
+                {
+                    DeviceName = "线1,线2",
+                    Date = "2025/12/31"
+                };
+
+                Response rst = await _apiClient.PostAsync<Response>(MeasureApi, requestData);
+                LogHelps.Error($@"test--{rst.returnResult[0].deviceName},{rst.returnResult[1].deviceName},{rst.returnResult[0].data[0].fai},
+{rst.returnResult[0].data[0].measureData[0].measureValue}");
+
+            }
+            catch (HttpRequestException ex)
+            {
+                LogHelps.Error($@"网络请求错误: {ex.Message}");
+                MessageBoxX.Show($@"{UserGlobal.CurrUser.UserName} 生成调机报告报错；报错原因：网络请求错误: {ex.Message}", "提示");
+            }
+            catch (InvalidOperationException ex)
+            {
+                LogHelps.Error($@"数据处理错误: {ex.Message}");
+                MessageBoxX.Show($@"{UserGlobal.CurrUser.UserName} 生成调机报告报错；报错原因：数据处理错误: {ex.Message}", "提示");
+            }
+
             //            if (string.IsNullOrEmpty(_selectedFilePath) || !File.Exists(_selectedFilePath))
             //            {
             //                MessageBoxX.Show("请先选择有效的Excel文件", "提示");
@@ -543,5 +593,90 @@ namespace SmartTuningSystem.View
             return GlobalData.Instance.IsDataValid ? ValidationResult.ValidResult
                 : new ValidationResult(false, "请输入有效数值（可含正负号和小数点）");
         }
+    }
+
+    public class MeasureDataItem
+    {
+        /// <summary>
+        /// 线1-1-01
+        /// </summary>
+        public string posNo { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string measureValue { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string measureDate { get; set; }
+
+    }
+
+    public class DataItem
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public string fai { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string nominal { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string max { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string min { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<MeasureDataItem> measureData { get; set; }
+
+    }
+
+    public class ReturnResultItem
+    {
+        /// <summary>
+        /// 线1
+        /// </summary>
+        public string deviceName { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<DataItem> data { get; set; }
+
+    }
+
+    public class Response
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<ReturnResultItem> returnResult { get; set; }
+
+    }
+
+    public class Request
+    {
+        /// <summary>
+        /// 线1,线2
+        /// </summary>
+        public string DeviceName { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Date { get; set; }
+
     }
 }
