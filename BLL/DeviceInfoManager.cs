@@ -42,5 +42,10 @@ namespace BLL
         {
             return DeviceInfoService.SelectDevice(id, device, ip, product);
         }
+
+        public List<DeviceInfo> GetAllDevice()
+        {
+            return DeviceInfoService.SelectAllDevice();
+        }
     }
 }

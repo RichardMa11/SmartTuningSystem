@@ -679,4 +679,332 @@ namespace SmartTuningSystem.View
         public string Date { get; set; }
 
     }
+
+    // 2. 模拟数据构造方法（核心）
+    public class MockDataService
+    {
+        /// <summary>
+        /// 生成模拟的Response测试数据（与你提供的JSON完全一致）
+        /// </summary>
+        /// <returns>模拟的Response对象</returns>
+        public async Task<Response> GetMockResponseDataAsync()
+        {
+            // 模拟异步延迟（更贴近真实API调用的行为）
+            await Task.Delay(100);
+
+            // 构造完整的模拟数据
+            var mockResponse = new Response
+            {
+                returnResult = new List<ReturnResultItem>
+            {
+                // 线1的数据
+                new ReturnResultItem
+                {
+                    deviceName = "线1",
+                    data = new List<DataItem>
+                    {
+                        new DataItem
+                        {
+                            fai = "FAI_12",
+                            nominal = "0",
+                            max = "0.100000",
+                            min = "0",
+                            measureData = new List<MeasureDataItem>
+                            {
+                                new MeasureDataItem
+                                {
+                                    posNo = "线1-1-01",
+                                    measureValue = "0.028100",
+                                    measureDate = "2024/09/20 15:26:26"
+                                }
+                            }
+                        },
+                        new DataItem
+                        {
+                            fai = "FAI18_1",
+                            nominal = "0",
+                            max = "0.080000",
+                            min = "0",
+                            measureData = new List<MeasureDataItem>
+                            {
+                                new MeasureDataItem
+                                {
+                                    posNo = "线1-1-01",
+                                    measureValue = "0.018400",
+                                    measureDate = "2024/09/20 15:26:26"
+                                }
+                            }
+                        },
+                        new DataItem
+                        {
+                            fai = "FAI18_2",
+                            nominal = "0",
+                            max = "0.080000",
+                            min = "0",
+                            measureData = new List<MeasureDataItem>
+                            {
+                                new MeasureDataItem
+                                {
+                                    posNo = "线1-1-01",
+                                    measureValue = "0.021400",
+                                    measureDate = "2024/09/20 15:26:26"
+                                }
+                            }
+                        },
+                        new DataItem
+                        {
+                            fai = "FAI18_3",
+                            nominal = "0",
+                            max = "0.080000",
+                            min = "0",
+                            measureData = new List<MeasureDataItem>
+                            {
+                                new MeasureDataItem
+                                {
+                                    posNo = "线1-1-01",
+                                    measureValue = "0.025900",
+                                    measureDate = "2024/09/20 15:26:26"
+                                }
+                            }
+                        },
+                        new DataItem
+                        {
+                            fai = "FAI18_4",
+                            nominal = "0",
+                            max = "0.080000",
+                            min = "0",
+                            measureData = new List<MeasureDataItem>
+                            {
+                                new MeasureDataItem
+                                {
+                                    posNo = "线1-1-01",
+                                    measureValue = "0.002400",
+                                    measureDate = "2024/09/20 15:26:26"
+                                }
+                            }
+                        },
+                        new DataItem
+                        {
+                            fai = "FAI1_A",
+                            nominal = "0",
+                            max = "0.060000",
+                            min = "0",
+                            measureData = new List<MeasureDataItem>
+                            {
+                                new MeasureDataItem
+                                {
+                                    posNo = "线1-1-01",
+                                    measureValue = "0.017600",
+                                    measureDate = "2024/09/20 15:26:26"
+                                }
+                            }
+                        },
+                        new DataItem
+                        {
+                            fai = "FAI2_B1",
+                            nominal = "1.950000",
+                            max = "0.020000",
+                            min = "-0.020000",
+                            measureData = new List<MeasureDataItem>
+                            {
+                                new MeasureDataItem
+                                {
+                                    posNo = "线1-1-01",
+                                    measureValue = "1.968000",
+                                    measureDate = "2024/09/20 15:26:26"
+                                }
+                            }
+                        },
+                        new DataItem
+                        {
+                            fai = "FAI2_B2",
+                            nominal = "1.950000",
+                            max = "0.020000",
+                            min = "-0.020000",
+                            measureData = new List<MeasureDataItem>
+                            {
+                                new MeasureDataItem
+                                {
+                                    posNo = "线1-1-01",
+                                    measureValue = "1.964500",
+                                    measureDate = "2024/09/20 15:26:26"
+                                }
+                            }
+                        },
+                        new DataItem
+                        {
+                            fai = "FAI2_B3",
+                            nominal = "1.950000",
+                            max = "0.020000",
+                            min = "-0.020000",
+                            measureData = new List<MeasureDataItem>
+                            {
+                                new MeasureDataItem
+                                {
+                                    posNo = "线1-1-01",
+                                    measureValue = "1.945200",
+                                    measureDate = "2024/09/20 15:26:26"
+                                }
+                            }
+                        },
+                        new DataItem
+                        {
+                            fai = "FAI2_B4",
+                            nominal = "1.950000",
+                            max = "0.020000",
+                            min = "-0.020000",
+                            measureData = new List<MeasureDataItem>
+                            {
+                                new MeasureDataItem
+                                {
+                                    posNo = "线1-1-01",
+                                    measureValue = "1.963400",
+                                    measureDate = "2024/09/20 15:26:26"
+                                }
+                            }
+                        },
+                        new DataItem
+                        {
+                            fai = "FAI3_C",
+                            nominal = "3.600000",
+                            max = "0.020000",
+                            min = "-0.020000",
+                            measureData = new List<MeasureDataItem>
+                            {
+                                new MeasureDataItem
+                                {
+                                    posNo = "线1-1-01",
+                                    measureValue = "3.599400",
+                                    measureDate = "2024/09/20 15:26:26"
+                                }
+                            }
+                        },
+                        new DataItem
+                        {
+                            fai = "FAI9_1",
+                            nominal = "0",
+                            max = "0.120000",
+                            min = "0",
+                            measureData = new List<MeasureDataItem>
+                            {
+                                new MeasureDataItem
+                                {
+                                    posNo = "线1-1-01",
+                                    measureValue = "0.018400",
+                                    measureDate = "2024/09/20 15:26:26"
+                                }
+                            }
+                        },
+                        new DataItem
+                        {
+                            fai = "FAI9_2",
+                            nominal = "0",
+                            max = "0.120000",
+                            min = "0",
+                            measureData = new List<MeasureDataItem>
+                            {
+                                new MeasureDataItem
+                                {
+                                    posNo = "线1-1-01",
+                                    measureValue = "0.021400",
+                                    measureDate = "2024/09/20 15:26:26"
+                                }
+                            }
+                        },
+                        new DataItem
+                        {
+                            fai = "FAI9_3",
+                            nominal = "0",
+                            max = "0.120000",
+                            min = "0",
+                            measureData = new List<MeasureDataItem>
+                            {
+                                new MeasureDataItem
+                                {
+                                    posNo = "线1-1-01",
+                                    measureValue = "0.025900",
+                                    measureDate = "2024/09/20 15:26:26"
+                                }
+                            }
+                        },
+                        new DataItem
+                        {
+                            fai = "FAI9_4",
+                            nominal = "0",
+                            max = "0.120000",
+                            min = "0",
+                            measureData = new List<MeasureDataItem>
+                            {
+                                new MeasureDataItem
+                                {
+                                    posNo = "线1-1-01",
+                                    measureValue = "0.002400",
+                                    measureDate = "2024/09/20 15:26:26"
+                                }
+                            }
+                        }
+                    }
+                },
+                // 线2的数据
+                new ReturnResultItem
+                {
+                    deviceName = "线2",
+                    data = new List<DataItem>
+                    {
+                        new DataItem
+                        {
+                            fai = "FAI 3-1",
+                            nominal = "90.130000",
+                            max = "2.000000",
+                            min = "-2.000000",
+                            measureData = new List<MeasureDataItem>
+                            {
+                                new MeasureDataItem
+                                {
+                                    posNo = "线2-1-01",
+                                    measureValue = "90.663000",
+                                    measureDate = "2024/07/04 18:59:27"
+                                }
+                            }
+                        },
+                        new DataItem
+                        {
+                            fai = "FAI 3-2",
+                            nominal = "90.130000",
+                            max = "2.000000",
+                            min = "-2.000000",
+                            measureData = new List<MeasureDataItem>
+                            {
+                                new MeasureDataItem
+                                {
+                                    posNo = "线2-1-01",
+                                    measureValue = "89.535000",
+                                    measureDate = "2024/07/04 18:59:27"
+                                }
+                            }
+                        },
+                        new DataItem
+                        {
+                            fai = "FAI 4",
+                            nominal = "36.800000",
+                            max = "0.600000",
+                            min = "-0.600000",
+                            measureData = new List<MeasureDataItem>
+                            {
+                                new MeasureDataItem
+                                {
+                                    posNo = "线2-1-01",
+                                    measureValue = "36.942000",
+                                    measureDate = "2024/07/04 18:59:27"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            };
+
+            return mockResponse;
+        }
+    }
 }

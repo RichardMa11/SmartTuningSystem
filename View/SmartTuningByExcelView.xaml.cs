@@ -279,7 +279,8 @@ namespace SmartTuningSystem.View
 left join [SmartTuningSystemDB].[dbo].[DeviceInfoDetail] det with(nolock) on dev.Id=det.DeviceId and det.IsValid=1 and det.IsUsedSmart=1
 where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
                         lockNameTemp = InspectionLockManager.GetLockByLockName(lockName).ToList();
-                        tempConnect = CNCCommunicationHelps.ConnectCnc(_deviceInfoModels.Select(t => t.IpAddress).Distinct().ToList());//开启连接
+                        tempConnect = CNCCommunicationHelps.ConnectCnc(_deviceInfoModels.Where(t => !string.IsNullOrWhiteSpace(t.PointName))
+                            .Select(t => t.IpAddress).Distinct().ToList());//开启连接
 
                         //devicePointPosList.AddRange(from r in sheet.GetRow(5).Cells where !string.IsNullOrEmpty(r.ToString()) select r.ToString());
                         foreach (var r in sheet.GetRow(5).Cells.Where(r => !string.IsNullOrEmpty(r.ToString())))

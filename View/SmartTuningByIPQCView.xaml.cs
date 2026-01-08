@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,7 +10,6 @@ using System.Windows.Media;
 using BLL;
 using Model;
 using NPOI.SS.UserModel;
-using NPOI.XSSF.UserModel;
 using Panuon.UI.Silver;
 using SmartTuningSystem.Extensions;
 using SmartTuningSystem.Global;
@@ -29,6 +28,9 @@ namespace SmartTuningSystem.View
         private List<DeviceInfoModel> _deviceInfoModels = new List<DeviceInfoModel>();
         public readonly SysConfigManager SysConfigManager = new SysConfigManager();
         public readonly InspectionLockManager InspectionLockManager = new InspectionLockManager();
+        public readonly DeviceInfoManager DeviceInfoManager = new DeviceInfoManager();
+        private static ApiClient _apiClient;
+        public string MeasureApi = "/IPQC_API/QuerySizeMeasurementData";
         //public ObservableCollection<string> Items { get; set; }
         public double AllowedRange { get; set; } = 0.15;
 
@@ -213,6 +215,21 @@ namespace SmartTuningSystem.View
             if (!string.IsNullOrEmpty(SysConfigManager.GetSysConfigByKey("AllowedRange").FirstOrDefault()?.Value))
                 AllowedRange = Convert.ToDouble(SysConfigManager.GetSysConfigByKey("AllowedRange").FirstOrDefault()?.Value);
 
+            string ipqcHttp = "http://awase1ipqc81:8080";
+            if (!string.IsNullOrEmpty(SysConfigManager.GetSysConfigByKey("IPQC_HTTP").FirstOrDefault()?.Value))
+                ipqcHttp = SysConfigManager.GetSysConfigByKey("IPQC_HTTP").FirstOrDefault()?.Value;
+
+            if (!string.IsNullOrEmpty(SysConfigManager.GetSysConfigByKey("MEASURE_API").FirstOrDefault()?.Value))
+                MeasureApi = SysConfigManager.GetSysConfigByKey("MEASURE_API").FirstOrDefault()?.Value;
+
+            _apiClient = new ApiClient(ipqcHttp)
+            {
+                LogRequestResponse = msg =>
+                {
+                    LogHelps.Info($"[API] {DateTime.Now:HH:mm:ss} {msg}");
+                }
+            };
+
             if (UserGlobal.MainWindow != null)
                 UserGlobal.MainWindow.WriteInfoOnBottom("打开智能调机成功。");
 
@@ -227,7 +244,8 @@ namespace SmartTuningSystem.View
                 return;
             }
             string lockName = comboLock.SelectedValue.ToString();
-
+            List<Model.InspectionLock> lockNameTemp;
+            List<UIModel> dataList = new List<UIModel>();
             //连接句柄
             Dictionary<string, ushort> tempConnect = new Dictionary<string, ushort>();
 
@@ -237,49 +255,76 @@ namespace SmartTuningSystem.View
                 if (_running) return;
                 _running = true;
 
-                Data.Clear();
-                List<UIModel> dataList = new List<UIModel>();
-                Dictionary<int, string> devicePointPosList = new Dictionary<int, string>();
-                List<Model.InspectionLock> lockNameTemp;
-                await Task.Run(() =>
+                try
                 {
-                    //解析Excel，生成调机报告
-                    using (FileStream fs = new FileStream("_selectedFilePath", FileMode.Open))
+                    DateTime.TryParseExact(lockName.Substring(0, 8), "yyyyMMdd", null,
+                        System.Globalization.DateTimeStyles.None, out DateTime date);
+                    lockNameTemp = InspectionLockManager.GetLockByLockName(lockName).ToList();
+                    List<DeviceInfo> deviceInfos = DeviceInfoManager.GetAllDevice();
+                    List<string> ipList = lockNameTemp.Select(t => t.IpAddress).Distinct().ToList();
+                    // 一步完成：查询→去重→过滤空值→拼接
+                    string devName = string.Join(",",
+                        deviceInfos
+                            .Where(t => ipList.Contains(t.IpAddress))
+                            .Select(t => t.DeviceName)
+                            .Distinct()
+                            .Where(s => !string.IsNullOrWhiteSpace(s))
+                    );
+
+                    var requestData = new Request
                     {
-                        IWorkbook workbook = new XSSFWorkbook(fs);
-                        ISheet sheet = workbook.GetSheetAt(0);
+                        DeviceName = devName,
+                        Date = date.ToString("yyyy/MM/dd")
+                    };
 
-                        _deviceInfoModels = LogManager.QueryBySql<DeviceInfoModel>(
-                            $@"   select [DeviceName],[IpAddress],[ProductName],[PointName],[PointPos],[PointAddress] FROM [SmartTuningSystemDB].[dbo].[DeviceInfo] dev with(nolock) 
+                    MockDataService mockDataService = new MockDataService();
+                    Response rst = await mockDataService.GetMockResponseDataAsync();
+                    //Response rst = await _apiClient.PostAsync<Response>(MeasureApi, requestData);
+
+                    if (rst.returnResult.Count == 0)
+                    {
+                        MessageBoxX.Show($@"{UserGlobal.CurrUser.UserName} IPQC没有对应的数据", "提示");
+                        return;
+                    }
+
+                    //返回的device
+                    List<string> rstDevices = rst.returnResult.Select(t => t.deviceName).Distinct().ToList();
+                    string rstIp = string.Join(",",
+                        deviceInfos.Where(t => rstDevices.Contains(t.DeviceName))
+                            .Select(t => t.IpAddress).Distinct()
+                            .Where(s => !string.IsNullOrWhiteSpace(s))
+                    );
+
+                    if (string.IsNullOrEmpty(rstIp))
+                    {
+                        MessageBoxX.Show($@"{UserGlobal.CurrUser.UserName} IPQC返回的数据在系统中没有对应的IP地址", "提示");
+                        return;
+                    }
+
+                    _deviceInfoModels = LogManager.QueryBySql<DeviceInfoModel>(
+                        $@"   select [DeviceName],[IpAddress],[ProductName],[PointName],[PointPos],[PointAddress] FROM [SmartTuningSystemDB].[dbo].[DeviceInfo] dev with(nolock) 
 left join [SmartTuningSystemDB].[dbo].[DeviceInfoDetail] det with(nolock) on dev.Id=det.DeviceId and det.IsValid=1 and det.IsUsedSmart=1
-where dev.IsValid=1 and ProductName='test'  ").ToList();
-                        lockNameTemp = InspectionLockManager.GetLockByLockName(lockName).ToList();
-                        tempConnect = CNCCommunicationHelps.ConnectCnc(_deviceInfoModels.Select(t => t.IpAddress).Distinct().ToList());//开启连接
+where dev.IsValid=1 and dev.IpAddress in ('{rstIp}')  ").ToList();
 
-                        //devicePointPosList.AddRange(from r in sheet.GetRow(5).Cells where !string.IsNullOrEmpty(r.ToString()) select r.ToString());
-                        foreach (var r in sheet.GetRow(5).Cells.Where(r => !string.IsNullOrEmpty(r.ToString())))
+                    tempConnect = CNCCommunicationHelps.ConnectCnc(_deviceInfoModels.Where(t => !string.IsNullOrWhiteSpace(t.PointName))
+                        .Select(t => t.IpAddress).Distinct().ToList());//开启连接
+                    foreach (var device in rst.returnResult)
+                    {
+                        foreach (var d in device.data)
                         {
-                            devicePointPosList.Add(r.ColumnIndex, r.ToString());
-                        }
-
-                        for (int i = 6; i <= sheet.LastRowNum; i++)
-                        {
-                            IRow row = sheet.GetRow(i);
-                            if (row == null) continue;
-                            if (string.IsNullOrEmpty(row.GetCell(0)?.ToString())) break;
-
-                            foreach (var d in devicePointPosList)
+                            foreach (var m in d.measureData)
                             {
                                 var data = new UIModel
                                 {
-                                    DeviceName = d.Value.Split('_')[0],
-                                    PointName = row.GetCell(0)?.ToString(),
-                                    PointPos = d.Value.Split('_')[1],
-                                    NominalDim = GetDoubleValue(row.GetCell(2)),
-                                    TolMax = GetDoubleValue(row.GetCell(3)),
-                                    TolMin = GetDoubleValue(row.GetCell(4)),
-                                    MeasureValue = GetDoubleValue(row.GetCell(d.Key))
+                                    DeviceName = device.deviceName,
+                                    PointName = d.fai,
+                                    PointPos = m.posNo,
+                                    NominalDim = Convert.ToDouble(d.nominal),
+                                    TolMax = Convert.ToDouble(d.max),
+                                    TolMin = Convert.ToDouble(d.min),
+                                    MeasureValue = Convert.ToDouble(m.measureValue)
                                 };
+
                                 var temp = _deviceInfoModels.FirstOrDefault(x => x.DeviceName == data.DeviceName &&
                                     x.PointName == data.PointName && x.PointPos == data.PointPos);
                                 //data.ParamCurrValue = temp == null
@@ -299,8 +344,21 @@ where dev.IsValid=1 and ProductName='test'  ").ToList();
                             }
                         }
                     }
-                });
+                }
+                catch (HttpRequestException ex)
+                {
+                    LogHelps.Error($@"网络请求错误: {ex.Message}");
+                    MessageBoxX.Show($@"{UserGlobal.CurrUser.UserName} 生成调机报告报错；报错原因：网络请求错误: {ex.Message}", "提示");
+                    return;
+                }
+                catch (InvalidOperationException ex)
+                {
+                    LogHelps.Error($@"数据处理错误: {ex.Message}");
+                    MessageBoxX.Show($@"{UserGlobal.CurrUser.UserName} 生成调机报告报错；报错原因：数据处理错误: {ex.Message}", "提示");
+                    return;
+                }
 
+                Data.Clear();
                 await Task.Delay(300);
                 bNoData.Visibility = dataList.Count() == 0 ? Visibility.Visible : Visibility.Collapsed;
                 if (!string.IsNullOrEmpty(txtDeviceName.Text))
@@ -397,7 +455,8 @@ where dev.IsValid=1 and ProductName='test'  ").ToList();
                     }
 
                     if (string.IsNullOrEmpty(befParam)) continue;
-                    LogHelps.WriteTuningRecord(tempData.Key, "_productName", sendParam.TrimEnd('|'), befParam.TrimEnd('|'));
+                    LogHelps.WriteTuningRecord(tempData.Key, _deviceInfoModels.Where(t => t.DeviceName == tempData.Key).Select(t => t.ProductName).Distinct()
+                        .FirstOrDefault(), sendParam.TrimEnd('|'), befParam.TrimEnd('|'));
                     deviceNames.Add(tempData.Key);
                     befParam = ""; sendParam = "";
                 }

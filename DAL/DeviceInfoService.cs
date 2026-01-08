@@ -135,5 +135,16 @@ namespace DAL
 
             return devices;
         }
+
+        public List<DeviceInfo> SelectAllDevice()
+        {
+            List<DeviceInfo> devices;
+            using (CoreDbContext context = new CoreDbContext())
+            {
+                devices = context.DeviceInfo.Where(e => e.IsValid).ToList();
+            }
+
+            return devices;
+        }
     }
 }
