@@ -283,19 +283,64 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
 
                         foreach (var s in workbook)
                         {
-                            int inspectRow = 0;
+                            int inspectRow = -1;
                             //devicePointPosList.AddRange(from r in sheet.GetRow(5).Cells where !string.IsNullOrEmpty(r.ToString()) select r.ToString());
                             foreach (var r in s.GetRow(1).Cells.Where(r => !string.IsNullOrEmpty(r.ToString())))
                             {
                                 if (DateTime.ParseExact(r.ToString(), "yyyy/MM/dd", System.Globalization.CultureInfo.InvariantCulture) ==
                                     DateTime.ParseExact(lockName.Substring(0, 8), "yyyyMMdd", System.Globalization.CultureInfo.InvariantCulture))
                                 {
-                                    inspectRow = r.ColumnIndex;
-                                    break;
+                                    try
+                                    {
+                                        // 截取lockName第8位开始的2个字符（小时），拼接:00，解析为TimeSpan
+                                        string targetTimeStr = lockName.Substring(8, 2) + ":00";
+                                        TimeSpan targetTime = TimeSpan.ParseExact(targetTimeStr, "hh\\:mm", System.Globalization.CultureInfo.InvariantCulture);
+
+                                        int temp = r.ColumnIndex;
+
+                                        // 改为do-while结构：先执行一次循环体，再判断条件
+                                        do
+                                        {
+                                            // 提取当前单元格的时间字符串（处理null，避免空引用）
+                                            string cellTimeStr = s.GetRow(2).GetCell(temp)?.ToString()?.Trim() ?? string.Empty;
+
+                                            // 避免空字符串/格式错误导致的异常
+                                            if (!string.IsNullOrEmpty(cellTimeStr))
+                                            {
+                                                try
+                                                {
+                                                    // 解析单元格的时间值
+                                                    TimeSpan cellTime = TimeSpan.ParseExact(cellTimeStr, "hh\\:mm",
+                                                        System.Globalization.CultureInfo.InvariantCulture);
+
+                                                    // 匹配目标时间则记录索引并退出循环
+                                                    if (cellTime == targetTime)
+                                                    {
+                                                        inspectRow = temp;
+                                                        break; // 找到目标，直接退出循环
+                                                    }
+                                                }
+                                                catch (FormatException)
+                                                {
+                                                    // 单元格时间格式错误，跳过当前列并记录日志
+                                                    LogHelps.WriteLogToDb($@"单元格[{temp}]时间格式错误，值为：{cellTimeStr}", LogLevel.Error);
+                                                }
+                                            }
+
+                                            temp++; // 列索引自增
+                                        }
+                                        // 循环条件：1. 未超过5列范围  2. 单元格为空时继续循环（匹配原业务逻辑）
+                                        while (temp < r.ColumnIndex + 5 && string.IsNullOrEmpty(s.GetRow(1).GetCell(temp)?.ToString().Trim()));
+                                    }
+                                    catch (ArgumentOutOfRangeException ex)
+                                    {
+                                        // 处理lockName长度不足8位的异常
+                                        LogHelps.WriteLogToDb($@"lockName截取小时失败：{ex.Message}，lockName值：{lockName}", LogLevel.Error);
+                                    }
                                 }
                             }
 
-                            if (inspectRow == 0)
+                            if (inspectRow == -1)
                                 break;
 
                             for (int i = 4; i <= s.LastRowNum; i++)
@@ -306,9 +351,10 @@ where dev.IsValid=1 and ProductName='{_productName}'  ").ToList();
 
                                 var data = new UIModel
                                 {
-                                    DeviceName = s.SheetName,
-                                    PointName = row.GetCell(5)?.ToString(),
-                                    PointPos = s.GetRow(3).GetCell(inspectRow)?.ToString(),
+                                    DeviceName = s.SheetName.Trim(),
+                                    PointName = row.GetCell(5)?.ToString().Trim(),
+                                    PointPos = !string.IsNullOrWhiteSpace(s.GetRow(3).GetCell(inspectRow)?.ToString().Trim())
+                                        ? s.GetRow(3).GetCell(inspectRow)?.ToString().Trim().Last().ToString() : s.GetRow(3).GetCell(inspectRow)?.ToString().Trim(),
                                     NominalDim = GetDoubleValue(row.GetCell(6)),
                                     TolMax = GetDoubleValue(row.GetCell(7)),
                                     TolMin = GetDoubleValue(row.GetCell(8)),
