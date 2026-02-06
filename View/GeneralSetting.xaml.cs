@@ -35,6 +35,8 @@ namespace SmartTuningSystem.View
             txtVersion.Text = SysConfigManager.GetSysConfigByKey("UpdateVersion").FirstOrDefault()?.Value ?? string.Empty;
             txtUpdateUrl.Text = SysConfigManager.GetSysConfigByKey("UpdateUrl").FirstOrDefault()?.Value ?? string.Empty;
             txtAllowedRange.Text = SysConfigManager.GetSysConfigByKey("AllowedRange").FirstOrDefault()?.Value ?? string.Empty;
+            txtIpqcHttp.Text = SysConfigManager.GetSysConfigByKey("IpqcHttp").FirstOrDefault()?.Value ?? string.Empty;
+            txtMeasureApi.Text = SysConfigManager.GetSysConfigByKey("MeasureApi").FirstOrDefault()?.Value ?? string.Empty;
         }
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
@@ -42,6 +44,8 @@ namespace SmartTuningSystem.View
             string version = txtVersion.Text;
             string updateUrl = txtUpdateUrl.Text;
             string allowedRange = txtAllowedRange.Text;//Convert.ToDouble(txtAllowedRange.Text);
+            string ipqcHttp = txtIpqcHttp.Text;
+            string measureApi = txtMeasureApi.Text;
 
             if (string.IsNullOrEmpty(version))
             {
@@ -64,9 +68,26 @@ namespace SmartTuningSystem.View
                 return;
             }
 
+            if (string.IsNullOrEmpty(ipqcHttp))
+            {
+                MessageBoxX.Show("请输入IPQC_HTTP的值", "空值提醒");
+                txtIpqcHttp.Focus();
+                return;
+            }
+
+            if (string.IsNullOrEmpty(measureApi))
+            {
+                MessageBoxX.Show("请输入MeasureApi的值", "空值提醒");
+                txtMeasureApi.Focus();
+                return;
+            }
+
             var tempVersion = SysConfigManager.GetSysConfigByKey("UpdateVersion").FirstOrDefault();
             var tempUrl = SysConfigManager.GetSysConfigByKey("UpdateUrl").FirstOrDefault();
             var tempRange = SysConfigManager.GetSysConfigByKey("AllowedRange").FirstOrDefault();
+            var tempHttp = SysConfigManager.GetSysConfigByKey("IpqcHttp").FirstOrDefault();
+            var tempMeasureApi = SysConfigManager.GetSysConfigByKey("MeasureApi").FirstOrDefault();
+
             if (tempVersion == null)
             {
                 SysConfigManager.AddSysConfig(new SysConfig
@@ -131,6 +152,52 @@ namespace SmartTuningSystem.View
                     Id = tempRange.Id,
                     Key = "AllowedRange",
                     Value = allowedRange,
+                    UpdateName = UserGlobal.CurrUser.UserName,
+                    UpdateNo = UserGlobal.CurrUser.UserNo
+                });
+            }
+
+            if (tempHttp == null)
+            {
+                SysConfigManager.AddSysConfig(new SysConfig
+                {
+                    Key = "IpqcHttp",
+                    Value = ipqcHttp,
+                    CreateName = UserGlobal.CurrUser.UserName,
+                    CreateNo = UserGlobal.CurrUser.UserNo,
+                    Remark = "IPQC-HTTP值"
+                });
+            }
+            else
+            {
+                SysConfigManager.ModifySysConfig(new SysConfig
+                {
+                    Id = tempHttp.Id,
+                    Key = "IpqcHttp",
+                    Value = ipqcHttp,
+                    UpdateName = UserGlobal.CurrUser.UserName,
+                    UpdateNo = UserGlobal.CurrUser.UserNo
+                });
+            }
+
+            if (tempMeasureApi == null)
+            {
+                SysConfigManager.AddSysConfig(new SysConfig
+                {
+                    Key = "MeasureApi",
+                    Value = measureApi,
+                    CreateName = UserGlobal.CurrUser.UserName,
+                    CreateNo = UserGlobal.CurrUser.UserNo,
+                    Remark = "IPQC-MeasureApi的值"
+                });
+            }
+            else
+            {
+                SysConfigManager.ModifySysConfig(new SysConfig
+                {
+                    Id = tempMeasureApi.Id,
+                    Key = "MeasureApi",
+                    Value = measureApi,
                     UpdateName = UserGlobal.CurrUser.UserName,
                     UpdateNo = UserGlobal.CurrUser.UserNo
                 });

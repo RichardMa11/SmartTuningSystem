@@ -216,11 +216,11 @@ namespace SmartTuningSystem.View
                 AllowedRange = Convert.ToDouble(SysConfigManager.GetSysConfigByKey("AllowedRange").FirstOrDefault()?.Value);
 
             string ipqcHttp = "http://awase1ipqc81:8080";
-            if (!string.IsNullOrEmpty(SysConfigManager.GetSysConfigByKey("IPQC_HTTP").FirstOrDefault()?.Value))
-                ipqcHttp = SysConfigManager.GetSysConfigByKey("IPQC_HTTP").FirstOrDefault()?.Value;
+            if (!string.IsNullOrEmpty(SysConfigManager.GetSysConfigByKey("IpqcHttp").FirstOrDefault()?.Value))
+                ipqcHttp = SysConfigManager.GetSysConfigByKey("IpqcHttp").FirstOrDefault()?.Value;
 
-            if (!string.IsNullOrEmpty(SysConfigManager.GetSysConfigByKey("MEASURE_API").FirstOrDefault()?.Value))
-                MeasureApi = SysConfigManager.GetSysConfigByKey("MEASURE_API").FirstOrDefault()?.Value;
+            if (!string.IsNullOrEmpty(SysConfigManager.GetSysConfigByKey("MeasureApi").FirstOrDefault()?.Value))
+                MeasureApi = SysConfigManager.GetSysConfigByKey("MeasureApi").FirstOrDefault()?.Value;
 
             _apiClient = new ApiClient(ipqcHttp)
             {
@@ -277,9 +277,9 @@ namespace SmartTuningSystem.View
                         Date = date.ToString("yyyy/MM/dd")
                     };
 
-                    MockDataService mockDataService = new MockDataService();
-                    Response rst = await mockDataService.GetMockResponseDataAsync();
-                    //Response rst = await _apiClient.PostAsync<Response>(MeasureApi, requestData);
+                    //MockDataService mockDataService = new MockDataService();
+                    //Response rst = await mockDataService.GetMockResponseDataAsync();
+                    Response rst = await _apiClient.PostAsync<Response>(MeasureApi, requestData);
 
                     if (rst.returnResult.Count == 0)
                     {
